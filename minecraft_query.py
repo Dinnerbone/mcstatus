@@ -21,7 +21,7 @@ class MinecraftQuery:
         version     = "Game Version",
     )
     
-    def __init__(self, host, port, timeout=10, id=0xBEEF, retries=2):
+    def __init__(self, host, port, timeout=10, id=0, retries=2):
         self.addr = (host, port)
         self.id = id
         self.id_packed = struct.pack('>l', id)
