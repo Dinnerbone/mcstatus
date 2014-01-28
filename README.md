@@ -11,7 +11,7 @@ Protocol documention: [http://dinnerbone.com/blog/2011/10/14/minecraft-19-has-rc
 Usage
 -----------
 
-    from status_query import MinecraftQuery
+    from minecraft_query import MinecraftQuery
     
     query = MinecraftQuery("localhost", 25565)
     
