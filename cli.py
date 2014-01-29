@@ -7,10 +7,12 @@ from argparse import ArgumentParser
 
 from minecraft_query import MinecraftQuery
 
+
 def main():
-    parser = ArgumentParser(description="Query status of Minecraft multiplayer server",
-                            epilog="Exit status: 0 if the server can be reached, otherwise nonzero."
-                           )
+    parser = ArgumentParser(
+        description="Query status of Minecraft multiplayer server",
+        epilog="Exit status: 0 if the server can be reached, otherwise nonzero."
+    )
     parser.add_argument("host", help="target hostname")
     parser.add_argument("-q", "--quiet", action='store_true', default=False,
                         help='don\'t print anything, just check if the server is running')
@@ -40,5 +42,5 @@ def main():
     sys.exit(0)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
