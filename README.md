@@ -1,7 +1,7 @@
 MinecraftQuery
 ======
 
-With 1.9 came a shiny new tool to allow native status querying in vanilla Minecraft servers.
+With Minecraft (old-beta-release-)1.9 came a shiny new tool to allow native status querying in vanilla Minecraft servers.
 This is a simple class designed to aid in retrieving any data from the servers.
 
 See it in action: [http://dinnerbone.com/minecraft/tools/status/](http://dinnerbone.com/minecraft/tools/status/)
@@ -20,7 +20,3 @@ Usage
     
     full_info = query.get_rules()
     print "The server is on the map '%s'" % (full_info['map'])
-
-Rights
------------
-Fully open. Go wild.
