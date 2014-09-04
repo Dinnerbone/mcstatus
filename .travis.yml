@@ -3,5 +3,6 @@ python:
   - 3.3
   - 2.7
   - 2.6
-install: pip install .
+install:
+  - pip install mock --use-mirrors
 script: nosetests
