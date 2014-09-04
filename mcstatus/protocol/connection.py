@@ -15,10 +15,14 @@ class Connection:
         return result
 
     def write(self, data):
-        self.sent += data
+        if not isinstance(data, bytearray):
+            data = bytearray(data)
+        self.sent.extend(data)
 
     def receive(self, data):
-        self.received += data
+        if not isinstance(data, bytearray):
+            data = bytearray(data)
+        self.received.extend(data)
 
     def remaining(self):
         return len(self.received)

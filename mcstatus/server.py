@@ -1,5 +1,5 @@
 import json
-import socket
+
 from mcstatus.pinger import ServerPinger
 from mcstatus.protocol.connection import TCPSocketConnection
 
