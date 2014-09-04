@@ -1,7 +1,8 @@
 from unittest import TestCase
 
 from mcstatus.protocol.connection import Connection
-from mcstatus.pinger import ServerPinger
+from mcstatus.pinger import ServerPinger, PingResponse
+from mcstatus.server import MinecraftServer
 
 
 class TestServerPinger(TestCase):
@@ -15,9 +16,14 @@ class TestServerPinger(TestCase):
 
     def test_read_status(self):
         self.pinger.connection.receive(bytearray.fromhex("7200707B226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E382D70726531222C2270726F746F636F6C223A34347D7D"))
+        status = self.pinger.read_status()
 
-        self.assertEqual(self.pinger.read_status(), '{"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}}')
+        self.assertEqual(status.raw, {"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
         self.assertEqual(self.pinger.connection.flush(), bytearray.fromhex("0100"))
+
+    def test_read_status_invalid_json(self):
+        self.pinger.connection.receive(bytearray.fromhex("6D006B7C226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E38222C2270726F746F636F6C223A34377D7D09010000000001C54246"))
+        self.assertRaises(IOError, self.pinger.read_status)
 
     def test_read_status_invalid(self):
         self.pinger.connection.receive(bytearray.fromhex("0105"))
@@ -42,3 +48,115 @@ class TestServerPinger(TestCase):
         self.pinger.ping_token = 12345
 
         self.assertRaises(IOError, self.pinger.test_ping)
+
+
+class TestPingResponse(TestCase):
+    def test_raw(self):
+        response = PingResponse({"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
+
+        self.assertEqual(response.raw, {"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
+
+    def test_description(self):
+        response = PingResponse({"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
+
+        self.assertEqual(response.description, "A Minecraft Server")
+
+    def test_version(self):
+        response = PingResponse({"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
+
+        self.assertIsNotNone(response.version)
+        self.assertEqual(response.version.name, "1.8-pre1")
+        self.assertEqual(response.version.protocol, 44)
+
+    def test_version_missing(self):
+        self.assertRaises(ValueError, PingResponse, {"description":"A Minecraft Server","players":{"max":20,"online":0}})
+
+    def test_version_invalid(self):
+        self.assertRaises(ValueError, PingResponse, {"description":"A Minecraft Server","players":{"max":20,"online":0},"version":"foo"})
+
+    def test_players(self):
+        response = PingResponse({"description":"A Minecraft Server","players":{"max":20,"online":5},"version":{"name":"1.8-pre1","protocol":44}})
+
+        self.assertIsNotNone(response.players)
+        self.assertEqual(response.players.max, 20)
+        self.assertEqual(response.players.online, 5)
+
+    def test_players_missing(self):
+        self.assertRaises(ValueError, PingResponse, {"description":"A Minecraft Server","version":{"name":"1.8-pre1","protocol":44}})
+
+
+class TestPingResponsePlayers(TestCase):
+    def test_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Players, "foo")
+
+    def test_max_missing(self):
+        self.assertRaises(ValueError, PingResponse.Players, {"online":5})
+
+    def test_max_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Players, {"max":"foo","online":5})
+
+    def test_online_missing(self):
+        self.assertRaises(ValueError, PingResponse.Players, {"max":20})
+
+    def test_online_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Players, {"max":20,"online":"foo"})
+
+    def test_valid(self):
+        players = PingResponse.Players({"max":20,"online":5})
+
+        self.assertEqual(players.max, 20)
+        self.assertEqual(players.online, 5)
+
+    def test_sample(self):
+        players = PingResponse.Players({"max":20,"online":1,"sample":[{"name":'Dinnerbone','id':"61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"}]})
+
+        self.assertIsNotNone(players.sample)
+
+    def test_sample_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Players, {"max":20,"online":1,"sample":"foo"})
+
+
+class TestPingResponsePlayersPlayer(TestCase):
+    def test_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Players.Player, "foo")
+
+    def test_name_missing(self):
+        self.assertRaises(ValueError, PingResponse.Players.Player, {"id":"61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"})
+
+    def test_name_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Players.Player, {"name":{},"id":"61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"})
+
+    def test_id_missing(self):
+        self.assertRaises(ValueError, PingResponse.Players.Player, {"name":"Dinnerbone"})
+
+    def test_id_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Players.Player, {"name":"Dinnerbone","id":{}})
+
+    def test_valid(self):
+        player = PingResponse.Players.Player({"name":'Dinnerbone','id':"61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"})
+
+        self.assertEqual(player.name, "Dinnerbone")
+        self.assertEqual(player.id, "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6")
+
+
+class TestPingResponseVersion(TestCase):
+    def test_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Version, "foo")
+
+    def test_protocol_missing(self):
+        self.assertRaises(ValueError, PingResponse.Version, {"name":"foo"})
+
+    def test_protocol_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Version, {"name":"foo","protocol":"bar"})
+
+    def test_name_missing(self):
+        self.assertRaises(ValueError, PingResponse.Version, {"protocol":5})
+
+    def test_name_invalid(self):
+        self.assertRaises(ValueError, PingResponse.Version, {"name":{},"protocol":5})
+
+    def test_valid(self):
+        players = PingResponse.Version({"name":"foo","protocol":5})
+
+        self.assertEqual(players.name, "foo")
+        self.assertEqual(players.protocol, 5)

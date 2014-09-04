@@ -30,6 +30,12 @@ class Connection:
         self.sent = ""
         return result
 
+    def _unpack(self, format, data):
+        return struct.unpack(">" + format, bytes(data))[0]
+
+    def _pack(self, format, data):
+        return struct.pack(">" + format, data)
+
     def read_varint(self):
         result = 0
         for i in range(5):
@@ -58,28 +64,28 @@ class Connection:
         self.write(bytearray(value, 'utf8'))
 
     def read_short(self):
-        return struct.unpack(">h", self.read(2))[0]
+        return self._unpack("h", self.read(2))
 
     def write_short(self, value):
-        self.write(struct.pack(">h", value))
+        self.write(self._pack("h", value))
 
     def read_ushort(self):
-        return struct.unpack(">H", self.read(2))[0]
+        return self._unpack("H", self.read(2))
 
     def write_ushort(self, value):
-        self.write(struct.pack(">H", value))
+        self.write(self._pack("H", value))
 
     def read_long(self):
-        return struct.unpack(">q", self.read(8))[0]
+        return self._unpack("q", self.read(8))
 
     def write_long(self, value):
-        self.write(struct.pack(">q", value))
+        self.write(self._pack("q", value))
 
     def read_ulong(self):
-        return struct.unpack(">Q", self.read(8))[0]
+        return self._unpack("Q", self.read(8))
 
     def write_ulong(self, value):
-        self.write(struct.pack(">Q", value))
+        self.write(self._pack("Q", value))
 
     def read_buffer(self):
         length = self.read_varint()
