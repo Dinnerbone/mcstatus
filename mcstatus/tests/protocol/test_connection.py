@@ -147,7 +147,7 @@ class TestConnection(TestCase):
         buffer = self.connection.read_buffer()
 
         self.assertEqual(buffer.received, bytearray.fromhex("7FAA"))
-        self.assertEqual(self.connection.flush(), "")
+        self.assertEqual(self.connection.flush(), bytearray())
 
     def test_writeBuffer(self):
         buffer = Connection()

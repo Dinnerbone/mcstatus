@@ -8,14 +8,12 @@ class Connection:
         self.received = bytearray()
 
     def read(self, length):
-        result = ""
-
         result = self.received[:length]
         self.received = self.received[length:]
         return result
 
     def write(self, data):
-        if not isinstance(data, bytearray):
+        if isinstance(data, str):
             data = bytearray(data)
         self.sent.extend(data)
 
@@ -45,40 +43,40 @@ class Connection:
         remaining = value
         for i in range(5):
             if remaining & ~0x7F == 0:
-                self.write(chr(remaining))
+                self.write(struct.pack("!B", remaining))
                 return
-            self.write(chr(remaining & 0x7F | 0x80))
+            self.write(struct.pack("!B", remaining & 0x7F | 0x80))
             remaining >>= 7
         raise ValueError("The value %d is too big to send in a varint" % value)
 
     def read_utf(self):
         length = self.read_varint()
-        return str(self.read(length)).encode('utf8')
+        return self.read(length).decode('utf8')
 
     def write_utf(self, value):
         self.write_varint(len(value))
-        self.write(bytearray(value.decode('utf8'), 'utf8'))
+        self.write(bytearray(value, 'utf8'))
 
     def read_short(self):
-        return struct.unpack(">h", str(self.read(2)))[0]
+        return struct.unpack(">h", self.read(2))[0]
 
     def write_short(self, value):
         self.write(struct.pack(">h", value))
 
     def read_ushort(self):
-        return struct.unpack(">H", str(self.read(2)))[0]
+        return struct.unpack(">H", self.read(2))[0]
 
     def write_ushort(self, value):
         self.write(struct.pack(">H", value))
 
     def read_long(self):
-        return struct.unpack(">q", str(self.read(8)))[0]
+        return struct.unpack(">q", self.read(8))[0]
 
     def write_long(self, value):
         self.write(struct.pack(">q", value))
 
     def read_ulong(self):
-        return struct.unpack(">Q", str(self.read(8)))[0]
+        return struct.unpack(">Q", self.read(8))[0]
 
     def write_ulong(self, value):
         self.write(struct.pack(">Q", value))
@@ -110,9 +108,9 @@ class TCPSocketConnection(Connection):
         raise TypeError("SocketConnection does not support remaining()")
 
     def read(self, length):
-        result = ""
+        result = bytearray()
         while len(result) < length:
-            result += self.socket.recv(length - len(result))
+            result.extend(self.socket.recv(length - len(result)))
         return result
 
     def write(self, data):

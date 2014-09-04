@@ -13,10 +13,10 @@ class MinecraftServer:
         connection = TCPSocketConnection((self.host, self.port))
         pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
         pinger.handshake()
-        try :
+        try:
             return {
                 "status": json.loads(pinger.read_status()),
                 "latency": pinger.test_ping(),
             }
-        except ValueError as ex:
+        except ValueError:
             raise IOError("The server responded with invalid json")
