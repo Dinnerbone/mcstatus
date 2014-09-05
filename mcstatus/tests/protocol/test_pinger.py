@@ -22,10 +22,15 @@ class TestServerPinger(TestCase):
         self.assertEqual(self.pinger.connection.flush(), bytearray.fromhex("0100"))
 
     def test_read_status_invalid_json(self):
-        self.pinger.connection.receive(bytearray.fromhex("6D006B7C226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E38222C2270726F746F636F6C223A34377D7D09010000000001C54246"))
+        self.pinger.connection.receive(bytearray.fromhex("0300017B"))
         self.assertRaises(IOError, self.pinger.read_status)
 
-    def test_read_status_invalid(self):
+    def test_read_status_invalid_reply(self):
+        self.pinger.connection.receive(bytearray.fromhex("4F004D7B22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E382D70726531222C2270726F746F636F6C223A34347D7D"))
+
+        self.assertRaises(IOError, self.pinger.read_status)
+
+    def test_read_status_invalid_status(self):
         self.pinger.connection.receive(bytearray.fromhex("0105"))
 
         self.assertRaises(IOError, self.pinger.read_status)
@@ -60,6 +65,9 @@ class TestPingResponse(TestCase):
         response = PingResponse({"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
 
         self.assertEqual(response.description, "A Minecraft Server")
+
+    def test_description_missing(self):
+        self.assertRaises(ValueError, PingResponse, {"players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
 
     def test_version(self):
         response = PingResponse({"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
