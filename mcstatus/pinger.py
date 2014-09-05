@@ -136,3 +136,6 @@ class PingResponse:
         if "description" not in raw:
             raise ValueError("Invalid status object (no 'description' value)")
         self.description = raw["description"]
+
+        if "favicon" in raw:
+            self.favicon = raw["favicon"]

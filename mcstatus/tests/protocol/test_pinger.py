@@ -84,6 +84,10 @@ class TestPingResponse(TestCase):
     def test_players_missing(self):
         self.assertRaises(ValueError, PingResponse, {"description":"A Minecraft Server","version":{"name":"1.8-pre1","protocol":44}})
 
+    def test_favicon(self):
+        response = PingResponse({"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44},"favicon":"data:image/png;base64,foo"})
+
+        self.assertEqual(response.favicon, "data:image/png;base64,foo")
 
 class TestPingResponsePlayers(TestCase):
     def test_invalid(self):
