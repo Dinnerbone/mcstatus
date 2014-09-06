@@ -1,4 +1,5 @@
 import random
+import struct
 from mcstatus.protocol.connection import Connection
 
 
@@ -14,7 +15,7 @@ class ServerQuerier:
     def _create_packet(self, id):
         packet = Connection()
         packet.write(self.MAGIC_PREFIX)
-        packet.write(chr(id))
+        packet.write(struct.pack("!B", id))
         packet.write_uint(0)
         packet.write_uint(self.challenge)
         return packet
