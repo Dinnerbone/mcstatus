@@ -79,7 +79,7 @@ class QueryResponse:
                 self.brand = parts[0].strip()
 
                 if len(parts) == 2:
-                    self.plugins = map(lambda s: s.strip(), parts[1].split(";"))
+                    self.plugins = [s.strip() for s in parts[1].split(";")]
 
 
     def __init__(self, raw, players):
