@@ -62,6 +62,29 @@ class ServerQuerier:
 
 
 class QueryResponse:
+    class Players:
+        def __init__(self, online, max, names):
+            self.online = int(online)
+            self.max = int(max)
+            self.names = names
+
+    class Software:
+        def __init__(self, version, plugins):
+            self.version = version
+            self.brand = "vanilla"
+            self.plugins = []
+
+            if plugins:
+                parts = plugins.split(":", 1)
+                self.brand = parts[0].strip()
+
+                if len(parts) == 2:
+                    self.plugins = map(lambda s: s.strip(), parts[1].split(";"))
+
+
     def __init__(self, raw, players):
         self.raw = raw
-        self.players = players
+        self.motd = raw["hostname"]
+        self.map = raw["map"]
+        self.players = QueryResponse.Players(raw["numplayers"], raw["maxplayers"], players)
+        self.software = QueryResponse.Software(raw["version"], raw["plugins"])
