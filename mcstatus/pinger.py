@@ -9,7 +9,7 @@ from mcstatus.protocol.connection import Connection
 class ServerPinger:
     def __init__(self, connection, host="", port=0, version=47, ping_token=None):
         if ping_token is None:
-            ping_token = random.randint(0, 1 << 63 - 1)
+            ping_token = random.randint(0, (1 << 63) - 1)
         self.version = version
         self.connection = connection
         self.host = host
@@ -42,7 +42,6 @@ class ServerPinger:
             return PingResponse(raw)
         except ValueError as e:
             raise IOError("Received invalid status response: %s" % e)
-
 
     def test_ping(self):
         request = Connection()

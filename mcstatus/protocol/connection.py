@@ -15,6 +15,8 @@ class Connection:
     def write(self, data):
         if isinstance(data, str):
             data = bytearray(data)
+        if isinstance(data, Connection):
+            data = bytearray(data.flush())
         self.sent.extend(data)
 
     def receive(self, data):
@@ -63,6 +65,16 @@ class Connection:
         self.write_varint(len(value))
         self.write(bytearray(value, 'utf8'))
 
+    def read_ascii(self):
+        result = ""
+        while len(result) == 0 or result[-1] != "\x00":
+            result += self.read(1).decode("ascii")
+        return result[:-1]
+
+    def write_ascii(self, value):
+        self.write(bytearray(value, 'ascii'))
+        self.write(bytearray.fromhex("00"))
+
     def read_short(self):
         return self._unpack("h", self.read(2))
 
@@ -74,6 +86,18 @@ class Connection:
 
     def write_ushort(self, value):
         self.write(self._pack("H", value))
+
+    def read_int(self):
+        return self._unpack("i", self.read(4))
+
+    def write_int(self, value):
+        self.write(self._pack("i", value))
+
+    def read_uint(self):
+        return self._unpack("I", self.read(4))
+
+    def write_uint(self, value):
+        self.write(self._pack("I", value))
 
     def read_long(self):
         return self._unpack("q", self.read(8))
@@ -105,13 +129,13 @@ class TCPSocketConnection(Connection):
         self.socket = socket.create_connection(addr, timeout=10)
 
     def flush(self):
-        raise TypeError("SocketConnection does not support flush()")
+        raise TypeError("TCPSocketConnection does not support flush()")
 
     def receive(self, data):
-        raise TypeError("SocketConnection does not support receive()")
+        raise TypeError("TCPSocketConnection does not support receive()")
 
     def remaining(self):
-        raise TypeError("SocketConnection does not support remaining()")
+        raise TypeError("TCPSocketConnection does not support remaining()")
 
     def read(self, length):
         result = bytearray()
@@ -121,3 +145,31 @@ class TCPSocketConnection(Connection):
 
     def write(self, data):
         self.socket.send(data)
+
+
+class UDPSocketConnection(Connection):
+    def __init__(self, addr):
+        Connection.__init__(self)
+        self.addr = addr
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.settimeout(10)
+
+    def flush(self):
+        raise TypeError("UDPSocketConnection does not support flush()")
+
+    def receive(self, data):
+        raise TypeError("UDPSocketConnection does not support receive()")
+
+    def remaining(self):
+        return 65535
+
+    def read(self, length):
+        result = bytearray()
+        while len(result) == 0:
+            result.extend(self.socket.recvfrom(self.remaining())[0])
+        return result
+
+    def write(self, data):
+        if isinstance(data, Connection):
+            data = bytearray(data.flush())
+        self.socket.sendto(data, self.addr)
