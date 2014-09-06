@@ -1,5 +1,5 @@
-import random
 import struct
+
 from mcstatus.protocol.connection import Connection
 
 
