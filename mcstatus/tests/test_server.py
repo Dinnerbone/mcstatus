@@ -23,6 +23,14 @@ class TestMinecraftServer(TestCase):
         self.assertEqual(info.raw, {"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8","protocol":47}})
         self.assertTrue(latency >= 0)
 
+    def test_ping_server_retry(self):
+        with patch("mcstatus.server.TCPSocketConnection") as connection:
+            connection.return_value = None
+            with patch("mcstatus.server.ServerPinger") as pinger:
+                pinger.side_effect = [Exception, Exception, Exception]
+                self.assertRaises(Exception, self.server.ping_server)
+                self.assertEqual(pinger.call_count, 3)
+
     def test_query_server(self):
         self.socket.receive(bytearray.fromhex("090000000035373033353037373800"))
         self.socket.receive(bytearray.fromhex("00000000000000000000000000000000686f73746e616d650041204d696e656372616674205365727665720067616d657479706500534d500067616d655f6964004d494e4543524146540076657273696f6e00312e3800706c7567696e7300006d617000776f726c64006e756d706c61796572730033006d6178706c617965727300323000686f7374706f727400323535363500686f73746970003139322e3136382e35362e31000001706c617965725f000044696e6e6572626f6e6500446a696e6e69626f6e650053746576650000"))
@@ -47,3 +55,11 @@ class TestMinecraftServer(TestCase):
             "hostport": "25565",
             "hostip": "192.168.56.1",
         })
+
+    def test_query_server_retry(self):
+        with patch("mcstatus.server.UDPSocketConnection") as connection:
+            connection.return_value = None
+            with patch("mcstatus.server.ServerQuerier") as querier:
+                querier.side_effect = [Exception, Exception, Exception]
+                self.assertRaises(Exception, self.server.query_server)
+                self.assertEqual(querier.call_count, 3)
