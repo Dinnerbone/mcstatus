@@ -1,7 +1,8 @@
 import json
 
 from mcstatus.pinger import ServerPinger
-from mcstatus.protocol.connection import TCPSocketConnection
+from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection
+from mcstatus.querier import ServerQuerier
 
 
 class MinecraftServer:
@@ -14,3 +15,9 @@ class MinecraftServer:
         pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
         pinger.handshake()
         return pinger.read_status(), pinger.test_ping()
+
+    def query_server(self):
+        connection = UDPSocketConnection((self.host, self.port))
+        querier = ServerQuerier(connection)
+        querier.handshake()
+        return querier.read_query()
