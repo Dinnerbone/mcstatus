@@ -13,10 +13,10 @@ class Connection:
         return result
 
     def write(self, data):
-        if isinstance(data, str):
-            data = bytearray(data)
         if isinstance(data, Connection):
             data = bytearray(data.flush())
+        if isinstance(data, str):
+            data = bytearray(data)
         self.sent.extend(data)
 
     def receive(self, data):
