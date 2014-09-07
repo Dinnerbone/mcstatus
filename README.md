@@ -1,22 +1,34 @@
-MinecraftQuery
-======
+mcstatus
+========
 
-With Minecraft (old-beta-release-)1.9 came a shiny new tool to allow native status querying in vanilla Minecraft servers.
-This is a simple class designed to aid in retrieving any data from the servers.
-
-See it in action: [http://dinnerbone.com/minecraft/tools/status/](http://dinnerbone.com/minecraft/tools/status/)
-
-Protocol documention: [http://dinnerbone.com/blog/2011/10/14/minecraft-19-has-rcon-and-query/](http://dinnerbone.com/blog/2011/10/14/minecraft-19-has-rcon-and-query/)
+mcstatus provides an easy way to query Minecraft servers for any information they can expose. It provides two modes of access, 'query' and 'ping', the differences of which are listed below in usage.
 
 Usage
------------
+-----
 
-    from minecraft_query import MinecraftQuery
+    from mcstatus import MinecraftServer
     
-    query = MinecraftQuery("localhost", 25565)
+    server = MinecraftServer("localhost", 25565)
     
-    basic_status = query.get_status()
-    print "The server has %d players" % (basic_status['numplayers'])
+    # 'ping' is supported by all Minecraft servers that are version 1.7 or higher.
+    status = server.ping_server()
+    print("The server has %d players" % (status.players.online))
     
-    full_info = query.get_rules()
-    print "The server is on the map '%s'" % (full_info['map'])
+    # 'query' has to be enabled in a servers' server.properties file.
+    # It may give more information than a ping, such as a full player list or mod information.
+    query = query.query_server()
+    print("The server has the following players online: " % (string.join(query.players.names, ", ")))
+
+Installation
+------------
+
+mcstatus is available on pypi, and can be installed trivially with:
+
+    pip install mcstatus
+
+Alternatively, just clone this repo!
+
+License
+-------
+
+mcstatus is licensed under Apache 2.0.
