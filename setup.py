@@ -6,7 +6,7 @@ setup(
     author='Nathan Adams',
     author_email='dinnerbone@dinnerbone.com',
     url='https://pypi.python.org/pypi/mcstatus',
-    packages=['minecraft_query',],
+    packages=['mcstatus',],
     description='A library to query Minecraft Servers for their status and capabilities.',
     install_requires=['six'],
     tests_require=['mock'],
