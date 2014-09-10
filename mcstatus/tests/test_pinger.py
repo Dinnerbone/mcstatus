@@ -123,6 +123,7 @@ class TestPingResponsePlayers(TestCase):
         players = PingResponse.Players({"max":20,"online":1,"sample":[{"name":'Dinnerbone','id':"61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"}]})
 
         self.assertIsNotNone(players.sample)
+        self.assertEqual(players.sample[0].name, "Dinnerbone")
 
     def test_sample_invalid(self):
         self.assertRaises(ValueError, PingResponse.Players, {"max":20,"online":1,"sample":"foo"})
