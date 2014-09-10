@@ -66,13 +66,13 @@ class Connection:
         self.write(bytearray(value, 'utf8'))
 
     def read_ascii(self):
-        result = ""
-        while len(result) == 0 or result[-1] != "\x00":
-            result += self.read(1).decode("ascii")
-        return result[:-1]
+        result = bytearray()
+        while len(result) == 0 or result[-1] != 0:
+            result.extend(self.read(1))
+        return result[:-1].decode("ISO-8859-1")
 
     def write_ascii(self, value):
-        self.write(bytearray(value, 'ascii'))
+        self.write(bytearray(value, 'ISO-8859-1'))
         self.write(bytearray.fromhex("00"))
 
     def read_short(self):
