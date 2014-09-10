@@ -17,7 +17,7 @@ class ServerQuerier:
         packet.write(self.MAGIC_PREFIX)
         packet.write(struct.pack("!B", id))
         packet.write_uint(0)
-        packet.write_uint(self.challenge)
+        packet.write_int(self.challenge)
         return packet
 
     def _read_packet(self):
