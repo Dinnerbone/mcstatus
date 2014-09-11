@@ -124,9 +124,9 @@ class Connection:
 
 
 class TCPSocketConnection(Connection):
-    def __init__(self, addr):
+    def __init__(self, addr, timeout=3):
         Connection.__init__(self)
-        self.socket = socket.create_connection(addr, timeout=10)
+        self.socket = socket.create_connection(addr, timeout=timeout)
 
     def flush(self):
         raise TypeError("TCPSocketConnection does not support flush()")
@@ -148,11 +148,11 @@ class TCPSocketConnection(Connection):
 
 
 class UDPSocketConnection(Connection):
-    def __init__(self, addr):
+    def __init__(self, addr, timeout=3):
         Connection.__init__(self)
         self.addr = addr
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.settimeout(10)
+        self.socket.settimeout(timeout)
 
     def flush(self):
         raise TypeError("UDPSocketConnection does not support flush()")
