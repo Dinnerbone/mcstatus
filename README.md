@@ -19,7 +19,7 @@ print("The server has {0} players".format(status.players.online))
 # 'query' has to be enabled in a servers' server.properties file.
 # It may give more information than a ping, such as a full player list or mod information.
 query = server.query_server()
-print("The server has the following players online: " % (string.join(query.players.names, ", ")))
+print("The server has the following players online: %s" % (", ".join(query.players.names)))
 ```
 
 Installation
