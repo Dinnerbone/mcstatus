@@ -1,7 +1,8 @@
 mcstatus
 ========
 
-mcstatus provides an easy way to query Minecraft servers for any information they can expose. It provides two modes of access, 'query' and 'ping', the differences of which are listed below in usage.
+`mcstatus` provides an easy way to query Minecraft servers for any information they can expose.
+It provides two modes of access, `query` and `ping`, the differences of which are listed below in usage.
 
 Usage
 -----
