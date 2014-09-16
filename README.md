@@ -6,18 +6,20 @@ mcstatus provides an easy way to query Minecraft servers for any information the
 Usage
 -----
 
-    from mcstatus import MinecraftServer
-    
-    server = MinecraftServer("localhost", 25565)
-    
-    # 'ping' is supported by all Minecraft servers that are version 1.7 or higher.
-    status = server.ping_server()
-    print("The server has %d players" % (status.players.online))
-    
-    # 'query' has to be enabled in a servers' server.properties file.
-    # It may give more information than a ping, such as a full player list or mod information.
-    query = query.query_server()
-    print("The server has the following players online: " % (string.join(query.players.names, ", ")))
+```python
+from mcstatus import MinecraftServer
+
+server = MinecraftServer("localhost", 25565)
+
+# 'ping' is supported by all Minecraft servers that are version 1.7 or higher.
+status = server.ping_server()
+print("The server has %d players" % (status.players.online))
+
+# 'query' has to be enabled in a servers' server.properties file.
+# It may give more information than a ping, such as a full player list or mod information.
+query = query.query_server()
+print("The server has the following players online: " % (string.join(query.players.names, ", ")))
+```
 
 Installation
 ------------
