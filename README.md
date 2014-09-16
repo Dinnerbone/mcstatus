@@ -13,7 +13,7 @@ from mcstatus import MinecraftServer
 server = MinecraftServer("localhost", 25565)
 
 # 'ping' is supported by all Minecraft servers that are version 1.7 or higher.
-status = server.ping_server()
+status, ping = server.ping_server()
 print("The server has %d players" % (status.players.online))
 
 # 'query' has to be enabled in a servers' server.properties file.
