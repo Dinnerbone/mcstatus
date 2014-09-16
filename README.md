@@ -14,7 +14,7 @@ server = MinecraftServer("localhost", 25565)
 
 # 'ping' is supported by all Minecraft servers that are version 1.7 or higher.
 status, ping = server.ping_server()
-print("The server has %d players" % (status.players.online))
+print("The server has {0} players".format(status.players.online))
 
 # 'query' has to be enabled in a servers' server.properties file.
 # It may give more information than a ping, such as a full player list or mod information.
