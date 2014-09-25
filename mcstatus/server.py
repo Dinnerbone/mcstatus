@@ -1,12 +1,36 @@
 from mcstatus.pinger import ServerPinger
 from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection
 from mcstatus.querier import ServerQuerier
+import dns.resolver
 
 
 class MinecraftServer:
     def __init__(self, host, port=25565):
         self.host = host
         self.port = port
+
+    @staticmethod
+    def lookup(address):
+        host = address
+        port = None
+        if ":" in address:
+            parts = address.split(":")
+            if len(parts) > 2:
+                raise ValueError("Invalid address '%s'" % address)
+            host = parts[0]
+            port = int(parts[1])
+        if port is None:
+            port = 25565
+            try:
+                answers = dns.resolver.query("_minecraft._tcp." + host, "SRV")
+                if len(answers):
+                    answer = answers[0]
+                    host = str(answer.target).rstrip(".")
+                    port = int(answer.port)
+            except Exception:
+                pass
+
+        return MinecraftServer(host, port)
 
     def ping(self, retries=3, **kwargs):
         attempt = 0

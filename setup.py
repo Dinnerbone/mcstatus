@@ -1,4 +1,18 @@
 from distutils.core import setup
+from six import PY2
+
+install_requires = [
+    'six'
+]
+
+if PY2:
+    install_requires.append('dnspython')
+else:
+    install_requires.append('dnspython3')
+
+tests_require = [
+    'mock'
+]
 
 setup(
     name='mcstatus',
@@ -8,8 +22,8 @@ setup(
     url='https://pypi.python.org/pypi/mcstatus',
     packages=['mcstatus', 'mcstatus.protocol'],
     description='A library to query Minecraft Servers for their status and capabilities.',
-    install_requires=['six'],
-    tests_require=['mock'],
+    install_requires=install_requires,
+    tests_require=tests_require,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',

@@ -82,3 +82,41 @@ class TestMinecraftServer(TestCase):
                 querier.side_effect = [Exception, Exception, Exception]
                 self.assertRaises(Exception, self.server.query)
                 self.assertEqual(querier.call_count, 3)
+
+    def test_by_address_no_srv(self):
+        with patch("dns.resolver.query") as query:
+            query.return_value = []
+            self.server = MinecraftServer.lookup("example.org")
+            query.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
+        self.assertEqual(self.server.host, "example.org")
+        self.assertEqual(self.server.port, 25565)
+
+    def test_by_address_invalid_srv(self):
+        with patch("dns.resolver.query") as query:
+            query.side_effect = [Exception]
+            self.server = MinecraftServer.lookup("example.org")
+            query.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
+        self.assertEqual(self.server.host, "example.org")
+        self.assertEqual(self.server.port, 25565)
+
+    def test_by_address_with_srv(self):
+        with patch("dns.resolver.query") as query:
+            answer = Mock()
+            answer.target = "different.example.org."
+            answer.port = 12345
+            query.return_value = [answer]
+            self.server = MinecraftServer.lookup("example.org")
+            query.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
+        self.assertEqual(self.server.host, "different.example.org")
+        self.assertEqual(self.server.port, 12345)
+
+    def test_by_address_with_port(self):
+        self.server = MinecraftServer.lookup("example.org:12345")
+        self.assertEqual(self.server.host, "example.org")
+        self.assertEqual(self.server.port, 12345)
+
+    def test_by_address_with_multiple_ports(self):
+        self.assertRaises(ValueError, MinecraftServer.lookup, "example.org:12345:6789")
+
+    def test_by_address_with_invalid_port(self):
+        self.assertRaises(ValueError, MinecraftServer.lookup, "example.org:port")
