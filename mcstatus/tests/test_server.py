@@ -47,7 +47,7 @@ class TestMinecraftServer(TestCase):
             connection.return_value = None
             with patch("mcstatus.server.ServerPinger") as pinger:
                 pinger.side_effect = [Exception, Exception, Exception]
-                self.assertRaises(Exception, self.server.ping)
+                self.assertRaises(Exception, self.server.status)
                 self.assertEqual(pinger.call_count, 3)
 
     def test_query(self):
