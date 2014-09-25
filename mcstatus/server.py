@@ -8,7 +8,7 @@ class MinecraftServer:
         self.host = host
         self.port = port
 
-    def ping_server(self, retries=3, **kwargs):
+    def ping(self, retries=3, **kwargs):
         attempt = 0
         connection = TCPSocketConnection((self.host, self.port))
         exception = None
@@ -16,13 +16,29 @@ class MinecraftServer:
             try:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
-                return pinger.read_status(), pinger.test_ping()
+                return pinger.test_ping()
             except Exception as e:
                 exception = e
                 attempt += 1
         raise exception
 
-    def query_server(self, retries=3):
+    def status(self, retries=3, **kwargs):
+        attempt = 0
+        connection = TCPSocketConnection((self.host, self.port))
+        exception = None
+        while attempt < retries:
+            try:
+                pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
+                pinger.handshake()
+                result = pinger.read_status()
+                result.latency = pinger.test_ping()
+                return result
+            except Exception as e:
+                exception = e
+                attempt += 1
+        raise exception
+
+    def query(self, retries=3):
         attempt = 0
         exception = None
         while attempt < retries:

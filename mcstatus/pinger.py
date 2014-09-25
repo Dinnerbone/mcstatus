@@ -138,3 +138,5 @@ class PingResponse:
 
         if "favicon" in raw:
             self.favicon = raw["favicon"]
+
+        self.latency = None
