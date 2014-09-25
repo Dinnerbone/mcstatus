@@ -97,6 +97,11 @@ class TestPingResponse(TestCase):
 
         self.assertEqual(response.favicon, "data:image/png;base64,foo")
 
+    def test_favicon_missing(self):
+        response = PingResponse({"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8-pre1","protocol":44}})
+
+        self.assertIsNone(response.favicon)
+
 class TestPingResponsePlayers(TestCase):
     def test_invalid(self):
         self.assertRaises(ValueError, PingResponse.Players, "foo")
@@ -127,6 +132,10 @@ class TestPingResponsePlayers(TestCase):
 
     def test_sample_invalid(self):
         self.assertRaises(ValueError, PingResponse.Players, {"max":20,"online":1,"sample":"foo"})
+
+    def test_sample_missing(self):
+        players = PingResponse.Players({"max":20,"online":1})
+        self.assertIsNone(players.sample)
 
 
 class TestPingResponsePlayersPlayer(TestCase):

@@ -103,6 +103,8 @@ class PingResponse:
                 if type(raw["sample"]) is not list:
                     raise ValueError("Invalid players object (expected 'sample' to be list, was %s)" % type(raw["max"]))
                 self.sample = [PingResponse.Players.Player(p) for p in raw["sample"]]
+            else:
+                self.sample = None
 
     class Version:
         def __init__(self, raw):
@@ -138,5 +140,7 @@ class PingResponse:
 
         if "favicon" in raw:
             self.favicon = raw["favicon"]
+        else:
+            self.favicon = None
 
         self.latency = None
