@@ -1,5 +1,6 @@
 from distutils.core import setup
-from six import PY2
+import sys
+PY2 = sys.version_info[0] == 2
 
 install_requires = [
     'six'
