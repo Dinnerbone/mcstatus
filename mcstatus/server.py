@@ -52,7 +52,8 @@ class MinecraftServer:
             try:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
-                result = re.sub(r'§.', '', pinger.read_status())
+                result = pinger.read_status()
+                result.description = re.sub(r'§.', '', result.description)
                 result.latency = pinger.test_ping()
                 return result
             except Exception as e:
