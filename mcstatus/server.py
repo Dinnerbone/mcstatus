@@ -53,8 +53,7 @@ class MinecraftServer:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
                 result = pinger.read_status()
-                result.color_description = result.description
-                result.description = re.sub(r'\u00A7.', '', result.color_description)
+                result.stripped_description = re.sub(r'\u00A7.', '', result.description)
                 result.latency = pinger.test_ping()
                 return result
             except Exception as e:
