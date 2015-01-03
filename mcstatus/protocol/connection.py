@@ -140,7 +140,10 @@ class TCPSocketConnection(Connection):
     def read(self, length):
         result = bytearray()
         while len(result) < length:
-            result.extend(self.socket.recv(length - len(result)))
+            new = self.socket.recv(length - len(result))
+            if len(new) == 0:
+                raise IOError("Server did not respond with any information!")
+            result.extend(new)
         return result
 
     def write(self, data):

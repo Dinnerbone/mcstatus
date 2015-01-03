@@ -225,6 +225,12 @@ class TCPSocketConnectionTest(TestCase):
 
         self.assertEqual(self.connection.read(2), bytearray.fromhex("7FAA"))
 
+    def test_read_empty(self):
+        self.connection.socket.recv.return_value = bytearray.fromhex("")
+
+        with self.assertRaises(IOError):
+            self.connection.read(2)
+
     def test_write(self):
         self.connection.write(bytearray.fromhex("7FAA"))
 
