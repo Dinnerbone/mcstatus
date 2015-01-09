@@ -62,9 +62,17 @@ class MinecraftServer:
 
     def query(self, retries=3):
         exception = None
+        host = self.host
+        try:
+            answers = dns.resolver.query(host, "A")
+            if len(answers):
+                answer = answers[0]
+                host = str(answer).rstrip(".")
+        except Exception as e:
+            pass
         for attempt in range(retries):
             try:
-                connection = UDPSocketConnection((self.host, self.port))
+                connection = UDPSocketConnection((host, self.port))
                 querier = ServerQuerier(connection)
                 querier.handshake()
                 return querier.read_query()
