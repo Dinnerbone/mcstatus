@@ -1,3 +1,8 @@
+2.1
+    * Fixed the connections hanging when no data is received
+    * Sped up Query requests by caching DNS
+    * Fixed running setup.py when Six is not installed
+
 2.0
     * Rewrote all the things!
     * Removed CLI. May add it back in future, if there's demand.
