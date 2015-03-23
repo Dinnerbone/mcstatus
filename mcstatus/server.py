@@ -40,10 +40,14 @@ class MinecraftServer:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
                 result = pinger.test_ping()
-                connection.close()
                 return result
             except Exception as e:
                 exception = e
+            finally:
+                try:
+                    connection.close()
+                except:
+                    pass
         else:
             raise exception
 
@@ -55,11 +59,20 @@ class MinecraftServer:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
                 result = pinger.read_status()
-                result.latency = pinger.test_ping()
-                connection.close()
+                try:
+                    result.latency = pinger.test_ping()
+                except IOError:
+                    # Some servers have an animated MOTD, which is nonstandard and
+                    # breaks the protocol. We don't get latency for these servers.
+                    result.latency = None
                 return result
             except Exception as e:
                 exception = e
+            finally:
+                try:
+                    connection.close()
+                except:
+                    pass
         else:
             raise exception
 
