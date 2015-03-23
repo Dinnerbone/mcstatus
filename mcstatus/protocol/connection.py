@@ -146,8 +146,11 @@ class TCPSocketConnection(Connection):
             result.extend(new)
         return result
 
-    def write(self, data):
+    def write(self, data): 
         self.socket.send(data)
+
+    def close(self):
+        self.socket.close()
 
 
 class UDPSocketConnection(Connection):
