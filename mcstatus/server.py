@@ -33,27 +33,30 @@ class MinecraftServer:
         return MinecraftServer(host, port)
 
     def ping(self, retries=3, **kwargs):
-        connection = TCPSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(retries):
             try:
+                connection = TCPSocketConnection((self.host, self.port))
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
-                return pinger.test_ping()
+                result = pinger.test_ping()
+                connection.close()
+                return result
             except Exception as e:
                 exception = e
         else:
             raise exception
 
     def status(self, retries=3, **kwargs):
-        connection = TCPSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(retries):
             try:
+                connection = TCPSocketConnection((self.host, self.port))
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
                 result = pinger.read_status()
                 result.latency = pinger.test_ping()
+                connection.close()
                 return result
             except Exception as e:
                 exception = e
