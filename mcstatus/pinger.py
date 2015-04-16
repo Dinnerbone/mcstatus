@@ -115,10 +115,8 @@ class PingResponse:
                 raise ValueError("Invalid version object (no 'name' value)")
             if not isinstance(raw["name"], string_types):
                 raise ValueError("Invalid version object (expected 'name' to be str, was %s)" % type(raw["name"]))
-                
-            # just remove colors from the server version
-            # anyone who does this is a bad person
-            self.name = re.sub(r'\u00A7.', '', raw["name"])
+            self.name = raw["name"]
+            self.name_clean = re.sub(r'\u00A7.', '', raw["name"])
 
             if "protocol" not in raw:
                 raise ValueError("Invalid version object (no 'protocol' value)")
