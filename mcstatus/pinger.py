@@ -1,6 +1,8 @@
 import datetime
 import json
 import random
+import re
+
 from six import string_types
 
 from mcstatus.protocol.connection import Connection
