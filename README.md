@@ -1,4 +1,4 @@
-mcstatus
+mcstatus [![Build Status](https://travis-ci.org/CloudBotIRC/mcstatus.svg?branch=master)](https://travis-ci.org/CloudBotIRC/mcstatus)
 ========
 
 `mcstatus` provides an easy way to query Minecraft servers for any information they can expose.
