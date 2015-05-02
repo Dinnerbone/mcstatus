@@ -64,7 +64,7 @@ class MinecraftServer:
                 except IOError:
                     # Some servers have an animated MOTD, which is nonstandard and
                     # breaks the protocol. We don't get latency for these servers.
-                    result.latency = None
+                    result.latency = 0.00
                 return result
             except Exception as e:
                 exception = e
