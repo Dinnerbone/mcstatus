@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 import sys
 PY2 = sys.version_info[0] == 2
 
