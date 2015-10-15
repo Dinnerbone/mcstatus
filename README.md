@@ -1,4 +1,4 @@
-mcstatus
+mcstatus [![Build Status](https://travis-ci.org/CloudBotIRC/mcstatus.svg?branch=master)](https://travis-ci.org/CloudBotIRC/mcstatus)
 ========
 
 `mcstatus` provides an easy way to query Minecraft servers for any information they can expose.
@@ -31,10 +31,10 @@ print("The server has the following players online: {0}".format(", ".join(query.
 Installation
 ------------
 
-mcstatus is available on pypi, and can be installed trivially with:
+mcstatus can be installed trivially with:
 
 ```bash
-pip install mcstatus
+pip install git+https://github.com/CloudBotIRC/mcstatus.git@master
 ```
 
 Alternatively, just clone this repo!

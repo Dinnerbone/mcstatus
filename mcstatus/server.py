@@ -33,30 +33,46 @@ class MinecraftServer:
         return MinecraftServer(host, port)
 
     def ping(self, retries=3, **kwargs):
-        connection = TCPSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(retries):
             try:
+                connection = TCPSocketConnection((self.host, self.port))
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
-                return pinger.test_ping()
+                result = pinger.test_ping()
+                return result
             except Exception as e:
                 exception = e
+            finally:
+                try:
+                    connection.close()
+                except:
+                    pass
         else:
             raise exception
 
     def status(self, retries=3, **kwargs):
-        connection = TCPSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(retries):
             try:
+                connection = TCPSocketConnection((self.host, self.port))
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
                 result = pinger.read_status()
-                result.latency = pinger.test_ping()
+                try:
+                    result.latency = pinger.test_ping()
+                except IOError:
+                    # Some servers have an animated MOTD, which is nonstandard and
+                    # breaks the protocol. We don't get latency for these servers.
+                    result.latency = 0.00
                 return result
             except Exception as e:
                 exception = e
+            finally:
+                try:
+                    connection.close()
+                except:
+                    pass
         else:
             raise exception
 

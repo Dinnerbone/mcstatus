@@ -1,3 +1,8 @@
+2.2
+    * Fix to allow ports > 32767 from @PangeaCake
+    * Added workaround for animated MOTDs
+    * Added code to strip colors from pinger data
+
 2.1
     * Fixed the connections hanging when no data is received
     * Sped up Query requests by caching DNS

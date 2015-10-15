@@ -1,6 +1,8 @@
 import datetime
 import json
 import random
+import re
+
 from six import string_types
 
 from mcstatus.protocol.connection import Connection
@@ -21,7 +23,7 @@ class ServerPinger:
         packet.write_varint(0)
         packet.write_varint(self.version)
         packet.write_utf(self.host)
-        packet.write_short(self.port)
+        packet.write_ushort(self.port)
         packet.write_varint(1)  # Intention to query status
 
         self.connection.write_buffer(packet)
@@ -116,6 +118,7 @@ class PingResponse:
             if not isinstance(raw["name"], string_types):
                 raise ValueError("Invalid version object (expected 'name' to be str, was %s)" % type(raw["name"]))
             self.name = raw["name"]
+            self.name_clean = re.sub(r'\u00A7.', '', raw["name"])
 
             if "protocol" not in raw:
                 raise ValueError("Invalid version object (no 'protocol' value)")
@@ -137,6 +140,7 @@ class PingResponse:
         if "description" not in raw:
             raise ValueError("Invalid status object (no 'description' value)")
         self.description = raw["description"]
+        self.description_clean = re.sub(r'\u00A7.', '', raw["description"])
 
         if "favicon" in raw:
             self.favicon = raw["favicon"]
