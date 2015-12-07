@@ -28,6 +28,44 @@ query = server.query()
 print("The server has the following players online: {0}".format(", ".join(query.players.names)))
 ```
 
+Command Line Interface
+```
+$ mcstatus
+Usage: mcstatus [OPTIONS] ADDRESS COMMAND [ARGS]...
+
+  mcstatus provides an easy way to query Minecraft servers for any
+  information they can expose. It provides three modes of access: query,
+  status, and ping.
+
+  Examples:
+
+  $ mcstatus example.org ping
+  21.120ms
+
+  $ mcstatus example.org:1234 ping
+  159.903ms
+
+  $ mcstatus example.org status
+  version: v1.8.8 (protocol 47)
+  description: "A Minecraft Server"
+  players: 1/20 ['Dinnerbone (61699b2e-d327-4a01-9f1e-0ea8c3f06bc6)']
+
+  $ mcstatus example.org query
+  host: 93.148.216.34:25565
+  software: v1.8.8 vanilla
+  plugins: []
+  motd: "A Minecraft Server"
+  players: 1/20 ['Dinnerbone (61699b2e-d327-4a01-9f1e-0ea8c3f06bc6)']
+
+Options:
+  -h, --help  Show this message and exit.
+
+Commands:
+  ping    prints server latency
+  query   detailed server information
+  status  basic server information
+```
+
 Installation
 ------------
 

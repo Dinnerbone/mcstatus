@@ -35,4 +35,9 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
+    py_modules=['mcstatus'],
+    entry_points='''
+        [console_scripts]
+        mcstatus=cli:cli
+    ''',
 )
