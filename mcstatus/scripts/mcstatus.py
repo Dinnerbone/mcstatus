@@ -1,12 +1,12 @@
 import click
 
-from mcstatus import MinecraftServer
+from .. import MinecraftServer
 
 server = None
 
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
-@click.argument("address", type=str)
+@click.argument("address")
 def cli(address):
     """
     mcstatus provides an easy way to query Minecraft servers for
