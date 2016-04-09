@@ -21,7 +21,7 @@ class ServerPinger:
         packet.write_varint(0)
         packet.write_varint(self.version)
         packet.write_utf(self.host)
-        packet.write_short(self.port)
+        packet.write_ushort(self.port)
         packet.write_varint(1)  # Intention to query status
 
         self.connection.write_buffer(packet)
