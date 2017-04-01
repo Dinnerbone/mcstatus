@@ -1,3 +1,9 @@
+2.2
+    * Added new CLI
+    * Clean up sockets better
+    * Fixed connecting to ports greater than 32767
+    * Took a very very long time. :D
+
 2.1
     * Fixed the connections hanging when no data is received
     * Sped up Query requests by caching DNS
