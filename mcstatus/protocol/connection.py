@@ -149,6 +149,9 @@ class TCPSocketConnection(Connection):
     def write(self, data):
         self.socket.send(data)
 
+    def __del__(self):
+        self.socket.close()
+
 
 class UDPSocketConnection(Connection):
     def __init__(self, addr, timeout=3):
@@ -176,3 +179,6 @@ class UDPSocketConnection(Connection):
         if isinstance(data, Connection):
             data = bytearray(data.flush())
         self.socket.sendto(data, self.addr)
+
+    def __del__(self):
+        self.socket.close()
