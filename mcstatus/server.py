@@ -2,7 +2,7 @@ from mcstatus.pinger import ServerPinger
 from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection
 from mcstatus.querier import ServerQuerier
 import dns.resolver
-
+import re
 
 class MinecraftServer:
     def __init__(self, host, port=25565):
@@ -53,6 +53,7 @@ class MinecraftServer:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
                 result = pinger.read_status()
+                result.stripped_description = re.sub(r'\u00A7.', '', result.description)
                 result.latency = pinger.test_ping()
                 return result
             except Exception as e:
