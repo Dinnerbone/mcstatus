@@ -150,7 +150,10 @@ class TCPSocketConnection(Connection):
         self.socket.send(data)
 
     def __del__(self):
-        self.socket.close()
+        try:
+            self.socket.close()
+        except:
+            pass
 
 
 class UDPSocketConnection(Connection):
@@ -181,4 +184,7 @@ class UDPSocketConnection(Connection):
         self.socket.sendto(data, self.addr)
 
     def __del__(self):
-        self.socket.close()
+        try:
+            self.socket.close()
+        except:
+            pass
