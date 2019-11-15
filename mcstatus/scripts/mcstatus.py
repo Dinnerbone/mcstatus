@@ -1,4 +1,5 @@
 import click
+from json import dumps as json_dumps
 
 from .. import MinecraftServer
 
@@ -68,7 +69,8 @@ def status():
             ] if response.players.sample is not None else "No players online"
         )
     )
-    
+
+
 @cli.command(short_help="all available server information in json")
 def json():
     """
@@ -76,49 +78,35 @@ def json():
     servers that are version 1.7 or higher.
     """
     try:
-        ping = server.ping()
-        online=True
-    except Exception:
-        online=False
-    output = '{'
-    if online:
-        response1 = server.status(retries=1)
+        response1 = server.ping()
+    except:
+        response1 = None
+    data = {
+        'online': response1 is not None
+    }
+    if data['online']:
+        response2 = server.status(retries=1)
         try:
-            response2 = server.query(retries=1)
-            query = True
+            response3 = server.query(retries=1)
         except Exception:
-            query = False
-        output+='"online":true,'
-        output+='"ping":{},'.format(ping)
-        output+='"version":"{}",'.format(response1.version.name)
-        output+='"protocol":{},'.format(response1.version.protocol)
-        output+='"motd":"{}",'.format(response1.description)
-        output+='"player_count":{},'.format(response1.players.online)
-        output+='"player_max":{},'.format(response1.players.max)
-        output+='"players":['
-        if response1.players.sample is not None:
-            for player in response1.players.sample:
-                output+='{'
-                output+='"name":"{}",'.format(player.name)
-                output+='"id":"{}"'.format(player.id)
-                output+='},'
-            if len(response1.players.sample)>0:
-                output = output[:-1]
-        output += '],'
-        if query :
-            output+='"host_ip":"{}",'.format(response2.raw['hostip'])
-            output+='"host_port":"{}",'.format(response2.raw['hostport'])
-            output+='"map":"{}",'.format(response2.map)
-            output+='"plugins":['
-            for plugin in response2.software.plugins:
-                output+=plugin+","
-            if len(response2.software.plugins)>0:
-                output = output[:-1]
-            output += '],' 
-    else:
-        output+='"online":false,'
-    output = output[:-1] + '}'
-    click.echo(output)
+            response3 = None
+        data['online'] = True
+        data['ping'] = response1
+        data['version'] = response2.version.name
+        data['protocol'] = response2.version.protocol
+        data['motd'] = response2.description
+        data['player_count'] = response2.players.online
+        data['player_max'] = response2.players.max
+        data['players'] = []
+        if response2.players.sample is not None:
+            data['players'] = [{'name': player.name, 'id': player.id} for player in response2.players.sample]
+        if response3 is not None:
+            data['host_ip'] = response3.raw['hostip']
+            data['host_port'] = response3.raw['hostport']
+            data['map'] = response3.map
+            data['plugins'] = response3.software.plugins
+    click.echo(json_dumps(data))
+
 
 @cli.command(short_help="detailed server information")
 def query():
