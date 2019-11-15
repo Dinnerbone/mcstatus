@@ -77,34 +77,34 @@ def json():
     Prints server status and query in json. Supported by all Minecraft
     servers that are version 1.7 or higher.
     """
+    data = {'online': False}
+    # Build data with responses and quit on exception
     try:
-        response1 = server.ping()
-    except:
-        response1 = None
-    data = {
-        'online': response1 is not None
-    }
-    if data['online']:
-        response2 = server.status(retries=1)
-        try:
-            response3 = server.query(retries=1)
-        except Exception:
-            response3 = None
+        ping_res = server.ping()
         data['online'] = True
-        data['ping'] = response1
-        data['version'] = response2.version.name
-        data['protocol'] = response2.version.protocol
-        data['motd'] = response2.description
-        data['player_count'] = response2.players.online
-        data['player_max'] = response2.players.max
+        data['ping'] = ping_res
+        data = {
+            'online': True,
+            'ping': ping_res,
+        }
+
+        status_res = server.status(retries=1)
+        data['version'] = status_res.version.name
+        data['protocol'] = status_res.version.protocol
+        data['motd'] = status_res.description
+        data['player_count'] = status_res.players.online
+        data['player_max'] = status_res.players.max
         data['players'] = []
-        if response2.players.sample is not None:
-            data['players'] = [{'name': player.name, 'id': player.id} for player in response2.players.sample]
-        if response3 is not None:
-            data['host_ip'] = response3.raw['hostip']
-            data['host_port'] = response3.raw['hostport']
-            data['map'] = response3.map
-            data['plugins'] = response3.software.plugins
+        if status_res.players.sample is not None:
+            data['players'] = [{'name': player.name, 'id': player.id} for player in status_res.players.sample]
+
+        query_res = server.query(retries=1)
+        data['host_ip'] = query_res.raw['hostip']
+        data['host_port'] = query_res.raw['hostport']
+        data['map'] = query_res.map
+        data['plugins'] = query_res.software.plugins
+    except:
+        pass
     click.echo(json_dumps(data))
 
 
