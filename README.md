@@ -65,6 +65,7 @@ Options:
   -h, --help  Show this message and exit.
 
 Commands:
+  json    combination of several other commands with json formatting
   ping    prints server latency
   query   detailed server information
   status  basic server information
