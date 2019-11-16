@@ -1,3 +1,6 @@
+2.3
+    * Added json CLI command
+
 2.2
     * Added new CLI
     * Clean up sockets better
