@@ -83,10 +83,6 @@ def json():
         ping_res = server.ping()
         data['online'] = True
         data['ping'] = ping_res
-        data = {
-            'online': True,
-            'ping': ping_res,
-        }
 
         status_res = server.status(retries=1)
         data['version'] = status_res.version.name
