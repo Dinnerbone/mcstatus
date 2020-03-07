@@ -77,7 +77,7 @@ Installation
 mcstatus is available on pypi, and can be installed trivially with:
 
 ```bash
-pip install mcstatus
+python3 -m pip install mcstatus
 ```
 
 Alternatively, just clone this repo!
