@@ -38,6 +38,8 @@ def parse_address(address):
             parts[0] = parts[0][1:]
             parts[-2] = parts[-2][:-1]
             tmp = ':'.join(parts[0:-1])
+        else:
+            tmp = tmp.replace("[", "").replace("]", "")
 
         if not ip_type(tmp) == 6:
             raise ValueError("Invalid address '%s'" % address)
