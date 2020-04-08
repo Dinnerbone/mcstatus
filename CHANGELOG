@@ -1,3 +1,6 @@
+3.0
+    * Drop support for python 2 and python 3.4; you may use version 2.3 or prior for outdated python versions.
+
 2.3
     * Added json CLI command
 
