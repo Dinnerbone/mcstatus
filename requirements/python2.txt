@@ -1,3 +1,0 @@
--r base.txt
-
-dnspython==1.12.0

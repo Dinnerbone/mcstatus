@@ -3,9 +3,9 @@ python:
   - 3.5
   - 3.6
   - 3.7
-  - 2.7
+  - 3.8
 install:
   - pip install --upgrade pip
-  - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install -r requirements/python2.txt; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements/python3.txt; fi
-script: nosetests
+  - pip install -r test-requirements.txt
+  - pip check
+script: python -m nose

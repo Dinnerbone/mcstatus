@@ -1,1 +1,3 @@
--r requirements/base.txt
+click==7.1.1
+dnspython3==1.15.0
+six==1.14.0
