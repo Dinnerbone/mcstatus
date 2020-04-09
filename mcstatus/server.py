@@ -1,6 +1,7 @@
 from mcstatus.pinger import ServerPinger
 from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection
 from mcstatus.querier import ServerQuerier
+from mcstatus.scripts.address_tools import parse_address
 import dns.resolver
 
 
@@ -11,14 +12,7 @@ class MinecraftServer:
 
     @staticmethod
     def lookup(address):
-        host = address
-        port = None
-        if ":" in address:
-            parts = address.split(":")
-            if len(parts) > 2:
-                raise ValueError("Invalid address '%s'" % address)
-            host = parts[0]
-            port = int(parts[1])
+        host, port = parse_address(address)
         if port is None:
             port = 25565
             try:
