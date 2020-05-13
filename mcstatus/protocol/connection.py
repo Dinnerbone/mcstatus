@@ -128,6 +128,7 @@ class TCPSocketConnection(Connection):
     def __init__(self, addr, timeout=3):
         Connection.__init__(self)
         self.socket = socket.create_connection(addr, timeout=timeout)
+        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
     def flush(self):
         raise TypeError("TCPSocketConnection does not support flush()")
