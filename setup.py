@@ -11,7 +11,7 @@ tests_require = [
 
 setup(
     name='mcstatus',
-    version='3.1.0',
+    version='3.1.1',
     author='Nathan Adams',
     author_email='dinnerbone@dinnerbone.com',
     url='https://pypi.python.org/pypi/mcstatus',
