@@ -26,10 +26,10 @@ class MinecraftServer:
 
         return MinecraftServer(host, port)
 
-    def ping(self, retries=3, **kwargs):
+    def ping(self, tries=3, **kwargs):
         connection = TCPSocketConnection((self.host, self.port))
         exception = None
-        for attempt in range(retries):
+        for attempt in range(tries):
             try:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
@@ -39,10 +39,10 @@ class MinecraftServer:
         else:
             raise exception
 
-    def status(self, retries=3, **kwargs):
+    def status(self, tries=3, **kwargs):
         connection = TCPSocketConnection((self.host, self.port))
         exception = None
-        for attempt in range(retries):
+        for attempt in range(tries):
             try:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
@@ -54,7 +54,7 @@ class MinecraftServer:
         else:
             raise exception
 
-    def query(self, retries=3):
+    def query(self, tries=3):
         exception = None
         host = self.host
         try:
@@ -64,7 +64,7 @@ class MinecraftServer:
                 host = str(answer).rstrip(".")
         except Exception as e:
             pass
-        for attempt in range(retries):
+        for attempt in range(tries):
             try:
                 connection = UDPSocketConnection((host, self.port))
                 querier = ServerQuerier(connection)
