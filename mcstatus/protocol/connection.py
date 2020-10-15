@@ -177,7 +177,10 @@ class UDPSocketConnection(Connection):
     def read(self, length):
         result = bytearray()
         while len(result) == 0:
-            result.extend(self.socket.recvfrom(self.remaining())[0])
+            try:
+                result.extend(self.socket.recvfrom(self.remaining())[0])
+            except socket.timeout:
+                raise ConnectionError
         return result
 
     def write(self, data):
