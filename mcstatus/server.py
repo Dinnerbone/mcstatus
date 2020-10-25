@@ -1,5 +1,5 @@
-from mcstatus.pinger import ServerPinger
-from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection
+from mcstatus.pinger import ServerPinger, AsyncServerPinger
+from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection, TCPAsyncSocketConnection
 from mcstatus.querier import ServerQuerier
 from mcstatus.scripts.address_tools import parse_address
 import dns.resolver
@@ -39,6 +39,19 @@ class MinecraftServer:
         else:
             raise exception
 
+    async def aync_ping(self, tries=3, **kwargs):
+        connection = await TCPAsyncSocketConnection((self.host, self.port))
+        exception = None
+        for attempt in range(tries):
+            try:
+                pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
+                pinger.handshake()
+                return await pinger.test_ping()
+            except Exception as e:
+                exception = e
+        else:
+            raise exception
+
     def status(self, tries=3, **kwargs):
         connection = TCPSocketConnection((self.host, self.port))
         exception = None
@@ -48,6 +61,22 @@ class MinecraftServer:
                 pinger.handshake()
                 result = pinger.read_status()
                 result.latency = pinger.test_ping()
+                return result
+            except Exception as e:
+                exception = e
+        else:
+            raise exception
+
+    async def async_status(self, tries=3, **kwargs):
+        connection = TCPAsyncSocketConnection()
+        await connection.connect((self.host, self.port))
+        exception = None
+        for attempt in range(tries):
+            try:
+                pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
+                pinger.handshake()
+                result = await pinger.read_status()
+                result.latency = await pinger.test_ping()
                 return result
             except Exception as e:
                 exception = e
@@ -74,3 +103,6 @@ class MinecraftServer:
                 exception = e
         else:
             raise exception
+
+    async def async_query(self, parameter_list):
+        raise NotImplementedError # TODO: '-'

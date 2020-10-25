@@ -1,5 +1,6 @@
 import socket
 import struct
+import asyncio
 
 from ..scripts.address_tools import ip_type
 
@@ -190,3 +191,66 @@ class UDPSocketConnection(Connection):
             self.socket.close()
         except:
             pass
+
+class TCPAsyncSocketConnection(TCPSocketConnection):
+    def __init__(self):
+        pass
+
+    async def connect(self, addr, timeout=3):
+        conn = asyncio.open_connection(addr[0], addr[1])
+        self.reader, self.writer = await asyncio.wait_for(conn, timeout=timeout)
+
+    async def read(self, length):
+        result = bytearray()
+        while len(result) < length:
+            new = await self.reader.read(length - len(result))
+            if len(new) == 0:
+                raise IOError("Server did not respond with any information!")
+            result.extend(new)
+        return result
+
+    def write(self, data):
+        self.writer.write(data)
+    
+    async def read_varint(self):
+        result = 0
+        for i in range(5):
+            part = ord(await self.read(1))
+            result |= (part & 0x7F) << 7 * i
+            if not part & 0x80:
+                return result
+        raise IOError("Server sent a varint that was too big!")
+
+    async def read_utf(self):
+        length = await self.read_varint()
+        return self.read(length).decode('utf8')
+
+    async def read_ascii(self):
+        result = bytearray()
+        while len(result) == 0 or result[-1] != 0:
+            result.extend(await self.read(1))
+        return result[:-1].decode("ISO-8859-1")
+
+    async def read_short(self):
+        return self._unpack("h", await self.read(2))
+
+    async def read_ushort(self):
+        return self._unpack("H", await self.read(2))
+
+    async def read_int(self):
+        return self._unpack("i", await self.read(4))
+
+    async def read_uint(self):
+        return self._unpack("I", await self.read(4))
+
+    async def read_long(self):
+        return self._unpack("q", await self.read(8))
+
+    async def read_ulong(self):
+        return self._unpack("Q", await self.read(8))
+
+    async def read_buffer(self):
+        length = await self.read_varint()
+        result = Connection()
+        result.receive(await self.read(length))
+        return result
