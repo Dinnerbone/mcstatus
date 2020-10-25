@@ -39,7 +39,7 @@ class MinecraftServer:
         else:
             raise exception
 
-    async def aync_ping(self, tries=3, **kwargs):
+    async def async_ping(self, tries=3, **kwargs):
         connection = await TCPAsyncSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(tries):
