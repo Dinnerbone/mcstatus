@@ -54,7 +54,7 @@ class BedrockStatusResponse:
             self.brand = brand
 
     def __init__(self, protocol, brand, latency, players_online, players_max, motd, map_, gamemode):
-        self.version = Version(protocol, brand)
+        self.version = self.Version(protocol, brand)
         self.latency = latency
         self.players_online = players_online
         self.players_max = players_max
