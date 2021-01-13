@@ -1,29 +1,18 @@
 from time import perf_counter
 import asyncio_dgram
+import socket
 import struct
 
 
 class BedrockServerStatus:
+    request_status_data = b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x124Vx'
+
     def __init__(self, host, port=19132):
         self.host = host
         self.port = port
 
-    async def read_status_async(self):
-        start = perf_counter()
-
-        try:
-            stream = await asyncio_dgram.connect((self.host, self.port))
-
-            await stream.send(b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x124Vx')
-            data, _ = await stream.recv()
-        finally:
-            try:
-                stream.close()
-            except BaseException:
-                pass
-
-        latency = perf_counter() - start
-
+    @staticmethod
+    def parse_response(data: bytes, latency: int):
         data = data[1:]
         name_length = struct.unpack('>H', data[32:34])[0]
         data = data[34:34+name_length].decode().split(';')
@@ -45,6 +34,33 @@ class BedrockServerStatus:
             map_,
             gamemode
         )
+
+    def read_status(self):
+        start = perf_counter()
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(1.5)
+
+        s.sendto(self.request_status_data, (socket.gethostbyname(self.host), self.port))
+        data, _ = s.recvfrom(2048)
+
+        return self.parse_response(data, (perf_counter() - start))
+
+    async def read_status_async(self):
+        start = perf_counter()
+
+        try:
+            stream = await asyncio_dgram.connect((self.host, self.port))
+
+            await stream.send(self.request_status_data)
+            data, _ = await stream.recv()
+        finally:
+            try:
+                stream.close()
+            except BaseException:
+                pass
+
+        return self.parse_response(data, (perf_counter() - start))
 
 
 class BedrockStatusResponse:
