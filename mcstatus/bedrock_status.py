@@ -49,11 +49,11 @@ class BedrockServerStatus:
 
 class BedrockStatusResponse:
     class Version:
-        def __init__(protocol, brand):
+        def __init__(self, protocol, brand):
             self.protocol = protocol
             self.brand = brand
 
-    def __init__(protocol, brand, latency, players_online, players_max, motd, map_, gamemode):
+    def __init__(self, protocol, brand, latency, players_online, players_max, motd, map_, gamemode):
         self.version = Version(protocol, brand)
         self.latency = latency
         self.players_online = players_online
