@@ -115,6 +115,10 @@ class MinecraftBedrockServer:
         self.host = host
         self.port = port
 
+    @classmethod
+    def lookup(cls, address):
+        return cls(parse_address(address))
+
     def status(self):
         raise NotImplementedError  # TODO: >_<
 
