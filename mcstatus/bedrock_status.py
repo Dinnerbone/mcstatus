@@ -7,9 +7,10 @@ import struct
 class BedrockServerStatus:
     request_status_data = b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x124Vx'
 
-    def __init__(self, host, port=19132):
+    def __init__(self, host, port=19132, timeout=3):
         self.host = host
         self.port = port
+        self.timeout = timeout
 
     @staticmethod
     def parse_response(data: bytes, latency: int):
@@ -39,7 +40,7 @@ class BedrockServerStatus:
         start = perf_counter()
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.settimeout(1.5)
+        s.settimeout(self.timeout)
 
         s.sendto(self.request_status_data, (socket.gethostbyname(self.host), self.port))
         data, _ = s.recvfrom(2048)
