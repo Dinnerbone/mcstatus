@@ -116,7 +116,7 @@ class MinecraftBedrockServer:
 
     @classmethod
     def lookup(cls, address):
-        return cls(parse_address(address))
+        return cls(*parse_address(address))
 
     def status(self):
         raise NotImplementedError  # TODO: >_<
