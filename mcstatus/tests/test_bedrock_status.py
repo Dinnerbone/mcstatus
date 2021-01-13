@@ -3,7 +3,7 @@ from unittest import TestCase
 from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 
 class TestBedrockServerPinger(TestCase):
-    def setUp(self):
+    def setUp(self):  # Not needed?
         pass
 
     def test_parse_response(self):
@@ -22,5 +22,5 @@ class TestBedrockServerPinger(TestCase):
         self.assertIn('brand', parsed.version.__dict__)
         self.assertIn('protocol', parsed.version.__dict__)
 
-    def test_read_status(self):
+    def test_read_status(self):  # Can't think of a good way to test this right now reliably.
         pass
