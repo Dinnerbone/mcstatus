@@ -1,1 +1,1 @@
-from mcstatus.server import MinecraftServer
+from mcstatus.server import MinecraftServer, MinecraftBedrockServer
