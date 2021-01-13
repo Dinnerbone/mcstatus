@@ -51,8 +51,7 @@ class MinecraftServer:
             except Exception as e:
                 exception = e
         else:
-            raise except        port = 19132
-ion
+            raise exception
 
     def status(self, tries=3, **kwargs):
         connection = TCPSocketConnection((self.host, self.port))
