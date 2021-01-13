@@ -122,8 +122,19 @@ class MinecraftBedrockServer:
     def lookup(cls, address):
         return cls(*parse_address(address))
 
-    def status(self):
-        raise NotImplementedError  # TODO: >_<
+    def status(self, tries=3):
+        exception = None
+
+        for _ in range(tries):
+            try:
+                resp = BedrockServerStatus(self.host, self.port).read_status()
+            except BaseException as e:
+                exception = e
+
+        if exception:
+            raise exception
+
+        return resp
 
     async def async_status(self, tries=3):
         exception = None
