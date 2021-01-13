@@ -137,15 +137,17 @@ class MinecraftBedrockServer:
         return resp
 
     async def async_status(self, tries=3):
-        exception = None
+        # exception = None
+        #
+        # for _ in range(tries):
+        #     try:
+        #         resp = await BedrockServerStatus(self.host, self.port).read_status_async()
+        #     except BaseException as e:
+        #         exception = e
+        #
+        # if exception:
+        #     raise exception
+        #
+        # return resp
 
-        for _ in range(tries):
-            try:
-                resp = await BedrockServerStatus(self.host, self.port).read_status_async()
-            except BaseException as e:
-                exception = e
-
-        if exception:
-            raise exception
-
-        return resp
+        raise NotImplementedError('Python 3.5 doesn\'t support asyncio-dgram...')

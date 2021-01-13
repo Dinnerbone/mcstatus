@@ -1,5 +1,5 @@
 from time import perf_counter
-import asyncio_dgram
+# import asyncio_dgram
 import socket
 import struct
 
@@ -48,20 +48,22 @@ class BedrockServerStatus:
         return self.parse_response(data, (perf_counter() - start))
 
     async def read_status_async(self):
-        start = perf_counter()
+        # start = perf_counter()
+        #
+        # try:
+        #     stream = await asyncio_dgram.connect((self.host, self.port))
+        #
+        #     await stream.send(self.request_status_data)
+        #     data, _ = await stream.recv()
+        # finally:
+        #     try:
+        #         stream.close()
+        #     except BaseException:
+        #         pass
+        #
+        # return self.parse_response(data, (perf_counter() - start))
 
-        try:
-            stream = await asyncio_dgram.connect((self.host, self.port))
-
-            await stream.send(self.request_status_data)
-            data, _ = await stream.recv()
-        finally:
-            try:
-                stream.close()
-            except BaseException:
-                pass
-
-        return self.parse_response(data, (perf_counter() - start))
+        raise NotImplementedError('Python 3.5 doesn\'t support asyncio-dgram...')
 
 
 class BedrockStatusResponse:
