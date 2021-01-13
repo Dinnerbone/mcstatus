@@ -122,12 +122,12 @@ class MinecraftBedrockServer:
     def lookup(cls, address):
         return cls(*parse_address(address))
 
-    def status(self, tries=3):
+    def status(self, tries=3, **kwargs):
         exception = None
 
         for _ in range(tries):
             try:
-                resp = BedrockServerStatus(self.host, self.port).read_status()
+                resp = BedrockServerStatus(self.host, self.port, **kwargs).read_status()
             except BaseException as e:
                 exception = e
 
