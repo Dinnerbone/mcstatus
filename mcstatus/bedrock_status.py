@@ -12,7 +12,7 @@ class BedrockServerStatus:
         start = perf_counter()
 
         try:
-            stream = await asyncio_dgram.connect((host, port))
+            stream = await asyncio_dgram.connect((self.host, self.port))
 
             await stream.send(b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x124Vx')
             data, _ = await stream.recv()
