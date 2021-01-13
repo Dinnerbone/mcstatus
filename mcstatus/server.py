@@ -128,6 +128,7 @@ class MinecraftBedrockServer:
         for _ in range(tries):
             try:
                 resp = BedrockServerStatus(self.host, self.port, **kwargs).read_status()
+                break
             except BaseException as e:
                 exception = e
 
