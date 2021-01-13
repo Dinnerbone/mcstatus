@@ -133,7 +133,8 @@ class MinecraftBedrockServer:
                 resp = await BedrockServerStatus(self.host, self.port).read_status_async()
             except BaseException as e:
                 exception = e
-        else:
+
+        if exception:
             raise exception
 
         return resp
