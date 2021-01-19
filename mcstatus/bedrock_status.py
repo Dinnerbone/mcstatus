@@ -26,14 +26,14 @@ class BedrockServerStatus:
             gamemode = None
 
         return BedrockStatusResponse(
-            data[2],
-            data[0],
-            latency,
-            data[4],
-            data[5],
-            data[1],
-            map_,
-            gamemode
+            protocol=data[2],
+            brand=data[0],
+            latency=latency,
+            players_online=data[4],
+            players_max=data[5],
+            motd=data[1],
+            map_=map_,
+            gamemode=gamemode
         )
 
     def read_status(self):
