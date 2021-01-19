@@ -21,6 +21,3 @@ class TestBedrockServerPinger(TestCase):
         self.assertIn('version', parsed.__dict__)
         self.assertIn('brand', parsed.version.__dict__)
         self.assertIn('protocol', parsed.version.__dict__)
-
-    def test_read_status(self):  # Can't think of a good way to test this right now reliably.
-        pass
