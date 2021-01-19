@@ -105,7 +105,7 @@ class PingResponse:
     class Players:
         class Player:
             def __init__(self, raw):
-                if type(raw) is not dict:
+                if not isinstance(raw, dict):
                     raise ValueError("Invalid player object (expected dict, found %s" % type(raw))
 
                 if "name" not in raw:
@@ -121,23 +121,23 @@ class PingResponse:
                 self.id = raw["id"]
 
         def __init__(self, raw):
-            if type(raw) is not dict:
+            if not isinstance(raw, dict):
                 raise ValueError("Invalid players object (expected dict, found %s" % type(raw))
 
             if "online" not in raw:
                 raise ValueError("Invalid players object (no 'online' value)")
-            if type(raw["online"]) is not int:
+            if not isinstance(raw["online"], int):
                 raise ValueError("Invalid players object (expected 'online' to be int, was %s)" % type(raw["online"]))
             self.online = raw["online"]
 
             if "max" not in raw:
                 raise ValueError("Invalid players object (no 'max' value)")
-            if type(raw["max"]) is not int:
+            if not isinstance(raw["max"], int):
                 raise ValueError("Invalid players object (expected 'max' to be int, was %s)" % type(raw["max"]))
             self.max = raw["max"]
 
             if "sample" in raw:
-                if type(raw["sample"]) is not list:
+                if not isinstance(raw["sample"], list):
                     raise ValueError("Invalid players object (expected 'sample' to be list, was %s)" % type(raw["max"]))
                 self.sample = [PingResponse.Players.Player(p) for p in raw["sample"]]
             else:
@@ -145,7 +145,7 @@ class PingResponse:
 
     class Version:
         def __init__(self, raw):
-            if type(raw) is not dict:
+            if not isinstance(raw, dict):
                 raise ValueError("Invalid version object (expected dict, found %s" % type(raw))
 
             if "name" not in raw:
@@ -156,7 +156,7 @@ class PingResponse:
 
             if "protocol" not in raw:
                 raise ValueError("Invalid version object (no 'protocol' value)")
-            if type(raw["protocol"]) is not int:
+            if not isinstance(raw["protocol"], int):
                 raise ValueError("Invalid version object (expected 'protocol' to be int, was %s)" % type(raw["protocol"]))
             self.protocol = raw["protocol"]
 
