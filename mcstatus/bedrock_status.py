@@ -42,7 +42,7 @@ class BedrockServerStatus:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.settimeout(self.timeout)
 
-        s.sendto(self.request_status_data, (socket.gethostbyname(self.host), self.port))
+        s.sendto(self.request_status_data, (self.host, self.port))
         data, _ = s.recvfrom(2048)
 
         return self.parse_response(data, (perf_counter() - start))
