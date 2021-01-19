@@ -1,6 +1,7 @@
 from mcstatus.pinger import ServerPinger, AsyncServerPinger
 from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection, TCPAsyncSocketConnection
 from mcstatus.querier import ServerQuerier
+from mcstatus.bedrock_status import BedrockServerStatus
 from mcstatus.scripts.address_tools import parse_address
 import dns.resolver
 
@@ -106,3 +107,47 @@ class MinecraftServer:
 
     async def async_query(self, tries=3):
         raise NotImplementedError # TODO: '-'
+
+
+class MinecraftBedrockServer:
+    def __init__(self, host, port=19132):
+        self.host = host
+
+        if port is None:
+            self.port = 19132
+        else:
+            self.port = port
+
+    @classmethod
+    def lookup(cls, address):
+        return cls(*parse_address(address))
+
+    def status(self, tries=3, **kwargs):
+        exception = None
+
+        for _ in range(tries):
+            try:
+                resp = BedrockServerStatus(self.host, self.port, **kwargs).read_status()
+                break
+            except BaseException as e:
+                exception = e
+
+        if exception:
+            raise exception
+
+        return resp
+
+    async def async_status(self, tries=3, **kwargs):
+        exception = None
+
+        for _ in range(tries):
+            try:
+                resp = await BedrockServerStatus(self.host, self.port, **kwargs).read_status_async()
+                break
+            except BaseException as e:
+                exception = e
+
+        if exception:
+            raise exception
+
+        return resp
