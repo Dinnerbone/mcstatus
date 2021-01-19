@@ -7,7 +7,7 @@ tests_require = ["mock", "nose"]
 
 setup(
     name="mcstatus",
-    version="5.0.0",
+    version="5.1.0",
     author="Nathan Adams",
     author_email="dinnerbone@dinnerbone.com",
     url="https://pypi.python.org/pypi/mcstatus",
