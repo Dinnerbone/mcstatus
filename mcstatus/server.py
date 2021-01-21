@@ -20,7 +20,14 @@ class MinecraftServer:
         self.port = port
 
     @staticmethod
-    def lookup(address):
+    def lookup(address: str):
+        """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
+
+        :param str address: The address of the Minecraft server, like `example.com:25565`.
+        :return: A MinecraftServer instance.
+        :rtype: MinecraftServer
+        """
+
         host, port = parse_address(address)
         if port is None:
             port = 25565
