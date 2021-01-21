@@ -42,7 +42,15 @@ class MinecraftServer:
 
         return MinecraftServer(host, port)
 
-    def ping(self, tries=3, **kwargs):
+    def ping(self, tries: int = 3, **kwargs):
+        """Gets the latency between the a Minecraft Java Edition server and the client (you).
+
+        :param int tries: How many times to retry if it fails.
+        :param type **kwargs: Passed to a `ServerPinger` instance.
+        :return: The latency between the Minecraft Server and you.
+        :rtype: float
+        """
+
         connection = TCPSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(tries):
