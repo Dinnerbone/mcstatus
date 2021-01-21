@@ -43,7 +43,7 @@ class MinecraftServer:
         return MinecraftServer(host, port)
 
     def ping(self, tries: int = 3, **kwargs):
-        """Gets the latency between a Minecraft Java Edition server and the client (you).
+        """Checks the latency between a Minecraft Java Edition server and the client (you).
 
         :param int tries: How many times to retry if it fails.
         :param type **kwargs: Passed to a `ServerPinger` instance.
@@ -63,7 +63,15 @@ class MinecraftServer:
         else:
             raise exception
 
-    async def async_ping(self, tries=3, **kwargs):
+    async def async_ping(self, tries: int = 3, **kwargs):
+        """Asynchronously checks the latency between a Minecraft Java Edition server and the client (you).
+
+        :param int tries: How many times to retry if it fails.
+        :param type **kwargs: Passed to a `AsyncServerPinger` instance.
+        :return: The latency between the Minecraft Server and you.
+        :rtype: float
+        """
+
         connection = await TCPAsyncSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(tries):
@@ -76,7 +84,16 @@ class MinecraftServer:
         else:
             raise exception
 
-    def status(self, tries=3, **kwargs):
+    def status(self, tries: int = 3, **kwargs):
+        """Checks the status of a Minecraft Java Edition server via the ping protocol.
+
+        :param int tries: How many times to retry if it fails.
+        :param type **kwargs: Passed to a `ServerPinger` instance.
+        :return: Status information in a PingResponse instance.
+        :rtype: PingResponse
+        """
+
+
         connection = TCPSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(tries):
@@ -91,7 +108,15 @@ class MinecraftServer:
         else:
             raise exception
 
-    async def async_status(self, tries=3, **kwargs):
+    async def async_status(self, tries: int = 3, **kwargs):
+        """Asynchronously checks the status of a Minecraft Java Edition server via the ping protocol.
+
+        :param int tries: How many times to retry if it fails.
+        :param type **kwargs: Passed to a `AsyncServerPinger` instance.
+        :return: Status information in a PingResponse instance.
+        :rtype: PingResponse
+        """
+
         connection = TCPAsyncSocketConnection()
         await connection.connect((self.host, self.port))
         exception = None
@@ -107,7 +132,14 @@ class MinecraftServer:
         else:
             raise exception
 
-    def query(self, tries=3):
+    def query(self, tries: int = 3):
+        """Checks the status of a Minecraft Java Edition server via the query protocol.
+
+        :param int tries: How many times to retry if it fails.
+        :return: Query status information in a QueryResponse instance.
+        :rtype: QueryResponse
+        """
+
         exception = None
         host = self.host
         try:
