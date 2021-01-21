@@ -24,7 +24,7 @@ class MinecraftServer:
         """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
 
         :param str address: The address of the Minecraft server, like `example.com:25565`.
-        :return: A MinecraftServer instance.
+        :return: A `MinecraftServer` instance.
         :rtype: MinecraftServer
         """
 
@@ -89,7 +89,7 @@ class MinecraftServer:
 
         :param int tries: How many times to retry if it fails.
         :param type **kwargs: Passed to a `ServerPinger` instance.
-        :return: Status information in a PingResponse instance.
+        :return: Status information in a `PingResponse` instance.
         :rtype: PingResponse
         """
 
@@ -113,7 +113,7 @@ class MinecraftServer:
 
         :param int tries: How many times to retry if it fails.
         :param type **kwargs: Passed to a `AsyncServerPinger` instance.
-        :return: Status information in a PingResponse instance.
+        :return: Status information in a `PingResponse` instance.
         :rtype: PingResponse
         """
 
@@ -136,7 +136,7 @@ class MinecraftServer:
         """Checks the status of a Minecraft Java Edition server via the query protocol.
 
         :param int tries: How many times to retry if it fails.
-        :return: Query status information in a QueryResponse instance.
+        :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
 
@@ -186,13 +186,21 @@ class MinecraftBedrockServer:
         """Parses a given address and returns a MinecraftBedrockServer instance.
 
         :param str address: The address of the Minecraft server, like `example.com:19132`
-        :return: A MinecraftBedrockServer instance.
+        :return: A `MinecraftBedrockServer` instance.
         :rtype: MinecraftBedrockServer
         """
 
         return cls(*parse_address(address))
 
     def status(self, tries: int = 3, **kwargs):
+        """Checks the status of a Minecraft Bedrock Edition server.
+
+        :param int tries: How many times to retry if it fails.
+        :param type **kwargs: Passed to a `BedrockServerStatus` instance.
+        :return: Status information in a `BedrockStatusResponse` instance.
+        :rtype: BedrockStatusResponse
+        """
+
         exception = None
 
         for _ in range(tries):
@@ -208,6 +216,14 @@ class MinecraftBedrockServer:
         return resp
 
     async def async_status(self, tries: int = 3, **kwargs):
+        """Asynchronously checks the status of a Minecraft Bedrock Edition server.
+
+        :param int tries: How many times to retry if it fails.
+        :param type **kwargs: Passed to a `BedrockServerStatus` instance.
+        :return: Status information in a `BedrockStatusResponse` instance.
+        :rtype: BedrockStatusResponse
+        """
+
         exception = None
 
         for _ in range(tries):
