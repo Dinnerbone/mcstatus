@@ -1,9 +1,11 @@
 from setuptools import setup
 
-# TODO: read requirements from file
-install_requires = ["click", "dnspython3", "six"]
+with open("requirements.txt") as f:
+    install_requires = f.read().splitlines()
 
-tests_require = ["mock", "nose"]
+with open("test-requirements.txt") as f:
+    tests_require = f.read().splitlines()
+    tests_require.pop(0)  # remove '-r requirements.txt' line
 
 setup(
     name="mcstatus",
