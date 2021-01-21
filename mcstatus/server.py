@@ -160,7 +160,7 @@ class MinecraftServer:
         else:
             raise exception
 
-    async def async_query(self, tries=3):
+    async def async_query(self, tries: int = 3):
         raise NotImplementedError # TODO: '-'
 
 
