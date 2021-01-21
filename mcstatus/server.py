@@ -43,7 +43,7 @@ class MinecraftServer:
         return MinecraftServer(host, port)
 
     def ping(self, tries: int = 3, **kwargs):
-        """Gets the latency between the a Minecraft Java Edition server and the client (you).
+        """Gets the latency between a Minecraft Java Edition server and the client (you).
 
         :param int tries: How many times to retry if it fails.
         :param type **kwargs: Passed to a `ServerPinger` instance.
