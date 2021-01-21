@@ -7,7 +7,15 @@ import dns.resolver
 
 
 class MinecraftServer:
-    def __init__(self, host, port=25565):
+    """Base class for a Minecraft Java Edition server.
+
+    :param type host: The host/address/ip of the Minecraft server.
+    :param type port: The port that the server is on.
+    :attr host:
+    :attr port:
+    """
+
+    def __init__(self, host: str, port: int = 25565):
         self.host = host
         self.port = port
 
