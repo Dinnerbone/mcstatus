@@ -9,8 +9,8 @@ import dns.resolver
 class MinecraftServer:
     """Base class for a Minecraft Java Edition server.
 
-    :param type host: The host/address/ip of the Minecraft server.
-    :param type port: The port that the server is on.
+    :param str host: The host/address/ip of the Minecraft server.
+    :param int port: The port that the server is on.
     :attr host:
     :attr port:
     """
@@ -165,7 +165,15 @@ class MinecraftServer:
 
 
 class MinecraftBedrockServer:
-    def __init__(self, host, port=19132):
+    """Base class for a Minecraft Bedrock Edition server.
+
+    :param str host: The host/address/ip of the Minecraft server.
+    :param int port: The port that the server is on.
+    :attr host:
+    :attr port:
+    """
+
+    def __init__(self, host: str, port: int = 19132):
         self.host = host
 
         if port is None:
@@ -174,10 +182,17 @@ class MinecraftBedrockServer:
             self.port = port
 
     @classmethod
-    def lookup(cls, address):
+    def lookup(cls, address: str):
+        """Parses a given address and returns a MinecraftBedrockServer instance.
+
+        :param str address: The address of the Minecraft server, like `example.com:19132`
+        :return: A MinecraftBedrockServer instance.
+        :rtype: MinecraftBedrockServer
+        """
+
         return cls(*parse_address(address))
 
-    def status(self, tries=3, **kwargs):
+    def status(self, tries: int = 3, **kwargs):
         exception = None
 
         for _ in range(tries):
@@ -192,7 +207,7 @@ class MinecraftBedrockServer:
 
         return resp
 
-    async def async_status(self, tries=3, **kwargs):
+    async def async_status(self, tries: int = 3, **kwargs):
         exception = None
 
         for _ in range(tries):
