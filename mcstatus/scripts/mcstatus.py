@@ -84,7 +84,7 @@ def json():
         data['online'] = True
         data['ping'] = ping_res
 
-        status_res = server.status(retries=1)
+        status_res = server.status(tries=1)
         data['version'] = status_res.version.name
         data['protocol'] = status_res.version.protocol
         data['motd'] = status_res.description
@@ -94,7 +94,7 @@ def json():
         if status_res.players.sample is not None:
             data['players'] = [{'name': player.name, 'id': player.id} for player in status_res.players.sample]
 
-        query_res = server.query(retries=1)
+        query_res = server.query(tries=1)
         data['host_ip'] = query_res.raw['hostip']
         data['host_port'] = query_res.raw['hostport']
         data['map'] = query_res.map
