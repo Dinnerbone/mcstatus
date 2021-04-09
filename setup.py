@@ -18,7 +18,9 @@ setup(
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     install_requires=install_requires,
-    tests_require=tests_require,
+    extras_require={
+        "tests": tests_require,
+    },
     python_requires=">=3.6",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
