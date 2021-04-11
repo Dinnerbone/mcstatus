@@ -1,9 +1,68 @@
+import asyncio
+
 from mock import patch, Mock
 import pytest
 
-from mcstatus.protocol.connection import Connection
+from mcstatus.protocol.connection import Connection, TCPAsyncSocketConnection
 from mcstatus.server import MinecraftServer
 
+
+class MockProtocolFactory(asyncio.Protocol):
+    def __init__(self, data_expected_to_receive, data_to_respond_with):
+        self.data_expected_to_receive = data_expected_to_receive
+        self.data_to_respond_with = data_to_respond_with
+
+    def connection_made(self, transport):
+        print("connection_made")
+        self.transport = transport
+
+    def connection_lost(self, exc):
+        print("connection_lost")
+
+    def data_received(self, data):
+        try:
+            assert self.data_expected_to_receive in data
+            self.transport.write(self.data_to_respond_with)
+        finally:
+            self.transport.close()
+
+    def eof_received(self):
+        print("eof_received")
+
+    def pause_writing(self):
+        print("pause_writing")
+
+    def resume_writing(self):
+        print("resume_writing")
+
+
+@pytest.fixture()
+async def create_mock_packet_server(event_loop):
+    servers = []
+    async def create_server(port, data_expected_to_receive, data_to_respond_with):
+        server = await event_loop.create_server(lambda: MockProtocolFactory(data_expected_to_receive, data_to_respond_with), host="localhost", port=port)
+        servers.append(server)
+        return server
+
+    yield create_server
+
+    for server in servers:
+        server.close()
+        await server.wait_closed()
+
+
+class TestAsyncMinecraftServer():
+    @pytest.mark.asyncio
+    async def test_async_ping(self, unused_tcp_port, create_mock_packet_server):
+        mock_packet_server = await create_mock_packet_server(
+            port=unused_tcp_port,
+            data_expected_to_receive=bytearray.fromhex("09010000000001C54246"),
+            data_to_respond_with=bytearray.fromhex("0F002F096C6F63616C686F737463DD0109010000000001C54246"),
+        )
+        minecraft_server = MinecraftServer("localhost", port=unused_tcp_port)
+
+        latency = await minecraft_server.async_ping(ping_token=29704774, version=47)
+        assert latency >= 0
 
 class TestMinecraftServer():
     def setup_method(self):

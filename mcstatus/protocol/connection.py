@@ -192,9 +192,9 @@ class UDPSocketConnection(Connection):
         except:
             pass
 
-class TCPAsyncSocketConnection(TCPSocketConnection):
+class TCPAsyncSocketConnection(Connection):
     def __init__(self):
-        pass
+        super().__init__()
 
     async def connect(self, addr, timeout=3):
         conn = asyncio.open_connection(addr[0], addr[1])
@@ -211,7 +211,7 @@ class TCPAsyncSocketConnection(TCPSocketConnection):
 
     def write(self, data):
         self.writer.write(data)
-    
+
     async def read_varint(self):
         result = 0
         for i in range(5):

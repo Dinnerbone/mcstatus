@@ -72,7 +72,8 @@ class MinecraftServer:
         :rtype: float
         """
 
-        connection = await TCPAsyncSocketConnection((self.host, self.port))
+        connection = TCPAsyncSocketConnection()
+        await connection.connect((self.host, self.port))
         exception = None
         for attempt in range(tries):
             try:
