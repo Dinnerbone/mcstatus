@@ -1,3 +1,4 @@
+import socket
 import click
 from json import dumps as json_dumps
 
@@ -110,7 +111,13 @@ def query():
     Prints detailed server information. Must be enabled in
     servers' server.properties file.
     """
-    response = server.query()
+    try:
+        response = server.query()
+    except socket.timeout:
+        print("""The server did not respond to the query protocol.
+              Please ensure that the server has enable-query turned on, and that the necessary port (same as server-port unless query-port is set) is open in any firewall(s).
+              See https://wiki.vg/Query for further information.""")
+        raise click.Abort()
     click.echo("host: {}:{}".format(response.raw['hostip'], response.raw['hostport']))
     click.echo("software: v{} {}".format(response.software.version, response.software.brand))
     click.echo("plugins: {}".format(response.software.plugins))
