@@ -39,8 +39,11 @@ class MockProtocolFactory(asyncio.Protocol):
 @pytest.fixture()
 async def create_mock_packet_server(event_loop):
     servers = []
+
     async def create_server(port, data_expected_to_receive, data_to_respond_with):
-        server = await event_loop.create_server(lambda: MockProtocolFactory(data_expected_to_receive, data_to_respond_with), host="localhost", port=port)
+        server = await event_loop.create_server(
+            lambda: MockProtocolFactory(data_expected_to_receive, data_to_respond_with), host="localhost", port=port
+        )
         servers.append(server)
         return server
 
@@ -51,7 +54,7 @@ async def create_mock_packet_server(event_loop):
         await server.wait_closed()
 
 
-class TestAsyncMinecraftServer():
+class TestAsyncMinecraftServer:
     @pytest.mark.asyncio
     async def test_async_ping(self, unused_tcp_port, create_mock_packet_server):
         mock_packet_server = await create_mock_packet_server(
@@ -64,7 +67,8 @@ class TestAsyncMinecraftServer():
         latency = await minecraft_server.async_ping(ping_token=29704774, version=47)
         assert latency >= 0
 
-class TestMinecraftServer():
+
+class TestMinecraftServer:
     def setup_method(self):
         self.socket = Connection()
         self.server = MinecraftServer("localhost", port=25565)
@@ -90,7 +94,11 @@ class TestMinecraftServer():
                 assert pinger.call_count == 3
 
     def test_status(self):
-        self.socket.receive(bytearray.fromhex("6D006B7B226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E38222C2270726F746F636F6C223A34377D7D09010000000001C54246"))
+        self.socket.receive(
+            bytearray.fromhex(
+                "6D006B7B226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E38222C2270726F746F636F6C223A34377D7D09010000000001C54246"
+            )
+        )
 
         with patch("mcstatus.server.TCPSocketConnection") as connection:
             connection.return_value = self.socket
@@ -98,7 +106,11 @@ class TestMinecraftServer():
 
         assert self.socket.flush() == bytearray.fromhex("0F002F096C6F63616C686F737463DD01010009010000000001C54246")
         assert self.socket.remaining() == 0, "Data is pending to be read, but should be empty"
-        assert info.raw == {"description":"A Minecraft Server","players":{"max":20,"online":0},"version":{"name":"1.8","protocol":47}}
+        assert info.raw == {
+            "description": "A Minecraft Server",
+            "players": {"max": 20, "online": 0},
+            "version": {"name": "1.8", "protocol": 47},
+        }
         assert info.latency >= 0
 
     def test_status_retry(self):
@@ -112,7 +124,11 @@ class TestMinecraftServer():
 
     def test_query(self):
         self.socket.receive(bytearray.fromhex("090000000035373033353037373800"))
-        self.socket.receive(bytearray.fromhex("00000000000000000000000000000000686f73746e616d650041204d696e656372616674205365727665720067616d657479706500534d500067616d655f6964004d494e4543524146540076657273696f6e00312e3800706c7567696e7300006d617000776f726c64006e756d706c61796572730033006d6178706c617965727300323000686f7374706f727400323535363500686f73746970003139322e3136382e35362e31000001706c617965725f000044696e6e6572626f6e6500446a696e6e69626f6e650053746576650000"))
+        self.socket.receive(
+            bytearray.fromhex(
+                "00000000000000000000000000000000686f73746e616d650041204d696e656372616674205365727665720067616d657479706500534d500067616d655f6964004d494e4543524146540076657273696f6e00312e3800706c7567696e7300006d617000776f726c64006e756d706c61796572730033006d6178706c617965727300323000686f7374706f727400323535363500686f73746970003139322e3136382e35362e31000001706c617965725f000044696e6e6572626f6e6500446a696e6e69626f6e650053746576650000"
+            )
+        )
 
         self.socket.remaining = Mock()
         self.socket.remaining.side_effect = [15, 208]

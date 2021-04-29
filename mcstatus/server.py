@@ -94,7 +94,6 @@ class MinecraftServer:
         :rtype: PingResponse
         """
 
-
         connection = TCPSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(tries):
@@ -162,7 +161,7 @@ class MinecraftServer:
             raise exception
 
     async def async_query(self, tries: int = 3):
-        raise NotImplementedError # TODO: '-'
+        raise NotImplementedError  # TODO: '-'
 
 
 class MinecraftBedrockServer:
