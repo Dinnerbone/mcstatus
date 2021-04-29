@@ -3,7 +3,10 @@ from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnectio
 from mcstatus.querier import ServerQuerier
 from mcstatus.bedrock_status import BedrockServerStatus
 from mcstatus.scripts.address_tools import parse_address
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
 import dns.resolver
+import asyncio
 
 
 class MinecraftServer:
@@ -162,7 +165,8 @@ class MinecraftServer:
             raise exception
 
     async def async_query(self, tries: int = 3):
-        raise NotImplementedError # TODO: '-'
+        with ThreadPoolExecutor() as tpool:
+            return await asyncio.get_event_loop().run_in_executor(tpool, partial(self.query, tries))
 
 
 class MinecraftBedrockServer:
