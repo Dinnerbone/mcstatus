@@ -4,6 +4,7 @@ import asyncio
 
 from ..scripts.address_tools import ip_type
 
+
 class Connection:
     def __init__(self):
         self.sent = bytearray()
@@ -61,11 +62,11 @@ class Connection:
 
     def read_utf(self):
         length = self.read_varint()
-        return self.read(length).decode('utf8')
+        return self.read(length).decode("utf8")
 
     def write_utf(self, value):
         self.write_varint(len(value))
-        self.write(bytearray(value, 'utf8'))
+        self.write(bytearray(value, "utf8"))
 
     def read_ascii(self):
         result = bytearray()
@@ -74,7 +75,7 @@ class Connection:
         return result[:-1].decode("ISO-8859-1")
 
     def write_ascii(self, value):
-        self.write(bytearray(value, 'ISO-8859-1'))
+        self.write(bytearray(value, "ISO-8859-1"))
         self.write(bytearray.fromhex("00"))
 
     def read_short(self):
@@ -192,6 +193,7 @@ class UDPSocketConnection(Connection):
         except:
             pass
 
+
 class TCPAsyncSocketConnection(Connection):
     def __init__(self):
         super().__init__()
@@ -223,7 +225,7 @@ class TCPAsyncSocketConnection(Connection):
 
     async def read_utf(self):
         length = await self.read_varint()
-        return self.read(length).decode('utf8')
+        return self.read(length).decode("utf8")
 
     async def read_ascii(self):
         result = bytearray()

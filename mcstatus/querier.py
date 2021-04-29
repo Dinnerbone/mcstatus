@@ -81,7 +81,6 @@ class QueryResponse:
                 if len(parts) == 2:
                     self.plugins = [s.strip() for s in parts[1].split(";")]
 
-
     def __init__(self, raw, players):
         self.raw = raw
         self.motd = raw["hostname"]
