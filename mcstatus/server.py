@@ -97,7 +97,6 @@ class MinecraftServer:
         :rtype: PingResponse
         """
 
-
         connection = TCPSocketConnection((self.host, self.port))
         exception = None
         for attempt in range(tries):
