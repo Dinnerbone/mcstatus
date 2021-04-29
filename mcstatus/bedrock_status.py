@@ -5,7 +5,7 @@ import struct
 
 
 class BedrockServerStatus:
-    request_status_data = b'\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x124Vx'
+    request_status_data = b"\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x124Vx"
 
     def __init__(self, host, port=19132, timeout=3):
         self.host = host
@@ -15,8 +15,8 @@ class BedrockServerStatus:
     @staticmethod
     def parse_response(data: bytes, latency: int):
         data = data[1:]
-        name_length = struct.unpack('>H', data[32:34])[0]
-        data = data[34:34+name_length].decode().split(';')
+        name_length = struct.unpack(">H", data[32:34])[0]
+        data = data[34 : 34 + name_length].decode().split(";")
 
         try:
             map_ = data[7]
@@ -33,7 +33,7 @@ class BedrockServerStatus:
             players_max=data[5],
             motd=data[1],
             map_=map_,
-            gamemode=gamemode
+            gamemode=gamemode,
         )
 
     def read_status(self):

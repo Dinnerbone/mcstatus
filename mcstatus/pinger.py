@@ -56,12 +56,14 @@ class ServerPinger:
             raise IOError("Received invalid ping response packet.")
         received_token = response.read_long()
         if received_token != self.ping_token:
-            raise IOError("Received mangled ping response packet (expected token %d, received %d)" % (
-                self.ping_token, received_token))
+            raise IOError(
+                "Received mangled ping response packet (expected token %d, received %d)" % (self.ping_token, received_token)
+            )
 
-        delta = (received - sent)
+        delta = received - sent
         # We have no trivial way of getting a time delta :(
         return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
+
 
 class AsyncServerPinger(ServerPinger):
     async def read_status(self):
@@ -94,12 +96,14 @@ class AsyncServerPinger(ServerPinger):
             raise IOError("Received invalid ping response packet.")
         received_token = response.read_long()
         if received_token != self.ping_token:
-            raise IOError("Received mangled ping response packet (expected token %d, received %d)" % (
-                self.ping_token, received_token))
+            raise IOError(
+                "Received mangled ping response packet (expected token %d, received %d)" % (self.ping_token, received_token)
+            )
 
-        delta = (received - sent)
+        delta = received - sent
         # We have no trivial way of getting a time delta :(
         return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
+
 
 class PingResponse:
     class Players:

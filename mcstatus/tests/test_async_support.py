@@ -2,6 +2,7 @@ from inspect import iscoroutinefunction
 
 from mcstatus.protocol.connection import TCPAsyncSocketConnection
 
+
 def test_is_completely_asynchronous():
     conn = TCPAsyncSocketConnection()
     assertions = 0
