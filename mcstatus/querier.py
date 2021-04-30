@@ -38,27 +38,29 @@ class ServerQuerier:
         self.connection.write(request)
 
         response = self._read_packet()
-        response.read(len("splitnum") + 1 + 1 + 1)
-        data = {}
-        players = []
+        return parse_response(response)
 
-        while True:
-            key = response.read_ascii()
-            if len(key) == 0:
-                response.read(1)
-                break
-            value = response.read_ascii()
-            data[key] = value
 
-        response.read(len("player_") + 1 + 1)
+class AsyncServerQuerier(ServerQuerier):
+    async def _read_packet(self):
+        packet = Connection()
+        packet.receive(await self.connection.read(self.connection.remaining()))
+        packet.read(1 + 4)
+        return packet
 
-        while True:
-            name = response.read_ascii()
-            if len(name) == 0:
-                break
-            players.append(name)
+    async def handshake(self):
+        await self.connection.write(self._create_packet(self.PACKET_TYPE_CHALLENGE))
 
-        return QueryResponse(data, players)
+        packet = await self._read_packet()
+        self.challenge = int(packet.read_ascii())
+
+    async def read_query(self):
+        request = self._create_packet(self.PACKET_TYPE_QUERY)
+        request.write_uint(0)
+        await self.connection.write(request)
+
+        response = await self._read_packet()
+        return parse_response(response)
 
 
 class QueryResponse:
@@ -87,3 +89,27 @@ class QueryResponse:
         self.map = raw["map"]
         self.players = QueryResponse.Players(raw["numplayers"], raw["maxplayers"], players)
         self.software = QueryResponse.Software(raw["version"], raw["plugins"])
+
+
+def parse_response(response: Connection) -> QueryResponse:
+    response.read(len("splitnum") + 1 + 1 + 1)
+    data = {}
+    players = []
+
+    while True:
+        key = response.read_ascii()
+        if len(key) == 0:
+            response.read(1)
+            break
+        value = response.read_ascii()
+        data[key] = value
+
+    response.read(len("player_") + 1 + 1)
+
+    while True:
+        name = response.read_ascii()
+        if len(name) == 0:
+            break
+        players.append(name)
+
+    return QueryResponse(data, players)

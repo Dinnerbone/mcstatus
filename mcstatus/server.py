@@ -1,6 +1,7 @@
 from mcstatus.pinger import ServerPinger, AsyncServerPinger
-from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection, TCPAsyncSocketConnection
-from mcstatus.querier import ServerQuerier
+from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection, TCPAsyncSocketConnection, \
+    UDPAsyncSocketConnection
+from mcstatus.querier import ServerQuerier, AsyncServerQuerier
 from mcstatus.bedrock_status import BedrockServerStatus
 from mcstatus.scripts.address_tools import parse_address
 import dns.resolver
@@ -161,7 +162,33 @@ class MinecraftServer:
             raise exception
 
     async def async_query(self, tries: int = 3):
-        raise NotImplementedError  # TODO: '-'
+        """Asynchronously checks the status of a Minecraft Java Edition server via the query protocol.
+
+        :param int tries: How many times to retry if it fails.
+        :return: Query status information in a `QueryResponse` instance.
+        :rtype: QueryResponse
+        """
+
+        exception = None
+        host = self.host
+        try:
+            answers = dns.resolver.query(host, "A")
+            if len(answers):
+                answer = answers[0]
+                host = str(answer).rstrip(".")
+        except Exception as e:
+            pass
+        for attempt in range(tries):
+            try:
+                connection = UDPAsyncSocketConnection()
+                await connection.connect((host, self.port))
+                querier = AsyncServerQuerier(connection)
+                await querier.handshake()
+                return await querier.read_query()
+            except Exception as e:
+                exception = e
+        else:
+            raise exception
 
 
 class MinecraftBedrockServer:
