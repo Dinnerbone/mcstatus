@@ -265,12 +265,16 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
 
 
 class UDPAsyncSocketConnection(AsyncReadConnection):
+    stream = None
+    timeout = None
+
     def __init__(self):
         super().__init__()
-        self.stream = None
 
     async def connect(self, addr, timeout=3):
-        self.stream = await asyncio_dgram.connect((addr[0], addr[1]))
+        self.timeout = timeout
+        conn = asyncio_dgram.connect((addr[0], addr[1]))
+        self.stream = await asyncio.wait_for(conn, timeout=self.timeout)
 
     def flush(self):
         raise TypeError("UDPSocketConnection does not support flush()")
@@ -282,7 +286,7 @@ class UDPAsyncSocketConnection(AsyncReadConnection):
         return 65535
 
     async def read(self, length):
-        data, remote_addr = await self.stream.recv()
+        data, remote_addr = await asyncio.wait_for(self.stream.recv(), timeout=self.timeout)
         return data
 
     async def write(self, data):
