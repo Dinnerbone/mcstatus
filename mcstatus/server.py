@@ -1,6 +1,10 @@
 from mcstatus.pinger import ServerPinger, AsyncServerPinger
-from mcstatus.protocol.connection import TCPSocketConnection, UDPSocketConnection, TCPAsyncSocketConnection, \
-    UDPAsyncSocketConnection
+from mcstatus.protocol.connection import (
+    TCPSocketConnection,
+    UDPSocketConnection,
+    TCPAsyncSocketConnection,
+    UDPAsyncSocketConnection,
+)
 from mcstatus.querier import ServerQuerier, AsyncServerQuerier
 from mcstatus.bedrock_status import BedrockServerStatus
 from mcstatus.scripts.address_tools import parse_address
