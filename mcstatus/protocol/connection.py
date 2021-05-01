@@ -1,6 +1,7 @@
 import socket
 import struct
 import asyncio
+import asyncio_dgram
 
 from ..scripts.address_tools import ip_type
 
@@ -126,6 +127,51 @@ class Connection:
         self.write(data)
 
 
+class AsyncReadConnection(Connection):
+    async def read_varint(self):
+        result = 0
+        for i in range(5):
+            part = ord(await self.read(1))
+            result |= (part & 0x7F) << 7 * i
+            if not part & 0x80:
+                return result
+        raise IOError("Server sent a varint that was too big!")
+
+    async def read_utf(self):
+        length = await self.read_varint()
+        return self.read(length).decode("utf8")
+
+    async def read_ascii(self):
+        result = bytearray()
+        while len(result) == 0 or result[-1] != 0:
+            result.extend(await self.read(1))
+        return result[:-1].decode("ISO-8859-1")
+
+    async def read_short(self):
+        return self._unpack("h", await self.read(2))
+
+    async def read_ushort(self):
+        return self._unpack("H", await self.read(2))
+
+    async def read_int(self):
+        return self._unpack("i", await self.read(4))
+
+    async def read_uint(self):
+        return self._unpack("I", await self.read(4))
+
+    async def read_long(self):
+        return self._unpack("q", await self.read(8))
+
+    async def read_ulong(self):
+        return self._unpack("Q", await self.read(8))
+
+    async def read_buffer(self):
+        length = await self.read_varint()
+        result = Connection()
+        result.receive(await self.read(length))
+        return result
+
+
 class TCPSocketConnection(Connection):
     def __init__(self, addr, timeout=3):
         Connection.__init__(self)
@@ -194,7 +240,10 @@ class UDPSocketConnection(Connection):
             pass
 
 
-class TCPAsyncSocketConnection(Connection):
+class TCPAsyncSocketConnection(AsyncReadConnection):
+    reader = None
+    writer = None
+
     def __init__(self):
         super().__init__()
 
@@ -214,45 +263,39 @@ class TCPAsyncSocketConnection(Connection):
     def write(self, data):
         self.writer.write(data)
 
-    async def read_varint(self):
-        result = 0
-        for i in range(5):
-            part = ord(await self.read(1))
-            result |= (part & 0x7F) << 7 * i
-            if not part & 0x80:
-                return result
-        raise IOError("Server sent a varint that was too big!")
 
-    async def read_utf(self):
-        length = await self.read_varint()
-        return self.read(length).decode("utf8")
+class UDPAsyncSocketConnection(AsyncReadConnection):
+    stream = None
+    timeout = None
 
-    async def read_ascii(self):
-        result = bytearray()
-        while len(result) == 0 or result[-1] != 0:
-            result.extend(await self.read(1))
-        return result[:-1].decode("ISO-8859-1")
+    def __init__(self):
+        super().__init__()
 
-    async def read_short(self):
-        return self._unpack("h", await self.read(2))
+    async def connect(self, addr, timeout=3):
+        self.timeout = timeout
+        conn = asyncio_dgram.connect((addr[0], addr[1]))
+        self.stream = await asyncio.wait_for(conn, timeout=self.timeout)
 
-    async def read_ushort(self):
-        return self._unpack("H", await self.read(2))
+    def flush(self):
+        raise TypeError("UDPSocketConnection does not support flush()")
 
-    async def read_int(self):
-        return self._unpack("i", await self.read(4))
+    def receive(self, data):
+        raise TypeError("UDPSocketConnection does not support receive()")
 
-    async def read_uint(self):
-        return self._unpack("I", await self.read(4))
+    def remaining(self):
+        return 65535
 
-    async def read_long(self):
-        return self._unpack("q", await self.read(8))
+    async def read(self, length):
+        data, remote_addr = await asyncio.wait_for(self.stream.recv(), timeout=self.timeout)
+        return data
 
-    async def read_ulong(self):
-        return self._unpack("Q", await self.read(8))
+    async def write(self, data):
+        if isinstance(data, Connection):
+            data = bytearray(data.flush())
+        await self.stream.send(data)
 
-    async def read_buffer(self):
-        length = await self.read_varint()
-        result = Connection()
-        result.receive(await self.read(length))
-        return result
+    def __del__(self):
+        try:
+            self.stream.close()
+        except:
+            pass
