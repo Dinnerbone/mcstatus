@@ -161,29 +161,29 @@ class TestMinecraftServer:
                 assert querier.call_count == 3
 
     def test_by_address_no_srv(self):
-        with patch("dns.resolver.query") as query:
-            query.return_value = []
+        with patch("dns.resolver.resolve") as resolve:
+            resolve.return_value = []
             self.server = MinecraftServer.lookup("example.org")
-            query.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
+            resolve.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
         assert self.server.host == "example.org"
         assert self.server.port == 25565
 
     def test_by_address_invalid_srv(self):
-        with patch("dns.resolver.query") as query:
-            query.side_effect = [Exception]
+        with patch("dns.resolver.resolve") as resolve:
+            resolve.side_effect = [Exception]
             self.server = MinecraftServer.lookup("example.org")
-            query.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
+            resolve.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
         assert self.server.host == "example.org"
         assert self.server.port == 25565
 
     def test_by_address_with_srv(self):
-        with patch("dns.resolver.query") as query:
+        with patch("dns.resolver.resolve") as resolve:
             answer = Mock()
             answer.target = "different.example.org."
             answer.port = 12345
-            query.return_value = [answer]
+            resolve.return_value = [answer]
             self.server = MinecraftServer.lookup("example.org")
-            query.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
+            resolve.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
         assert self.server.host == "different.example.org"
         assert self.server.port == 12345
 

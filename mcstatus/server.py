@@ -37,7 +37,7 @@ class MinecraftServer:
         if port is None:
             port = 25565
             try:
-                answers = dns.resolver.query("_minecraft._tcp." + host, "SRV")
+                answers = dns.resolver.resolve("_minecraft._tcp." + host, "SRV")
                 if len(answers):
                     answer = answers[0]
                     host = str(answer.target).rstrip(".")
@@ -148,7 +148,7 @@ class MinecraftServer:
         exception = None
         host = self.host
         try:
-            answers = dns.resolver.query(host, "A")
+            answers = dns.resolver.resolve(host, "A")
             if len(answers):
                 answer = answers[0]
                 host = str(answer).rstrip(".")

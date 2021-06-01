@@ -1,4 +1,4 @@
-![travis build status](	https://img.shields.io/travis/Dinnerbone/mcstatus/master.svg)
+![travis build status](https://img.shields.io/travis/Dinnerbone/mcstatus/master.svg)
 ![current version](https://img.shields.io/pypi/v/mcstatus.svg)
 ![supported python versions](https://img.shields.io/pypi/pyversions/mcstatus.svg)
 
