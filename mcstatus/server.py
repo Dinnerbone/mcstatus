@@ -140,17 +140,6 @@ class MinecraftServer:
         else:
             raise exception
 
-    def resolve_host(self, host: str) -> str:
-        """Tries to resolve the host"""
-        try:
-            answers = dns.resolver.resolve(host, "A")
-            if len(answers):
-                answer = answers[0]
-                return str(answer).rstrip(".")
-        except Exception as e:
-            pass
-        return host
-
     def query(self, tries: int = 3) -> QueryResponse:
         """Checks the status of a Minecraft Java Edition server via the query protocol.
 
@@ -159,7 +148,15 @@ class MinecraftServer:
         :rtype: QueryResponse
         """
         exception = Exception
-        host = self.resolve_host(self.host)
+        host = self.host
+        try:
+            answers = dns.resolver.resolve(host, "A")
+            if len(answers):
+                answer = answers[0]
+                host = str(answer).rstrip(".")
+        except Exception as e:
+            pass
+        
         for _ in range(tries):
             try:
                 connection = UDPSocketConnection((host, self.port))
@@ -179,7 +176,15 @@ class MinecraftServer:
         :rtype: QueryResponse
         """
         exception = Exception
-        host = self.resolve_host(self.host)
+        host = self.host
+        try:
+            answers = dns.resolver.resolve(host, "A")
+            if len(answers):
+                answer = answers[0]
+                host = str(answer).rstrip(".")
+        except Exception as e:
+            pass
+        
         for _ in range(tries):
             try:
                 connection = UDPAsyncSocketConnection()
