@@ -1,15 +1,16 @@
-from mcstatus.pinger import ServerPinger, AsyncServerPinger
+from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
 from mcstatus.protocol.connection import (
     TCPSocketConnection,
     UDPSocketConnection,
     TCPAsyncSocketConnection,
     UDPAsyncSocketConnection,
 )
-from mcstatus.querier import ServerQuerier, AsyncServerQuerier
-from mcstatus.bedrock_status import BedrockServerStatus
+from mcstatus.querier import QueryResponse, ServerQuerier, AsyncServerQuerier
+from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 from mcstatus.scripts.address_tools import parse_address
 import dns.resolver
 
+__all__ = ['MinecraftServer', 'MinecraftBedrockServer']
 
 class MinecraftServer:
     """Base class for a Minecraft Java Edition server.
@@ -24,8 +25,8 @@ class MinecraftServer:
         self.host = host
         self.port = port
 
-    @staticmethod
-    def lookup(address: str):
+    @classmethod
+    def lookup(cls, address: str):
         """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
 
         :param str address: The address of the Minecraft server, like `example.com:25565`.
@@ -45,9 +46,9 @@ class MinecraftServer:
             except Exception:
                 pass
 
-        return MinecraftServer(host, port)
+        return cls(host, port)
 
-    def ping(self, tries: int = 3, **kwargs):
+    def ping(self, tries: int = 3, **kwargs) -> float:
         """Checks the latency between a Minecraft Java Edition server and the client (you).
 
         :param int tries: How many times to retry if it fails.
@@ -57,8 +58,8 @@ class MinecraftServer:
         """
 
         connection = TCPSocketConnection((self.host, self.port))
-        exception = None
-        for attempt in range(tries):
+        exception = Exception
+        for _ in range(tries):
             try:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
@@ -68,7 +69,7 @@ class MinecraftServer:
         else:
             raise exception
 
-    async def async_ping(self, tries: int = 3, **kwargs):
+    async def async_ping(self, tries: int = 3, **kwargs) -> float:
         """Asynchronously checks the latency between a Minecraft Java Edition server and the client (you).
 
         :param int tries: How many times to retry if it fails.
@@ -79,18 +80,20 @@ class MinecraftServer:
 
         connection = TCPAsyncSocketConnection()
         await connection.connect((self.host, self.port))
-        exception = None
-        for attempt in range(tries):
+        exception = Exception
+        for _ in range(tries):
             try:
                 pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
-                return await pinger.test_ping()
+                ping = await pinger.test_ping()
+                connection.close()
+                return ping
             except Exception as e:
                 exception = e
         else:
             raise exception
 
-    def status(self, tries: int = 3, **kwargs):
+    def status(self, tries: int = 3, **kwargs) -> PingResponse:
         """Checks the status of a Minecraft Java Edition server via the ping protocol.
 
         :param int tries: How many times to retry if it fails.
@@ -100,8 +103,8 @@ class MinecraftServer:
         """
 
         connection = TCPSocketConnection((self.host, self.port))
-        exception = None
-        for attempt in range(tries):
+        exception = Exception
+        for _ in range(tries):
             try:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
@@ -113,7 +116,7 @@ class MinecraftServer:
         else:
             raise exception
 
-    async def async_status(self, tries: int = 3, **kwargs):
+    async def async_status(self, tries: int = 3, **kwargs) -> PingResponse:
         """Asynchronously checks the status of a Minecraft Java Edition server via the ping protocol.
 
         :param int tries: How many times to retry if it fails.
@@ -124,8 +127,8 @@ class MinecraftServer:
 
         connection = TCPAsyncSocketConnection()
         await connection.connect((self.host, self.port))
-        exception = None
-        for attempt in range(tries):
+        exception = Exception
+        for _ in range(tries):
             try:
                 pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
@@ -137,24 +140,27 @@ class MinecraftServer:
         else:
             raise exception
 
-    def query(self, tries: int = 3):
+    def resolve_host(self, host: str) -> str:
+        """Tries to resolve the host"""
+        try:
+            answers = dns.resolver.resolve(host, "A")
+            if len(answers):
+                answer = answers[0]
+                return str(answer).rstrip(".")
+        except Exception as e:
+            pass
+        return host
+
+    def query(self, tries: int = 3) -> QueryResponse:
         """Checks the status of a Minecraft Java Edition server via the query protocol.
 
         :param int tries: How many times to retry if it fails.
         :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
-
-        exception = None
-        host = self.host
-        try:
-            answers = dns.resolver.resolve(host, "A")
-            if len(answers):
-                answer = answers[0]
-                host = str(answer).rstrip(".")
-        except Exception as e:
-            pass
-        for attempt in range(tries):
+        exception = Exception
+        host = self.resolve_host(self.host)
+        for _ in range(tries):
             try:
                 connection = UDPSocketConnection((host, self.port))
                 querier = ServerQuerier(connection)
@@ -165,24 +171,16 @@ class MinecraftServer:
         else:
             raise exception
 
-    async def async_query(self, tries: int = 3):
+    async def async_query(self, tries: int = 3) -> QueryResponse:
         """Asynchronously checks the status of a Minecraft Java Edition server via the query protocol.
 
         :param int tries: How many times to retry if it fails.
         :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
-
-        exception = None
-        host = self.host
-        try:
-            answers = dns.resolver.query(host, "A")
-            if len(answers):
-                answer = answers[0]
-                host = str(answer).rstrip(".")
-        except Exception as e:
-            pass
-        for attempt in range(tries):
+        exception = Exception
+        host = self.resolve_host(self.host)
+        for _ in range(tries):
             try:
                 connection = UDPAsyncSocketConnection()
                 await connection.connect((host, self.port))
@@ -204,13 +202,9 @@ class MinecraftBedrockServer:
     :attr port:
     """
 
-    def __init__(self, host: str, port: int = 19132):
+    def __init__(self, host: str, port: int = None):
         self.host = host
-
-        if port is None:
-            self.port = 19132
-        else:
-            self.port = port
+        self.port = port or 19132
 
     @classmethod
     def lookup(cls, address: str):
@@ -220,10 +214,9 @@ class MinecraftBedrockServer:
         :return: A `MinecraftBedrockServer` instance.
         :rtype: MinecraftBedrockServer
         """
-
         return cls(*parse_address(address))
 
-    def status(self, tries: int = 3, **kwargs):
+    def status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Checks the status of a Minecraft Bedrock Edition server.
 
         :param int tries: How many times to retry if it fails.
@@ -231,7 +224,6 @@ class MinecraftBedrockServer:
         :return: Status information in a `BedrockStatusResponse` instance.
         :rtype: BedrockStatusResponse
         """
-
         exception = None
 
         for _ in range(tries):
@@ -244,9 +236,9 @@ class MinecraftBedrockServer:
         if exception:
             raise exception
 
-        return resp
+        return resp # type: ignore - possibly unbound
 
-    async def async_status(self, tries: int = 3, **kwargs):
+    async def async_status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Asynchronously checks the status of a Minecraft Bedrock Edition server.
 
         :param int tries: How many times to retry if it fails.
@@ -254,7 +246,6 @@ class MinecraftBedrockServer:
         :return: Status information in a `BedrockStatusResponse` instance.
         :rtype: BedrockStatusResponse
         """
-
         exception = None
 
         for _ in range(tries):
@@ -267,4 +258,4 @@ class MinecraftBedrockServer:
         if exception:
             raise exception
 
-        return resp
+        return resp # type: ignore - possibly unbound

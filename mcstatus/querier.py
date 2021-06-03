@@ -1,4 +1,5 @@
 import struct
+from typing import List
 
 from mcstatus.protocol.connection import Connection
 
@@ -38,7 +39,7 @@ class ServerQuerier:
         self.connection.write(request)
 
         response = self._read_packet()
-        return parse_response(response)
+        return QueryResponse.from_connection(response)
 
 
 class AsyncServerQuerier(ServerQuerier):
@@ -60,17 +61,28 @@ class AsyncServerQuerier(ServerQuerier):
         await self.connection.write(request)
 
         response = await self._read_packet()
-        return parse_response(response)
+        return QueryResponse.from_connection(response)
+
 
 
 class QueryResponse:
+    # THIS IS SO UNPYTHONIC
+    # it's staying just because the tests depend on this structure
     class Players:
+        online: int
+        max: int
+        names: List[str]
+
         def __init__(self, online, max, names):
             self.online = int(online)
             self.max = int(max)
             self.names = names
 
     class Software:
+        version: str
+        brand: str
+        plugins: List[str]
+
         def __init__(self, version, plugins):
             self.version = version
             self.brand = "vanilla"
@@ -82,34 +94,40 @@ class QueryResponse:
 
                 if len(parts) == 2:
                     self.plugins = [s.strip() for s in parts[1].split(";")]
-
+    motd: str
+    map: str
+    players: Players
+    software: Software
     def __init__(self, raw, players):
-        self.raw = raw
-        self.motd = raw["hostname"]
-        self.map = raw["map"]
-        self.players = QueryResponse.Players(raw["numplayers"], raw["maxplayers"], players)
-        self.software = QueryResponse.Software(raw["version"], raw["plugins"])
+        try:
+            self.raw = raw
+            self.motd = raw["hostname"]
+            self.map = raw["map"]
+            self.players = QueryResponse.Players(raw["numplayers"], raw["maxplayers"], players)
+            self.software = QueryResponse.Software(raw["version"], raw["plugins"])
+        except:
+            raise ValueError('The provided data is not valid')
+    
+    @classmethod
+    def from_connection(cls, response: Connection):
+        response.read(len("splitnum") + 1 + 1 + 1)
+        data = {}
+        players = []
 
+        while True:
+            key = response.read_ascii()
+            if len(key) == 0:
+                response.read(1)
+                break
+            value = response.read_ascii()
+            data[key] = value
 
-def parse_response(response: Connection) -> QueryResponse:
-    response.read(len("splitnum") + 1 + 1 + 1)
-    data = {}
-    players = []
+        response.read(len("player_") + 1 + 1)
 
-    while True:
-        key = response.read_ascii()
-        if len(key) == 0:
-            response.read(1)
-            break
-        value = response.read_ascii()
-        data[key] = value
+        while True:
+            name = response.read_ascii()
+            if len(name) == 0:
+                break
+            players.append(name)
 
-    response.read(len("player_") + 1 + 1)
-
-    while True:
-        name = response.read_ascii()
-        if len(name) == 0:
-            break
-        players.append(name)
-
-    return QueryResponse(data, players)
+        return cls(data, players)

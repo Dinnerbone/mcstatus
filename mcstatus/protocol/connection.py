@@ -1,3 +1,4 @@
+from abc import abstractmethod
 import socket
 import struct
 import asyncio
@@ -18,9 +19,9 @@ class Connection:
 
     def write(self, data):
         if isinstance(data, Connection):
-            data = bytearray(data.flush())
+            data = data.flush()
         if isinstance(data, str):
-            data = bytearray(data)
+            data = bytearray(data, 'utf-8')
         self.sent.extend(data)
 
     def receive(self, data):
@@ -33,7 +34,7 @@ class Connection:
 
     def flush(self):
         result = self.sent
-        self.sent = ""
+        self.sent = bytearray()
         return result
 
     def _unpack(self, format, data):
@@ -128,6 +129,10 @@ class Connection:
 
 
 class AsyncReadConnection(Connection):
+    @abstractmethod
+    async def read(self, length: int) -> bytearray:
+        ...
+    
     async def read_varint(self):
         result = 0
         for i in range(5):
@@ -139,7 +144,7 @@ class AsyncReadConnection(Connection):
 
     async def read_utf(self):
         length = await self.read_varint()
-        return self.read(length).decode("utf8")
+        return (await self.read(length)).decode("utf8")
 
     async def read_ascii(self):
         result = bytearray()
@@ -262,6 +267,9 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
 
     def write(self, data):
         self.writer.write(data)
+    
+    def close(self):
+        self.writer.close()
 
 
 class UDPAsyncSocketConnection(AsyncReadConnection):

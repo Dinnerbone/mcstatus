@@ -62,7 +62,7 @@ class TestQueryResponse:
         assert response.software.version == "1.8"
         assert response.software.plugins == []
 
-    def test_valid(self):
+    def test_valid2(self):
         players = QueryResponse.Players(5, 20, ["Dinnerbone", "Djinnibone", "Steve"])
         assert players.online == 5
         assert players.max == 20
