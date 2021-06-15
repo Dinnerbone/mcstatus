@@ -1,4 +1,5 @@
 import socket
+from typing import Any
 import click
 from json import dumps as json_dumps
 
@@ -77,7 +78,8 @@ def json():
     Prints server status and query in json. Supported by all Minecraft
     servers that are version 1.7 or higher.
     """
-    data = {"online": False}
+    data = {}
+    data["online"] = False
     # Build data with responses and quit on exception
     try:
         ping_res = server.ping()

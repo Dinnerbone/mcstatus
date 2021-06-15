@@ -13,7 +13,7 @@ class TestConnection:
         self.connection.sent = bytearray.fromhex("7FAABB")
 
         assert self.connection.flush() == bytearray.fromhex("7FAABB")
-        assert self.connection.sent == ""
+        assert self.connection.sent == bytearray()
 
     def test_receive(self):
         self.connection.receive(bytearray.fromhex("7F"))
