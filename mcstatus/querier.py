@@ -104,7 +104,9 @@ class QueryResponse:
             self.raw = raw
             self.motd = raw["hostname"]
             self.map = raw["map"]
-            self.players = QueryResponse.Players(raw["numplayers"], raw["maxplayers"], players)
+            self.players = QueryResponse.Players(
+                raw["numplayers"], raw["maxplayers"], players
+            )
             self.software = QueryResponse.Software(raw["version"], raw["plugins"])
         except:
             raise ValueError("The provided data is not valid")

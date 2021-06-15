@@ -62,7 +62,9 @@ class MinecraftServer:
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
-                pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
+                pinger = ServerPinger(
+                    connection, host=self.host, port=self.port, **kwargs
+                )
                 pinger.handshake()
                 return pinger.test_ping()
             except Exception as e:
@@ -84,7 +86,9 @@ class MinecraftServer:
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
-                pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
+                pinger = AsyncServerPinger(
+                    connection, host=self.host, port=self.port, **kwargs
+                )
                 pinger.handshake()
                 ping = await pinger.test_ping()
                 connection.close()
@@ -107,7 +111,9 @@ class MinecraftServer:
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
-                pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
+                pinger = ServerPinger(
+                    connection, host=self.host, port=self.port, **kwargs
+                )
                 pinger.handshake()
                 result = pinger.read_status()
                 result.latency = pinger.test_ping()
@@ -131,7 +137,9 @@ class MinecraftServer:
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
-                pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
+                pinger = AsyncServerPinger(
+                    connection, host=self.host, port=self.port, **kwargs
+                )
                 pinger.handshake()
                 result = await pinger.read_status()
                 result.latency = await pinger.test_ping()
@@ -256,7 +264,9 @@ class MinecraftBedrockServer:
 
         for _ in range(tries):
             try:
-                resp = await BedrockServerStatus(self.host, self.port, **kwargs).read_status_async()
+                resp = await BedrockServerStatus(
+                    self.host, self.port, **kwargs
+                ).read_status_async()
                 break
             except BaseException as e:
                 exception = e

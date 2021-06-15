@@ -9,7 +9,14 @@ from mcstatus.protocol.connection import Connection
 
 
 class ServerPinger:
-    def __init__(self, connection, host: str = "", port: int = 0, version: int = 47, ping_token=None):
+    def __init__(
+        self,
+        connection,
+        host: str = "",
+        port: int = 0,
+        version: int = 47,
+        ping_token=None,
+    ):
         if ping_token is None:
             ping_token = random.randint(0, (1 << 63) - 1)
         self.version = version
@@ -59,12 +66,15 @@ class ServerPinger:
         received_token = response.read_long()
         if received_token != self.ping_token:
             raise IOError(
-                "Received mangled ping response packet (expected token %d, received %d)" % (self.ping_token, received_token)
+                "Received mangled ping response packet (expected token %d, received %d)"
+                % (self.ping_token, received_token)
             )
 
         delta = received - sent
         # We have no trivial way of getting a time delta :(
-        return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
+        return (
+            delta.days * 24 * 60 * 60 + delta.seconds
+        ) * 1000 + delta.microseconds / 1000.0
 
 
 class AsyncServerPinger(ServerPinger):
@@ -99,13 +109,15 @@ class AsyncServerPinger(ServerPinger):
         received_token = response.read_long()
         if received_token != self.ping_token:
             raise IOError(
-                "Received mangled ping response packet (expected token %d, received %d)" % (self.ping_token, received_token)
+                "Received mangled ping response packet (expected token %d, received %d)"
+                % (self.ping_token, received_token)
             )
 
         delta = received - sent
         # We have no trivial way of getting a time delta :(
-        return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
-
+        return (
+            delta.days * 24 * 60 * 60 + delta.seconds
+        ) * 1000 + delta.microseconds / 1000.0
 
 class PingResponse:
     # THIS IS SO UNPYTHONIC
@@ -117,18 +129,26 @@ class PingResponse:
 
             def __init__(self, raw):
                 if not isinstance(raw, dict):
-                    raise ValueError("Invalid player object (expected dict, found %s" % type(raw))
+                    raise ValueError(
+                        "Invalid player object (expected dict, found %s" % type(raw)
+                    )
 
                 if "name" not in raw:
                     raise ValueError("Invalid player object (no 'name' value)")
                 if not isinstance(raw["name"], string_types):
-                    raise ValueError("Invalid player object (expected 'name' to be str, was %s)" % type(raw["name"]))
+                    raise ValueError(
+                        "Invalid player object (expected 'name' to be str, was %s)"
+                        % type(raw["name"])
+                    )
                 self.name = raw["name"]
 
                 if "id" not in raw:
                     raise ValueError("Invalid player object (no 'id' value)")
                 if not isinstance(raw["id"], string_types):
-                    raise ValueError("Invalid player object (expected 'id' to be str, was %s)" % type(raw["id"]))
+                    raise ValueError(
+                        "Invalid player object (expected 'id' to be str, was %s)"
+                        % type(raw["id"])
+                    )
                 self.id = raw["id"]
 
         online: int
@@ -137,23 +157,34 @@ class PingResponse:
 
         def __init__(self, raw):
             if not isinstance(raw, dict):
-                raise ValueError("Invalid players object (expected dict, found %s" % type(raw))
+                raise ValueError(
+                    "Invalid players object (expected dict, found %s" % type(raw)
+                )
 
             if "online" not in raw:
                 raise ValueError("Invalid players object (no 'online' value)")
             if not isinstance(raw["online"], int):
-                raise ValueError("Invalid players object (expected 'online' to be int, was %s)" % type(raw["online"]))
+                raise ValueError(
+                    "Invalid players object (expected 'online' to be int, was %s)"
+                    % type(raw["online"])
+                )
             self.online = raw["online"]
 
             if "max" not in raw:
                 raise ValueError("Invalid players object (no 'max' value)")
             if not isinstance(raw["max"], int):
-                raise ValueError("Invalid players object (expected 'max' to be int, was %s)" % type(raw["max"]))
+                raise ValueError(
+                    "Invalid players object (expected 'max' to be int, was %s)"
+                    % type(raw["max"])
+                )
             self.max = raw["max"]
 
             if "sample" in raw:
                 if not isinstance(raw["sample"], list):
-                    raise ValueError("Invalid players object (expected 'sample' to be list, was %s)" % type(raw["max"]))
+                    raise ValueError(
+                        "Invalid players object (expected 'sample' to be list, was %s)"
+                        % type(raw["max"])
+                    )
                 self.sample = [PingResponse.Players.Player(p) for p in raw["sample"]]
             else:
                 self.sample = None
@@ -164,18 +195,26 @@ class PingResponse:
 
         def __init__(self, raw):
             if not isinstance(raw, dict):
-                raise ValueError("Invalid version object (expected dict, found %s" % type(raw))
+                raise ValueError(
+                    "Invalid version object (expected dict, found %s" % type(raw)
+                )
 
             if "name" not in raw:
                 raise ValueError("Invalid version object (no 'name' value)")
             if not isinstance(raw["name"], string_types):
-                raise ValueError("Invalid version object (expected 'name' to be str, was %s)" % type(raw["name"]))
+                raise ValueError(
+                    "Invalid version object (expected 'name' to be str, was %s)"
+                    % type(raw["name"])
+                )
             self.name = raw["name"]
 
             if "protocol" not in raw:
                 raise ValueError("Invalid version object (no 'protocol' value)")
             if not isinstance(raw["protocol"], int):
-                raise ValueError("Invalid version object (expected 'protocol' to be int, was %s)" % type(raw["protocol"]))
+                raise ValueError(
+                    "Invalid version object (expected 'protocol' to be int, was %s)"
+                    % type(raw["protocol"])
+                )
             self.protocol = raw["protocol"]
 
     players: Players

@@ -7,12 +7,16 @@ from mcstatus.server import MinecraftServer
 
 class TestServerPinger:
     def setup_method(self):
-        self.pinger = ServerPinger(Connection(), host="localhost", port=25565, version=44)
+        self.pinger = ServerPinger(
+            Connection(), host="localhost", port=25565, version=44
+        )
 
     def test_handshake(self):
         self.pinger.handshake()
 
-        assert self.pinger.connection.flush() == bytearray.fromhex("0F002C096C6F63616C686F737463DD01")
+        assert self.pinger.connection.flush() == bytearray.fromhex(
+            "0F002C096C6F63616C686F737463DD01"
+        )
 
     def test_read_status(self):
         self.pinger.connection.receive(
@@ -55,7 +59,9 @@ class TestServerPinger:
         self.pinger.ping_token = 14515484
 
         assert self.pinger.test_ping() >= 0
-        assert self.pinger.connection.flush() == bytearray.fromhex("09010000000000DD7D1C")
+        assert self.pinger.connection.flush() == bytearray.fromhex(
+            "09010000000000DD7D1C"
+        )
 
     def test_test_ping_invalid(self):
         self.pinger.connection.receive(bytearray.fromhex("011F"))
@@ -101,7 +107,12 @@ class TestPingResponse:
 
     def test_description_missing(self):
         with pytest.raises(ValueError):
-            PingResponse({"players": {"max": 20, "online": 0}, "version": {"name": "1.8-pre1", "protocol": 44}})
+            PingResponse(
+                {
+                    "players": {"max": 20, "online": 0},
+                    "version": {"name": "1.8-pre1", "protocol": 44},
+                }
+            )
 
     def test_version(self):
         response = PingResponse(
@@ -118,11 +129,22 @@ class TestPingResponse:
 
     def test_version_missing(self):
         with pytest.raises(ValueError):
-            PingResponse({"description": "A Minecraft Server", "players": {"max": 20, "online": 0}})
+            PingResponse(
+                {
+                    "description": "A Minecraft Server",
+                    "players": {"max": 20, "online": 0},
+                }
+            )
 
     def test_version_invalid(self):
         with pytest.raises(ValueError):
-            PingResponse({"description": "A Minecraft Server", "players": {"max": 20, "online": 0}, "version": "foo"})
+            PingResponse(
+                {
+                    "description": "A Minecraft Server",
+                    "players": {"max": 20, "online": 0},
+                    "version": "foo",
+                }
+            )
 
     def test_players(self):
         response = PingResponse(
@@ -139,7 +161,12 @@ class TestPingResponse:
 
     def test_players_missing(self):
         with pytest.raises(ValueError):
-            PingResponse({"description": "A Minecraft Server", "version": {"name": "1.8-pre1", "protocol": 44}})
+            PingResponse(
+                {
+                    "description": "A Minecraft Server",
+                    "version": {"name": "1.8-pre1", "protocol": 44},
+                }
+            )
 
     def test_favicon(self):
         response = PingResponse(
@@ -194,7 +221,13 @@ class TestPingResponsePlayers:
 
     def test_sample(self):
         players = PingResponse.Players(
-            {"max": 20, "online": 1, "sample": [{"name": "Dinnerbone", "id": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"}]}
+            {
+                "max": 20,
+                "online": 1,
+                "sample": [
+                    {"name": "Dinnerbone", "id": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"}
+                ],
+            }
         )
 
         assert players.sample != None
@@ -220,7 +253,9 @@ class TestPingResponsePlayersPlayer:
 
     def test_name_invalid(self):
         with pytest.raises(ValueError):
-            PingResponse.Players.Player({"name": {}, "id": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"})
+            PingResponse.Players.Player(
+                {"name": {}, "id": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"}
+            )
 
     def test_id_missing(self):
         with pytest.raises(ValueError):
@@ -231,7 +266,9 @@ class TestPingResponsePlayersPlayer:
             PingResponse.Players.Player({"name": "Dinnerbone", "id": {}})
 
     def test_valid(self):
-        player = PingResponse.Players.Player({"name": "Dinnerbone", "id": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"})
+        player = PingResponse.Players.Player(
+            {"name": "Dinnerbone", "id": "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"}
+        )
 
         assert player.name == "Dinnerbone"
         assert player.id == "61699b2e-d327-4a01-9f1e-0ea8c3f06bc6"

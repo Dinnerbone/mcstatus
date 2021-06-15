@@ -7,9 +7,13 @@ class TestMinecraftQuerier:
         self.querier = ServerQuerier(Connection())
 
     def test_handshake(self):
-        self.querier.connection.receive(bytearray.fromhex("090000000035373033353037373800"))
+        self.querier.connection.receive(
+            bytearray.fromhex("090000000035373033353037373800")
+        )
         self.querier.handshake()
-        assert self.querier.connection.flush() == bytearray.fromhex("FEFD090000000000000000")
+        assert self.querier.connection.flush() == bytearray.fromhex(
+            "FEFD090000000000000000"
+        )
         assert self.querier.challenge == 570350778
 
     def test_query(self):
@@ -19,7 +23,9 @@ class TestMinecraftQuerier:
             )
         )
         response = self.querier.read_query()
-        assert self.querier.connection.flush() == bytearray.fromhex("FEFD00000000000000000000000000")
+        assert self.querier.connection.flush() == bytearray.fromhex(
+            "FEFD00000000000000000000000000"
+        )
         assert response.raw == {
             "hostname": "A Minecraft Server",
             "gametype": "SMP",
@@ -75,7 +81,9 @@ class TestQueryResponse:
         assert software.plugins == []
 
     def test_modded(self):
-        software = QueryResponse.Software("1.8", "A modded server: Foo 1.0; Bar 2.0; Baz 3.0")
+        software = QueryResponse.Software(
+            "1.8", "A modded server: Foo 1.0; Bar 2.0; Baz 3.0"
+        )
         assert software.brand == "A modded server"
         assert software.plugins == ["Foo 1.0", "Bar 2.0", "Baz 3.0"]
 

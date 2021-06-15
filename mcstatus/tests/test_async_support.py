@@ -1,6 +1,9 @@
 from inspect import iscoroutinefunction
 
-from mcstatus.protocol.connection import TCPAsyncSocketConnection, UDPAsyncSocketConnection
+from mcstatus.protocol.connection import (
+    TCPAsyncSocketConnection,
+    UDPAsyncSocketConnection,
+)
 
 
 def test_is_completely_asynchronous():

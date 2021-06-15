@@ -215,7 +215,10 @@ class UDPSocketConnection(Connection):
     def __init__(self, addr, timeout=3):
         Connection.__init__(self)
         self.addr = addr
-        self.socket = socket.socket(socket.AF_INET if ip_type(addr[0]) == 4 else socket.AF_INET6, socket.SOCK_DGRAM)
+        self.socket = socket.socket(
+            socket.AF_INET if ip_type(addr[0]) == 4 else socket.AF_INET6,
+            socket.SOCK_DGRAM,
+        )
         self.socket.settimeout(timeout)
 
     def flush(self):
@@ -294,7 +297,9 @@ class UDPAsyncSocketConnection(AsyncReadConnection):
         return 65535
 
     async def read(self, length):
-        data, remote_addr = await asyncio.wait_for(self.stream.recv(), timeout=self.timeout)
+        data, remote_addr = await asyncio.wait_for(
+            self.stream.recv(), timeout=self.timeout
+        )
         return data
 
     async def write(self, data):
