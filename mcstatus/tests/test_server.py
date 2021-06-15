@@ -56,19 +56,18 @@ async def create_mock_packet_server(event_loop):
         await server.wait_closed()
 
 
-# # Test keeps failing for me! Unknown fixture
-# class TestAsyncMinecraftServer:
-#     @pytest.mark.asyncio # unknown mark ???
-#     async def test_async_ping(self, unused_tcp_port, create_mock_packet_server):
-#         mock_packet_server = await create_mock_packet_server(
-#             port=unused_tcp_port,
-#             data_expected_to_receive=bytearray.fromhex("09010000000001C54246"),
-#             data_to_respond_with=bytearray.fromhex("0F002F096C6F63616C686F737463DD0109010000000001C54246"),
-#         )
-#         minecraft_server = MinecraftServer("localhost", port=unused_tcp_port)
-#
-#         latency = await minecraft_server.async_ping(ping_token=29704774, version=47)
-#         assert latency >= 0
+class TestAsyncMinecraftServer:
+    @pytest.mark.asyncio
+    async def test_async_ping(self, unused_tcp_port, create_mock_packet_server):
+        mock_packet_server = await create_mock_packet_server(
+            port=unused_tcp_port,
+            data_expected_to_receive=bytearray.fromhex("09010000000001C54246"),
+            data_to_respond_with=bytearray.fromhex("0F002F096C6F63616C686F737463DD0109010000000001C54246"),
+        )
+        minecraft_server = MinecraftServer("localhost", port=unused_tcp_port)
+
+        latency = await minecraft_server.async_ping(ping_token=29704774, version=47)
+        assert latency >= 0
 
 
 class TestMinecraftServer:
