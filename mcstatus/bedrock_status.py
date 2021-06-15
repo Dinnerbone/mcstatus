@@ -1,7 +1,9 @@
-from time import perf_counter
-import asyncio_dgram
 import socket
 import struct
+from time import perf_counter
+from typing import Optional
+
+import asyncio_dgram
 
 
 class BedrockServerStatus:
@@ -16,22 +18,24 @@ class BedrockServerStatus:
     def parse_response(data: bytes, latency: float):
         data = data[1:]
         name_length = struct.unpack(">H", data[32:34])[0]
-        data = data[34 : 34 + name_length].decode().split(";")  # type: ignore
+        decoded_data = data[34 : 34 + name_length].decode().split(";")
 
+        map_: Optional[str]
+        gamemode: Optional[str]
         try:
-            map_ = data[7]
-            gamemode = data[8]
+            map_ = decoded_data[7]
+            gamemode = decoded_data[8]
         except BaseException:
             map_ = None
             gamemode = None
 
         return BedrockStatusResponse(
-            protocol=data[2],
-            brand=data[0],
+            protocol=decoded_data[2],
+            brand=decoded_data[0],
             latency=latency,
-            players_online=data[4],
-            players_max=data[5],
-            motd=data[1],
+            players_online=decoded_data[4],
+            players_max=decoded_data[5],
+            motd=decoded_data[1],
             map_=map_,
             gamemode=gamemode,
         )
@@ -57,7 +61,7 @@ class BedrockServerStatus:
             data, _ = await stream.recv()
         finally:
             try:
-                stream.close()  # type: ignore - stream may be unbound
+                stream.close()
             except BaseException:
                 pass
 

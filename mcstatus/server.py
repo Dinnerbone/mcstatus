@@ -59,16 +59,16 @@ class MinecraftServer:
         """
 
         connection = TCPSocketConnection((self.host, self.port))
-        exception = Exception
+        exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
                 return pinger.test_ping()
             except Exception as e:
-                exception = e
+                exception_to_raise_after_giving_up = e
         else:
-            raise exception
+            raise exception_to_raise_after_giving_up
 
     async def async_ping(self, tries: int = 3, **kwargs) -> float:
         """Asynchronously checks the latency between a Minecraft Java Edition server and the client (you).
@@ -81,7 +81,7 @@ class MinecraftServer:
 
         connection = TCPAsyncSocketConnection()
         await connection.connect((self.host, self.port))
-        exception = Exception
+        exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
                 pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
@@ -90,9 +90,9 @@ class MinecraftServer:
                 connection.close()
                 return ping
             except Exception as e:
-                exception = e
+                exception_to_raise_after_giving_up = e
         else:
-            raise exception
+            raise exception_to_raise_after_giving_up
 
     def status(self, tries: int = 3, **kwargs) -> PingResponse:
         """Checks the status of a Minecraft Java Edition server via the ping protocol.
@@ -104,7 +104,7 @@ class MinecraftServer:
         """
 
         connection = TCPSocketConnection((self.host, self.port))
-        exception = Exception
+        exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
                 pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
@@ -113,9 +113,9 @@ class MinecraftServer:
                 result.latency = pinger.test_ping()
                 return result
             except Exception as e:
-                exception = e
+                exception_to_raise_after_giving_up = e
         else:
-            raise exception
+            raise exception_to_raise_after_giving_up
 
     async def async_status(self, tries: int = 3, **kwargs) -> PingResponse:
         """Asynchronously checks the status of a Minecraft Java Edition server via the ping protocol.
@@ -128,7 +128,7 @@ class MinecraftServer:
 
         connection = TCPAsyncSocketConnection()
         await connection.connect((self.host, self.port))
-        exception = Exception
+        exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
                 pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
@@ -137,9 +137,9 @@ class MinecraftServer:
                 result.latency = await pinger.test_ping()
                 return result
             except Exception as e:
-                exception = e
+                exception_to_raise_after_giving_up = e
         else:
-            raise exception
+            raise exception_to_raise_after_giving_up
 
     def query(self, tries: int = 3) -> QueryResponse:
         """Checks the status of a Minecraft Java Edition server via the query protocol.
@@ -148,7 +148,6 @@ class MinecraftServer:
         :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
-        exception = Exception
         host = self.host
         try:
             answers = dns.resolver.resolve(host, "A")
@@ -158,6 +157,7 @@ class MinecraftServer:
         except Exception as e:
             pass
 
+        exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
                 connection = UDPSocketConnection((host, self.port))
@@ -165,9 +165,9 @@ class MinecraftServer:
                 querier.handshake()
                 return querier.read_query()
             except Exception as e:
-                exception = e
+                exception_to_raise_after_giving_up = e
         else:
-            raise exception
+            raise exception_to_raise_after_giving_up
 
     async def async_query(self, tries: int = 3) -> QueryResponse:
         """Asynchronously checks the status of a Minecraft Java Edition server via the query protocol.
@@ -176,7 +176,6 @@ class MinecraftServer:
         :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
-        exception = Exception
         host = self.host
         try:
             answers = dns.resolver.resolve(host, "A")
@@ -186,6 +185,7 @@ class MinecraftServer:
         except Exception as e:
             pass
 
+        exception_to_raise_after_giving_up: BaseException
         for _ in range(tries):
             try:
                 connection = UDPAsyncSocketConnection()
@@ -194,9 +194,9 @@ class MinecraftServer:
                 await querier.handshake()
                 return await querier.read_query()
             except Exception as e:
-                exception = e
+                exception_to_raise_after_giving_up = e
         else:
-            raise exception
+            raise exception_to_raise_after_giving_up
 
 
 class MinecraftBedrockServer:
@@ -242,7 +242,7 @@ class MinecraftBedrockServer:
         if exception:
             raise exception
 
-        return resp  # type: ignore - possibly unbound
+        return resp
 
     async def async_status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Asynchronously checks the status of a Minecraft Bedrock Edition server.
@@ -264,4 +264,4 @@ class MinecraftBedrockServer:
         if exception:
             raise exception
 
-        return resp  # type: ignore - possibly unbound
+        return resp

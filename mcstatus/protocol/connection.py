@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 import socket
 import struct
 import asyncio
@@ -128,7 +128,7 @@ class Connection:
         self.write(data)
 
 
-class AsyncReadConnection(Connection):
+class AsyncReadConnection(Connection, ABC):
     @abstractmethod
     async def read(self, length: int) -> bytearray:
         ...
