@@ -21,7 +21,7 @@ class Connection:
         if isinstance(data, Connection):
             data = data.flush()
         if isinstance(data, str):
-            data = bytearray(data, 'utf-8')
+            data = bytearray(data, "utf-8")
         self.sent.extend(data)
 
     def receive(self, data):
@@ -132,7 +132,7 @@ class AsyncReadConnection(Connection):
     @abstractmethod
     async def read(self, length: int) -> bytearray:
         ...
-    
+
     async def read_varint(self):
         result = 0
         for i in range(5):
@@ -267,7 +267,7 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
 
     def write(self, data):
         self.writer.write(data)
-    
+
     def close(self):
         self.writer.close()
 

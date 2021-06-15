@@ -64,7 +64,6 @@ class AsyncServerQuerier(ServerQuerier):
         return QueryResponse.from_connection(response)
 
 
-
 class QueryResponse:
     # THIS IS SO UNPYTHONIC
     # it's staying just because the tests depend on this structure
@@ -94,10 +93,12 @@ class QueryResponse:
 
                 if len(parts) == 2:
                     self.plugins = [s.strip() for s in parts[1].split(";")]
+
     motd: str
     map: str
     players: Players
     software: Software
+
     def __init__(self, raw, players):
         try:
             self.raw = raw
@@ -106,8 +107,8 @@ class QueryResponse:
             self.players = QueryResponse.Players(raw["numplayers"], raw["maxplayers"], players)
             self.software = QueryResponse.Software(raw["version"], raw["plugins"])
         except:
-            raise ValueError('The provided data is not valid')
-    
+            raise ValueError("The provided data is not valid")
+
     @classmethod
     def from_connection(cls, response: Connection):
         response.read(len("splitnum") + 1 + 1 + 1)

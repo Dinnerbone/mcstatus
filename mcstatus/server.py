@@ -10,7 +10,8 @@ from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 from mcstatus.scripts.address_tools import parse_address
 import dns.resolver
 
-__all__ = ['MinecraftServer', 'MinecraftBedrockServer']
+__all__ = ["MinecraftServer", "MinecraftBedrockServer"]
+
 
 class MinecraftServer:
     """Base class for a Minecraft Java Edition server.
@@ -156,7 +157,7 @@ class MinecraftServer:
                 host = str(answer).rstrip(".")
         except Exception as e:
             pass
-        
+
         for _ in range(tries):
             try:
                 connection = UDPSocketConnection((host, self.port))
@@ -184,7 +185,7 @@ class MinecraftServer:
                 host = str(answer).rstrip(".")
         except Exception as e:
             pass
-        
+
         for _ in range(tries):
             try:
                 connection = UDPAsyncSocketConnection()
@@ -241,7 +242,7 @@ class MinecraftBedrockServer:
         if exception:
             raise exception
 
-        return resp # type: ignore - possibly unbound
+        return resp  # type: ignore - possibly unbound
 
     async def async_status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Asynchronously checks the status of a Minecraft Bedrock Edition server.
@@ -263,4 +264,4 @@ class MinecraftBedrockServer:
         if exception:
             raise exception
 
-        return resp # type: ignore - possibly unbound
+        return resp  # type: ignore - possibly unbound

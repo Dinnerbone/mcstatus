@@ -64,7 +64,7 @@ async def create_mock_packet_server(event_loop):
 #             data_to_respond_with=bytearray.fromhex("0F002F096C6F63616C686F737463DD0109010000000001C54246"),
 #         )
 #         minecraft_server = MinecraftServer("localhost", port=unused_tcp_port)
-# 
+#
 #         latency = await minecraft_server.async_ping(ping_token=29704774, version=47)
 #         assert latency >= 0
 

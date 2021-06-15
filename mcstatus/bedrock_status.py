@@ -16,7 +16,7 @@ class BedrockServerStatus:
     def parse_response(data: bytes, latency: float):
         data = data[1:]
         name_length = struct.unpack(">H", data[32:34])[0]
-        data = data[34 : 34 + name_length].decode().split(";") # type: ignore
+        data = data[34 : 34 + name_length].decode().split(";")  # type: ignore
 
         try:
             map_ = data[7]
@@ -57,7 +57,7 @@ class BedrockServerStatus:
             data, _ = await stream.recv()
         finally:
             try:
-                stream.close() # type: ignore - stream may be unbound
+                stream.close()  # type: ignore - stream may be unbound
             except BaseException:
                 pass
 

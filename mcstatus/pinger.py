@@ -9,7 +9,7 @@ from mcstatus.protocol.connection import Connection
 
 
 class ServerPinger:
-    def __init__(self, connection, host: str="", port: int=0, version: int=47, ping_token=None):
+    def __init__(self, connection, host: str = "", port: int = 0, version: int = 47, ping_token=None):
         if ping_token is None:
             ping_token = random.randint(0, (1 << 63) - 1)
         self.version = version
@@ -107,7 +107,6 @@ class AsyncServerPinger(ServerPinger):
         return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
 
 
-
 class PingResponse:
     # THIS IS SO UNPYTHONIC
     # it's staying just because the tests depend on this structure
@@ -115,6 +114,7 @@ class PingResponse:
         class Player:
             name: str
             id: str
+
             def __init__(self, raw):
                 if not isinstance(raw, dict):
                     raise ValueError("Invalid player object (expected dict, found %s" % type(raw))
@@ -130,10 +130,11 @@ class PingResponse:
                 if not isinstance(raw["id"], string_types):
                     raise ValueError("Invalid player object (expected 'id' to be str, was %s)" % type(raw["id"]))
                 self.id = raw["id"]
-        
+
         online: int
         max: int
-        sample: Optional[List['PingResponse.Players.Player']]
+        sample: Optional[List["PingResponse.Players.Player"]]
+
         def __init__(self, raw):
             if not isinstance(raw, dict):
                 raise ValueError("Invalid players object (expected dict, found %s" % type(raw))
@@ -160,6 +161,7 @@ class PingResponse:
     class Version:
         name: str
         protocol: int
+
         def __init__(self, raw):
             if not isinstance(raw, dict):
                 raise ValueError("Invalid version object (expected dict, found %s" % type(raw))
@@ -175,12 +177,13 @@ class PingResponse:
             if not isinstance(raw["protocol"], int):
                 raise ValueError("Invalid version object (expected 'protocol' to be int, was %s)" % type(raw["protocol"]))
             self.protocol = raw["protocol"]
-    
+
     players: Players
     version: Version
     description: str
     favicon: Optional[str]
     latency: float = 0
+
     def __init__(self, raw):
         self.raw = raw
 
