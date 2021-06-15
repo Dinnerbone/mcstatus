@@ -59,20 +59,13 @@ def status():
     servers that are version 1.7 or higher.
     """
     response = server.status()
-    click.echo(
-        "version: v{} (protocol {})".format(
-            response.version.name, response.version.protocol
-        )
-    )
+    click.echo("version: v{} (protocol {})".format(response.version.name, response.version.protocol))
     click.echo('description: "{}"'.format(response.description))
     click.echo(
         "players: {}/{} {}".format(
             response.players.online,
             response.players.max,
-            [
-                "{} ({})".format(player.name, player.id)
-                for player in response.players.sample
-            ]
+            ["{} ({})".format(player.name, player.id) for player in response.players.sample]
             if response.players.sample is not None
             else "No players online",
         )
@@ -101,10 +94,7 @@ def json():
         data["player_max"] = status_res.players.max
         data["players"] = []
         if status_res.players.sample is not None:
-            data["players"] = [
-                {"name": player.name, "id": player.id}
-                for player in status_res.players.sample
-            ]
+            data["players"] = [{"name": player.name, "id": player.id} for player in status_res.players.sample]
 
         query_res = server.query(tries=1)
         data["host_ip"] = query_res.raw["hostip"]
@@ -132,9 +122,7 @@ def query():
         )
         raise click.Abort()
     click.echo("host: {}:{}".format(response.raw["hostip"], response.raw["hostport"]))
-    click.echo(
-        "software: v{} {}".format(response.software.version, response.software.brand)
-    )
+    click.echo("software: v{} {}".format(response.software.version, response.software.brand))
     click.echo("plugins: {}".format(response.software.plugins))
     click.echo('motd: "{}"'.format(response.motd))
     click.echo(

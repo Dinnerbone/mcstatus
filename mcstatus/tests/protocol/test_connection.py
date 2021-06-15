@@ -81,9 +81,7 @@ class TestConnection:
     def test_writeUtf(self):
         self.connection.write_utf("Hello, world!")
 
-        assert self.connection.flush() == bytearray.fromhex(
-            "0D48656C6C6F2C20776F726C6421"
-        )
+        assert self.connection.flush() == bytearray.fromhex("0D48656C6C6F2C20776F726C6421")
 
     def test_readEmptyUtf(self):
         self.connection.write_utf("")
@@ -98,9 +96,7 @@ class TestConnection:
     def test_writeAscii(self):
         self.connection.write_ascii("Hello, world!")
 
-        assert self.connection.flush() == bytearray.fromhex(
-            "48656C6C6F2C20776F726C642100"
-        )
+        assert self.connection.flush() == bytearray.fromhex("48656C6C6F2C20776F726C642100")
 
     def test_readEmptyAscii(self):
         self.connection.write_ascii("")
@@ -248,9 +244,7 @@ class TCPSocketConnectionTest:
         self.connection.write(bytearray.fromhex("7FAA"))
 
         # pytype: disable=attribute-error
-        self.connection.socket.send.assert_called_once_with(
-            bytearray.fromhex("7FAA")
-        )
+        self.connection.socket.send.assert_called_once_with(bytearray.fromhex("7FAA"))
 
 
 class UDPSocketConnectionTest:
@@ -282,6 +276,4 @@ class UDPSocketConnectionTest:
         self.connection.write(bytearray.fromhex("7FAA"))
 
         # pytype: disable=attribute-error
-        self.connection.socket.sendto.assert_called_once_with(
-            bytearray.fromhex("7FAA"), ("localhost", 1234)
-        )
+        self.connection.socket.sendto.assert_called_once_with(bytearray.fromhex("7FAA"), ("localhost", 1234))

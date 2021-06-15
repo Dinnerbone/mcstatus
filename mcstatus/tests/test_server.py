@@ -82,12 +82,8 @@ class TestMinecraftServer:
             connection.return_value = self.socket
             latency = self.server.ping(ping_token=29704774, version=47)
 
-        assert self.socket.flush() == bytearray.fromhex(
-            "0F002F096C6F63616C686F737463DD0109010000000001C54246"
-        )
-        assert (
-            self.socket.remaining() == 0
-        ), "Data is pending to be read, but should be empty"
+        assert self.socket.flush() == bytearray.fromhex("0F002F096C6F63616C686F737463DD0109010000000001C54246")
+        assert self.socket.remaining() == 0, "Data is pending to be read, but should be empty"
         assert latency >= 0
 
     def test_ping_retry(self):
@@ -110,12 +106,8 @@ class TestMinecraftServer:
             connection.return_value = self.socket
             info = self.server.status(ping_token=29704774, version=47)
 
-        assert self.socket.flush() == bytearray.fromhex(
-            "0F002F096C6F63616C686F737463DD01010009010000000001C54246"
-        )
-        assert (
-            self.socket.remaining() == 0
-        ), "Data is pending to be read, but should be empty"
+        assert self.socket.flush() == bytearray.fromhex("0F002F096C6F63616C686F737463DD01010009010000000001C54246")
+        assert self.socket.remaining() == 0, "Data is pending to be read, but should be empty"
         assert info.raw == {
             "description": "A Minecraft Server",
             "players": {"max": 20, "online": 0},
@@ -147,9 +139,7 @@ class TestMinecraftServer:
             connection.return_value = self.socket
             info = self.server.query()
 
-        assert self.socket.flush() == bytearray.fromhex(
-            "FEFD090000000000000000FEFD000000000021FEDCBA00000000"
-        )
+        assert self.socket.flush() == bytearray.fromhex("FEFD090000000000000000FEFD000000000021FEDCBA00000000")
         assert info.raw == {
             "hostname": "A Minecraft Server",
             "gametype": "SMP",

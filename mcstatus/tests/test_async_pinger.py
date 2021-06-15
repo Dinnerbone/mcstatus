@@ -24,16 +24,12 @@ class FakeAsyncConnection(Connection):
 
 class TestAsyncServerPinger:
     def setup_method(self):
-        self.pinger = AsyncServerPinger(
-            FakeAsyncConnection(), host="localhost", port=25565, version=44
-        )
+        self.pinger = AsyncServerPinger(FakeAsyncConnection(), host="localhost", port=25565, version=44)
 
     def test_handshake(self):
         self.pinger.handshake()
 
-        assert self.pinger.connection.flush() == bytearray.fromhex(
-            "0F002C096C6F63616C686F737463DD01"
-        )
+        assert self.pinger.connection.flush() == bytearray.fromhex("0F002C096C6F63616C686F737463DD01")
 
     def test_read_status(self):
         self.pinger.connection.receive(
@@ -76,9 +72,7 @@ class TestAsyncServerPinger:
         self.pinger.ping_token = 14515484
 
         assert async_decorator(self.pinger.test_ping)() >= 0
-        assert self.pinger.connection.flush() == bytearray.fromhex(
-            "09010000000000DD7D1C"
-        )
+        assert self.pinger.connection.flush() == bytearray.fromhex("09010000000000DD7D1C")
 
     def test_test_ping_invalid(self):
         self.pinger.connection.receive(bytearray.fromhex("011F"))

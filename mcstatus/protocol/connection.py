@@ -297,9 +297,7 @@ class UDPAsyncSocketConnection(AsyncReadConnection):
         return 65535
 
     async def read(self, length):
-        data, remote_addr = await asyncio.wait_for(
-            self.stream.recv(), timeout=self.timeout
-        )
+        data, remote_addr = await asyncio.wait_for(self.stream.recv(), timeout=self.timeout)
         return data
 
     async def write(self, data):
