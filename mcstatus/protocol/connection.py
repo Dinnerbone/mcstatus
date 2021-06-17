@@ -54,11 +54,13 @@ class Connection:
                 return signed_int32(result).value
         raise IOError("Server sent a varint that was too big!")
 
-    def write_varint(self, value):
+    def write_varint(self, value): 
         remaining = unsigned_int32(value).value
         for i in range(5):
             if remaining & ~0x7F == 0:
                 self.write(struct.pack("!B", remaining))
+                if value > 2 ** 31 - 1:
+                    break
                 return
             self.write(struct.pack("!B", remaining & 0x7F | 0x80))
             remaining >>= 7
