@@ -54,7 +54,7 @@ class TestConnection:
         assert self.connection.flush() == bytearray.fromhex("0F")
 
     def test_readBigVarInt(self):
-        self.connection.receive(bytearray.fromhex("FFFFFFFFF7"))
+        self.connection.receive(bytearray.fromhex("FFFFFFFF07"))
 
         assert self.connection.read_varint() == 2147483647
     
