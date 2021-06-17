@@ -4,8 +4,10 @@ import struct
 import asyncio
 import asyncio_dgram
 
-from ..scripts.address_tools import ip_type
+from ctypes import c_uint32 as unsigned_int32
+from ctypes import c_int32 as signed_int32
 
+from ..scripts.address_tools import ip_type
 
 class Connection:
     def __init__(self):
@@ -46,14 +48,14 @@ class Connection:
     def read_varint(self):
         result = 0
         for i in range(5):
-            part = ord(self.read(1))
+            part = self.read(1)[0]
             result |= (part & 0x7F) << 7 * i
             if not part & 0x80:
-                return result
+                return signed_int32(result).value
         raise IOError("Server sent a varint that was too big!")
 
     def write_varint(self, value):
-        remaining = value
+        remaining = unsigned_int32(value).value
         for i in range(5):
             if remaining & ~0x7F == 0:
                 self.write(struct.pack("!B", remaining))
@@ -136,10 +138,10 @@ class AsyncReadConnection(Connection, ABC):
     async def read_varint(self):
         result = 0
         for i in range(5):
-            part = ord(await self.read(1))
-            result |= (part & 0x7F) << 7 * i
+            part = (await self.read(1))[0]
+            result |= (part & 0x7F) << (7 * i)
             if not part & 0x80:
-                return result
+                return signed_int32(result).value
         raise IOError("Server sent a varint that was too big!")
 
     async def read_utf(self):
