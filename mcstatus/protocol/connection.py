@@ -55,12 +55,12 @@ class Connection:
         raise IOError("Server sent a varint that was too big!")
 
     def write_varint(self, value): 
+        if value < -2 ** 31 or 2 ** 31 - 1 < value:
+            raise ValueError("Minecraft varints must be in the range of [-2**31, 2**31 - 1]")
         remaining = unsigned_int32(value).value
         for i in range(5):
             if remaining & ~0x7F == 0:
                 self.write(struct.pack("!B", remaining))
-                if value > 2 ** 31 - 1:
-                    break
                 return
             self.write(struct.pack("!B", remaining & 0x7F | 0x80))
             remaining >>= 7
