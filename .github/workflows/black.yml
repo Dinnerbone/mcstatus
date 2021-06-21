@@ -1,16 +1,14 @@
-
 name: Auto Black
 
 on: [push]
 
 jobs:
   autoblack:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
-            ref: ${{ github.head_ref }}
+          ref: ${{ github.head_ref }}
 
       - uses: actions/setup-python@v1
 
@@ -18,14 +16,4 @@ jobs:
 
       - name: autoblack_check
         id: black-check
-        continue-on-error: true
         run: black --check -l 127 .
-
-      - name: autoblack
-        if: steps.black-check.outcome != 'success'
-        run: |
-          black -l 127 .
-          git config --global user.name github-actions
-          git config --global user.email '${GITHUB_ACTOR}@users.noreply.github.com'
-          git commit -am "apply black codestyle" --allow-empty
-          git push
