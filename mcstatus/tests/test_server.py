@@ -139,7 +139,8 @@ class TestMinecraftServer:
             connection.return_value = self.socket
             info = self.server.query()
 
-        assert self.socket.flush() == bytearray.fromhex("FEFD090000000000000000FEFD000000000021FEDCBA00000000")
+        conn_bytes = self.socket.flush()
+        assert conn_bytes[:3] == bytearray.fromhex("FEFD09")
         assert info.raw == {
             "hostname": "A Minecraft Server",
             "gametype": "SMP",

@@ -9,7 +9,9 @@ class TestMinecraftQuerier:
     def test_handshake(self):
         self.querier.connection.receive(bytearray.fromhex("090000000035373033353037373800"))
         self.querier.handshake()
-        assert self.querier.connection.flush() == bytearray.fromhex("FEFD090000000000000000")
+
+        conn_bytes = self.querier.connection.flush()
+        assert conn_bytes[:3] == bytearray.fromhex("FEFD09")
         assert self.querier.challenge == 570350778
 
     def test_query(self):
@@ -19,7 +21,8 @@ class TestMinecraftQuerier:
             )
         )
         response = self.querier.read_query()
-        assert self.querier.connection.flush() == bytearray.fromhex("FEFD00000000000000000000000000")
+        conn_bytes = self.querier.connection.flush()
+        assert conn_bytes[:3] == bytearray.fromhex("FEFD00")
         assert response.raw == {
             "hostname": "A Minecraft Server",
             "gametype": "SMP",
