@@ -1,3 +1,4 @@
+import random
 import struct
 from typing import List
 
@@ -6,6 +7,7 @@ from mcstatus.protocol.connection import Connection
 
 class ServerQuerier:
     MAGIC_PREFIX = bytearray.fromhex("FEFD")
+    PADDING = bytearray.fromhex("00000000")
     PACKET_TYPE_CHALLENGE = 9
     PACKET_TYPE_QUERY = 0
 
@@ -13,12 +15,25 @@ class ServerQuerier:
         self.connection = connection
         self.challenge = 0
 
-    def _create_packet(self, id):
+    @staticmethod
+    def _generate_session_id():
+        # minecraft only supports lower 4 bits
+        return random.randint(0, 2**31) & 0x0F0F0F0F
+
+    def _create_packet(self):
         packet = Connection()
         packet.write(self.MAGIC_PREFIX)
-        packet.write(struct.pack("!B", id))
-        packet.write_uint(0)
+        packet.write(struct.pack("!B", self.PACKET_TYPE_QUERY))
+        packet.write_uint(self._generate_session_id())
         packet.write_int(self.challenge)
+        packet.write(self.PADDING)
+        return packet
+
+    def _create_handshake_packet(self):
+        packet = Connection()
+        packet.write(self.MAGIC_PREFIX)
+        packet.write(struct.pack("!B", self.PACKET_TYPE_CHALLENGE))
+        packet.write_uint(self._generate_session_id())
         return packet
 
     def _read_packet(self):
@@ -28,14 +43,13 @@ class ServerQuerier:
         return packet
 
     def handshake(self):
-        self.connection.write(self._create_packet(self.PACKET_TYPE_CHALLENGE))
+        self.connection.write(self._create_handshake_packet())
 
         packet = self._read_packet()
         self.challenge = int(packet.read_ascii())
 
     def read_query(self):
-        request = self._create_packet(self.PACKET_TYPE_QUERY)
-        request.write_uint(0)
+        request = self._create_packet()
         self.connection.write(request)
 
         response = self._read_packet()
@@ -50,14 +64,13 @@ class AsyncServerQuerier(ServerQuerier):
         return packet
 
     async def handshake(self):
-        await self.connection.write(self._create_packet(self.PACKET_TYPE_CHALLENGE))
+        await self.connection.write(self._create_handshake_packet())
 
         packet = await self._read_packet()
         self.challenge = int(packet.read_ascii())
 
     async def read_query(self):
-        request = self._create_packet(self.PACKET_TYPE_QUERY)
-        request.write_uint(0)
+        request = self._create_packet()
         await self.connection.write(request)
 
         response = await self._read_packet()
