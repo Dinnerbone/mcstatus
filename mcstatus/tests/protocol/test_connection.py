@@ -43,25 +43,21 @@ class TestConnection:
         assert self.connection.read(2) == bytearray.fromhex("7FAA")
         assert self.connection.read(1) == bytearray.fromhex("BB")
 
-    def test_readSimpleVarInt(self):
-        self.connection.receive(bytearray.fromhex("0F"))
+    def _assert_varint_read_write(self, hexstr, value):
+        self.connection.receive(bytearray.fromhex(hexstr))
+        assert self.connection.read_varint() == value
 
-        assert self.connection.read_varint() == 15
+        self.connection.write_varint(value)
+        assert self.connection.flush() == bytearray.fromhex(hexstr)
 
-    def test_writeSimpleVarInt(self):
-        self.connection.write_varint(15)
+    def test_varint_cases(self):
+        self._assert_varint_read_write("00", 0)
+        self._assert_varint_read_write("01", 1)
+        self._assert_varint_read_write("0F", 15)
+        self._assert_varint_read_write("FFFFFFFF07", 2147483647)
 
-        assert self.connection.flush() == bytearray.fromhex("0F")
-
-    def test_readBigVarInt(self):
-        self.connection.receive(bytearray.fromhex("FFFFFFFF07"))
-
-        assert self.connection.read_varint() == 2147483647
-
-    def test_writeBigVarInt(self):
-        self.connection.write_varint(2147483647)
-
-        assert self.connection.flush() == bytearray.fromhex("FFFFFFFF07")
+        self._assert_varint_read_write("FFFFFFFF0F", -1)
+        self._assert_varint_read_write("8080808008", -2147483648)
 
     def test_readInvalidVarInt(self):
         self.connection.receive(bytearray.fromhex("FFFFFFFF80"))
@@ -74,24 +70,6 @@ class TestConnection:
             self.connection.write_varint(2147483648)
         with pytest.raises(ValueError):
             self.connection.write_varint(-2147483649)
-
-    def test_readNegativeVarInt(self):
-        self.connection.receive(bytearray.fromhex("FFFFFFFF0F"))
-
-        assert self.connection.read_varint() == -1
-
-    def test_writeNegativeVarInt(self):
-        self.connection.write_varint(-1)
-
-        assert self.connection.flush() == bytearray.fromhex("FFFFFFFF0F")
-        self.connection.write_varint(-2147483648)
-
-        assert self.connection.flush() == bytearray.fromhex("8080808008")
-
-    def test_readLargeNegativeVarInt(self):
-        self.connection.receive(bytearray.fromhex("8080808008"))
-
-        assert self.connection.read_varint() == -2147483648
 
     def test_readUtf(self):
         self.connection.receive(bytearray.fromhex("0D48656C6C6F2C20776F726C6421"))

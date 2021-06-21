@@ -9,6 +9,7 @@ from ctypes import c_int32 as signed_int32
 
 from ..scripts.address_tools import ip_type
 
+
 class Connection:
     def __init__(self):
         self.sent = bytearray()
@@ -54,9 +55,9 @@ class Connection:
                 return signed_int32(result).value
         raise IOError("Server sent a varint that was too big!")
 
-    def write_varint(self, value): 
-        if value < -2 ** 31 or 2 ** 31 - 1 < value:
-            raise ValueError("Minecraft varints must be in the range of [-2**31, 2**31 - 1]")
+    def write_varint(self, value):
+        if value < -(2 ** 31) or 2 ** 31 - 1 < value:
+            raise ValueError("Minecraft varints must be in the range of [-2**31, 2**31 - 1].")
         remaining = unsigned_int32(value).value
         for i in range(5):
             if remaining & ~0x7F == 0:
@@ -64,7 +65,6 @@ class Connection:
                 return
             self.write(struct.pack("!B", remaining & 0x7F | 0x80))
             remaining >>= 7
-        raise ValueError("The value %d is too big to send in a varint" % value)
 
     def read_utf(self):
         length = self.read_varint()
