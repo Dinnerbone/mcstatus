@@ -23,6 +23,7 @@ class TestMinecraftQuerier:
         response = self.querier.read_query()
         conn_bytes = self.querier.connection.flush()
         assert conn_bytes[:3] == bytearray.fromhex("FEFD00")
+        assert conn_bytes[7:] == bytearray.fromhex("0000000000000000")
         assert response.raw == {
             "hostname": "A Minecraft Server",
             "gametype": "SMP",
