@@ -9,7 +9,7 @@ with open("test-requirements.txt") as f:
 
 setup(
     name="mcstatus",
-    version="6.1.1",
+    version="6.1.2",
     author="Nathan Adams",
     author_email="dinnerbone@dinnerbone.com",
     url="https://pypi.python.org/pypi/mcstatus",
