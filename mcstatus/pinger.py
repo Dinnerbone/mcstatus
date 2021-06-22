@@ -255,7 +255,4 @@ class PingResponse:
         else:
             self.description = raw["description"]
 
-        if "favicon" in raw:
-            self.favicon = raw["favicon"]
-        else:
-            self.favicon = None
+        self.favicon = raw.get("favicon")
