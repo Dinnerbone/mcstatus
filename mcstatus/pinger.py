@@ -7,6 +7,25 @@ from six import string_types
 
 from mcstatus.protocol.connection import Connection
 
+COLOR_MAP = {
+    "dark_red": "4",
+    "red": "c",
+    "gold": "6",
+    "yellow": "e",
+    "dark_green": "2",
+    "green": "a",
+    "aqua": "b",
+    "dark_aqua": "3",
+    "dark_blue": "1",
+    "blue": "9",
+    "light_purple": "d",
+    "dark_purple": "5",
+    "white": "f",
+    "gray": "7",
+    "dark_gray": "8",
+    "black": "0"
+}
+
 
 class ServerPinger:
     def __init__(
@@ -204,8 +223,35 @@ class PingResponse:
 
         if "description" not in raw:
             raise ValueError("Invalid status object (no 'description' value)")
-        if isinstance(raw["description"], dict):
-            self.description = raw["description"]["text"]
+        if isinstance(raw["description"], (dict, list)):
+            if isinstance(raw["description"], dict):
+                entries = raw["description"].get("extra", ())
+                end = raw["description"]["text"]
+            else:
+                entries = raw["description"]
+                end = ""
+
+            description = ""
+
+            for entry in entries:
+                if entry.get("bold"):
+                    description += "§l"
+
+                if entry.get("italic"):
+                    description += "§o"
+
+                if entry.get("underlined"):
+                    description += "§n"
+
+                if entry.get("obfuscated"):
+                    description += "§k"
+
+                if entry.get("color"):
+                    description += "§" + COLOR_MAP[entry["color"]]
+
+                description += entry.get("text", "")
+
+            self.description = description + end
         else:
             self.description = raw["description"]
 
