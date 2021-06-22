@@ -9,7 +9,7 @@ from mcstatus.protocol.connection import TCPAsyncSocketConnection
 
 class FakeAsyncStream(StreamReader):
     async def read(self, n: int = ...) -> bytes:
-        await asyncio.sleep(delay=10**3)
+        await asyncio.sleep(delay=2)
         return bytes([0] * n)
 
 
