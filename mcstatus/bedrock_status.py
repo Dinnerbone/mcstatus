@@ -32,6 +32,7 @@ class BedrockServerStatus:
         return BedrockStatusResponse(
             protocol=decoded_data[2],
             brand=decoded_data[0],
+            version=decoded_data[3],
             latency=latency,
             players_online=decoded_data[4],
             players_max=decoded_data[5],
@@ -70,14 +71,16 @@ class BedrockServerStatus:
 
 class BedrockStatusResponse:
     class Version:
-        def __init__(self, protocol, brand):
+        def __init__(self, protocol, brand, version):
             self.protocol = protocol
             self.brand = brand
+            self.version = version
 
     def __init__(
         self,
         protocol,
         brand,
+        version,
         latency,
         players_online,
         players_max,
@@ -85,7 +88,7 @@ class BedrockStatusResponse:
         map_,
         gamemode,
     ):
-        self.version = self.Version(protocol, brand)
+        self.version = self.Version(protocol, brand, version)
         self.latency = latency
         self.players_online = players_online
         self.players_max = players_max
