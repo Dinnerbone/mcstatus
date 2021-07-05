@@ -10,6 +10,8 @@ from mcstatus.protocol.connection import (
 
 
 class TestConnection:
+    connection: Connection
+
     def setup_method(self):
         self.connection = Connection()
 

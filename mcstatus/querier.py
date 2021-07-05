@@ -18,7 +18,7 @@ class ServerQuerier:
     @staticmethod
     def _generate_session_id():
         # minecraft only supports lower 4 bits
-        return random.randint(0, 2**31) & 0x0F0F0F0F
+        return random.randint(0, 2 ** 31) & 0x0F0F0F0F
 
     def _create_packet(self):
         packet = Connection()

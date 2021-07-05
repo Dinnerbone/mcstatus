@@ -1,7 +1,9 @@
 -r requirements.txt
+black
 coverage
 mock>=3.0.5
 pytest
 pytest-asyncio
 pytest-cov
+pytype
 twine

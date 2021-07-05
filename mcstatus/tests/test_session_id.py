@@ -19,5 +19,5 @@ class TestHandshake:
 
         conn_bytes = self.querier.connection.flush()
         assert conn_bytes[:3] == bytearray.fromhex("FEFD09")
-        assert conn_bytes[3:] == session_id().to_bytes(4, byteorder='big')
+        assert conn_bytes[3:] == session_id().to_bytes(4, byteorder="big")
         assert self.querier.challenge == 570350778
