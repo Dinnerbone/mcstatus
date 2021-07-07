@@ -8,7 +8,7 @@ from mcstatus.protocol.connection import TCPAsyncSocketConnection
 
 
 class FakeAsyncStream(StreamReader):
-    async def read(self, n: int = ...) -> bytes:
+    async def read(self, n: int) -> bytes:
         await asyncio.sleep(delay=2)
         return bytes([0] * n)
 
@@ -30,7 +30,7 @@ class TestAsyncSocketConnection:
         loop = asyncio.get_event_loop()
         with patch("asyncio.open_connection") as open_conn:
             open_conn.return_value = (FakeAsyncStream(), None)
-            loop.run_until_complete(self.tcp_async_socket.connect('dummy_address', timeout=0.01))
+            loop.run_until_complete(self.tcp_async_socket.connect("dummy_address", timeout=0.01))
 
             with pytest.raises(TimeoutError):
                 loop.run_until_complete(self.tcp_async_socket.read(10))

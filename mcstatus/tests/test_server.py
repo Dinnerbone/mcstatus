@@ -8,6 +8,8 @@ from mcstatus.server import MinecraftServer
 
 
 class MockProtocolFactory(asyncio.Protocol):
+    transport: asyncio.Transport
+
     def __init__(self, data_expected_to_receive, data_to_respond_with):
         self.data_expected_to_receive = data_expected_to_receive
         self.data_to_respond_with = data_to_respond_with
