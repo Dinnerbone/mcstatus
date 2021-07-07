@@ -23,7 +23,7 @@ COLOR_MAP = {
     "white": "f",
     "gray": "7",
     "dark_gray": "8",
-    "black": "0"
+    "black": "0",
 }
 
 
