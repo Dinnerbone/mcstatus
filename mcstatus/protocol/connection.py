@@ -255,18 +255,20 @@ class UDPSocketConnection(Connection):
 class TCPAsyncSocketConnection(AsyncReadConnection):
     reader = None
     writer = None
+    timeout = None
 
     def __init__(self):
         super().__init__()
 
     async def connect(self, addr, timeout=3):
+        self.timeout = timeout
         conn = asyncio.open_connection(addr[0], addr[1])
-        self.reader, self.writer = await asyncio.wait_for(conn, timeout=timeout)
+        self.reader, self.writer = await asyncio.wait_for(conn, timeout=self.timeout)
 
     async def read(self, length):
         result = bytearray()
         while len(result) < length:
-            new = await self.reader.read(length - len(result))
+            new = await asyncio.wait_for(self.reader.read(length - len(result)), timeout=self.timeout)
             if len(new) == 0:
                 raise IOError("Server did not respond with any information!")
             result.extend(new)

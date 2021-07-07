@@ -18,13 +18,11 @@ class MockProtocolFactory(asyncio.Protocol):
 
     def connection_lost(self, exc):
         print("connection_lost")
+        self.transport.close()
 
     def data_received(self, data):
-        try:
-            assert self.data_expected_to_receive in data
-            self.transport.write(self.data_to_respond_with)
-        finally:
-            self.transport.close()
+        assert self.data_expected_to_receive in data
+        self.transport.write(self.data_to_respond_with)
 
     def eof_received(self):
         print("eof_received")
