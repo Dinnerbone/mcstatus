@@ -1,3 +1,4 @@
+import asyncio
 import socket
 import struct
 from time import perf_counter
@@ -56,10 +57,11 @@ class BedrockServerStatus:
         start = perf_counter()
 
         try:
-            stream = await asyncio_dgram.connect((self.host, self.port))
+            conn = asyncio_dgram.connect((self.host, self.port))
+            stream = await asyncio.wait_for(conn, timeout=self.timeout)
 
-            await stream.send(self.request_status_data)
-            data, _ = await stream.recv()
+            await asyncio.wait_for(stream.send(self.request_status_data), timeout=self.timeout)
+            data, _ = await asyncio.wait_for(stream.recv(), timeout=self.timeout)
         finally:
             try:
                 stream.close()
