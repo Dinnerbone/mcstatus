@@ -208,9 +208,9 @@ class MinecraftBedrockServer:
     :attr port:
     """
 
-    def __init__(self, host: str, port: int = None):
+    def __init__(self, host: str, port: int = 19132):
         self.host = host
-        self.port = port or 19132
+        self.port = port
 
     @classmethod
     def lookup(cls, address: str):
