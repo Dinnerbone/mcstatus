@@ -46,6 +46,9 @@ twine = "^3.5.0"
 black = "^21.10b0"
 pytype = "^2021.11.2"
 
+[tool.poetry.scripts]
+mcstatus = 'mcstatus.scripts.mcstatus:cli'
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
