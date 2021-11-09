@@ -55,6 +55,7 @@ class BedrockServerStatus:
 
     async def read_status_async(self):
         start = perf_counter()
+        stream = None
 
         try:
             conn = asyncio_dgram.connect((self.host, self.port))
@@ -63,10 +64,8 @@ class BedrockServerStatus:
             await asyncio.wait_for(stream.send(self.request_status_data), timeout=self.timeout)
             data, _ = await asyncio.wait_for(stream.recv(), timeout=self.timeout)
         finally:
-            try:
+            if stream is not None:
                 stream.close()
-            except BaseException:
-                pass
 
         return self.parse_response(data, (perf_counter() - start))
 
