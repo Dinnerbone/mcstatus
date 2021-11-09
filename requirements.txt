@@ -1,4 +1,0 @@
-asyncio-dgram>=1.2.0
-click>=7.1.1
-dnspython>=2.1.0
-six>=1.14.0
