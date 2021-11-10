@@ -5,7 +5,6 @@ description = "A library to query Minecraft Servers for their status and capabil
 authors = ["Nathan Adams <dinnerbone@dinnerbone.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://dinnerbone.com/minecraft/tools/status/"
 repository = "https://github.com/Dinnerbone/mcstatus"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
