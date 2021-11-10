@@ -49,7 +49,7 @@ def ping():
     """
     Ping server for latency.
     """
-    click.echo("{}ms".format(server.ping()))
+    click.echo(f"{server.ping()}ms")
 
 
 @cli.command(short_help="basic server information")
@@ -59,17 +59,14 @@ def status():
     servers that are version 1.7 or higher.
     """
     response = server.status()
-    click.echo("version: v{} (protocol {})".format(response.version.name, response.version.protocol))
-    click.echo('description: "{}"'.format(response.description))
-    click.echo(
-        "players: {}/{} {}".format(
-            response.players.online,
-            response.players.max,
-            ["{} ({})".format(player.name, player.id) for player in response.players.sample]
-            if response.players.sample is not None
-            else "No players online",
-        )
-    )
+    if response.players.sample is not None:
+        player_sample = str([f"{player.name} ({player.id})" for player in response.players.sample])
+    else:
+        player_sample = "No players online"
+
+    click.echo(f"version: v{response.version.name} (protocol {response.version.protocol})")
+    click.echo(f'description: "{response.description}"')
+    click.echo(f"players: {response.players.online}/{response.players.max} {player_sample}")
 
 
 @cli.command(short_help="all available server information in json")
@@ -121,17 +118,11 @@ def query():
               See https://wiki.vg/Query for further information."""
         )
         raise click.Abort()
-    click.echo("host: {}:{}".format(response.raw["hostip"], response.raw["hostport"]))
-    click.echo("software: v{} {}".format(response.software.version, response.software.brand))
-    click.echo("plugins: {}".format(response.software.plugins))
-    click.echo('motd: "{}"'.format(response.motd))
-    click.echo(
-        "players: {}/{} {}".format(
-            response.players.online,
-            response.players.max,
-            response.players.names,
-        )
-    )
+    click.echo(f"host: {response.raw['hostip']}:{response.raw['hostport']}")
+    click.echo(f"software: v{response.software.version} {response.software.brand}")
+    click.echo(f"plugins: {response.software.plugins}")
+    click.echo(f'motd: "{response.motd}"')
+    click.echo(f"players: {response.players.online}/{response.players.max} {response.players.names}")
 
 
 if __name__ == "__main__":
