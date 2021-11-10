@@ -1,0 +1,53 @@
+[tool.poetry]
+name = "mcstatus"
+version = "7.0.0"
+description = "A library to query Minecraft Servers for their status and capabilities."
+authors = ["Nathan Adams <dinnerbone@dinnerbone.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/Dinnerbone/mcstatus"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Games/Entertainment",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Monitoring",
+]
+packages = [
+    { include = "mcstatus" },
+    { include = "protocol", from = "mcstatus" },
+    { include = "scripts", from = "mcstatus" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.6.2,<3.10"
+asyncio-dgram = "1.2.0"
+click = "7.1.2"
+dnspython = "2.1.0"
+six = "1.14.0"
+
+[tool.poetry.dev-dependencies]
+coverage = "^6.1.1"
+mock = "3.0.5"
+pytest = "^6.2.5"
+pytest-asyncio = "^0.16.0"
+pytest-cov = "^3.0.0"
+twine = "^3.5.0"
+black = "^21.10b0"
+pytype = "^2021.11.2"
+
+[tool.poetry.scripts]
+mcstatus = 'mcstatus.scripts.mcstatus:cli'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
