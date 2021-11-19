@@ -13,5 +13,5 @@ def ip_type(address):
 def parse_address(address):
     tmp = urlparse("//" + address)
     if not tmp.hostname:
-        raise ValueError("Invalid address '%s'" % address)
+        raise ValueError(f"Invalid address '{address}'")
     return (tmp.hostname, tmp.port)
