@@ -87,7 +87,6 @@ class MinecraftServer:
                 pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
                 pinger.handshake()
                 ping = await pinger.test_ping()
-                connection.close()
                 return ping
             except Exception as e:
                 exception_to_raise_after_giving_up = e
