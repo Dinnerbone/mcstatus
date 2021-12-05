@@ -277,8 +277,11 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
     def write(self, data):
         self.writer.write(data)
 
-    def close(self):
-        self.writer.close()
+    def __del__(self):
+        try:
+            self.writer.close()
+        except:
+            pass
 
 
 class UDPAsyncSocketConnection(AsyncReadConnection):
