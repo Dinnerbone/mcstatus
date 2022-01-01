@@ -1,27 +1,33 @@
 import datetime
 import json
 import random
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from mcstatus.protocol.connection import Connection
 
-COLOR_MAP = {
-    "dark_red": "4",
-    "red": "c",
-    "gold": "6",
-    "yellow": "e",
-    "dark_green": "2",
-    "green": "a",
-    "aqua": "b",
-    "dark_aqua": "3",
-    "dark_blue": "1",
-    "blue": "9",
-    "light_purple": "d",
-    "dark_purple": "5",
-    "white": "f",
-    "gray": "7",
-    "dark_gray": "8",
-    "black": "0",
+STYLE_MAP = {
+    "bold": "l",
+    "italic": "o",
+    "underlined": "n",
+    "obfuscated": "k",
+    "color": {
+        "dark_red": "4",
+        "red": "c",
+        "gold": "6",
+        "yellow": "e",
+        "dark_green": "2",
+        "green": "a",
+        "aqua": "b",
+        "dark_aqua": "3",
+        "dark_blue": "1",
+        "blue": "9",
+        "light_purple": "d",
+        "dark_purple": "5",
+        "white": "f",
+        "gray": "7",
+        "dark_gray": "8",
+        "black": "0",
+    },
 }
 
 
@@ -219,36 +225,30 @@ class PingResponse:
 
         if "description" not in raw:
             raise ValueError("Invalid status object (no 'description' value)")
-        if isinstance(raw["description"], (dict, list)):
-            if isinstance(raw["description"], dict):
-                entries = raw["description"].get("extra", ())
-                end = raw["description"]["text"]
-            else:
-                entries = raw["description"]
-                end = ""
-
-            description = ""
-
-            for entry in entries:
-                if entry.get("bold"):
-                    description += "§l"
-
-                if entry.get("italic"):
-                    description += "§o"
-
-                if entry.get("underlined"):
-                    description += "§n"
-
-                if entry.get("obfuscated"):
-                    description += "§k"
-
-                if entry.get("color"):
-                    description += "§" + COLOR_MAP[entry["color"]]
-
-                description += entry.get("text", "")
-
-            self.description = description + end
-        else:
-            self.description = raw["description"]
+        self.description = self._parse_description(raw["description"])
 
         self.favicon = raw.get("favicon")
+
+    @staticmethod
+    def _parse_description(raw_description: Union[dict, list, str]) -> str:
+        if isinstance(raw_description, str):
+            return raw_description
+
+        if isinstance(raw_description, dict):
+            entries = raw_description.get("extra", ())
+            end = raw_description["text"]
+        else:
+            entries = raw_description
+            end = ""
+
+        description = ""
+
+        for entry in entries:
+            for style_key, style_val in STYLE_MAP.items():
+                if entry.get(style_key):
+                    while isinstance(style_val, dict):
+                        style_val = style_val[entry[style_key]]
+
+                    description += f"§{style_val}"
+
+        return description + end
