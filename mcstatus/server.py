@@ -153,7 +153,7 @@ class MinecraftServer:
             if len(answers):
                 answer = answers[0]
                 host = str(answer).rstrip(".")
-        except Exception as e:
+        except Exception:
             pass
 
         exception_to_raise_after_giving_up: Exception
@@ -181,7 +181,7 @@ class MinecraftServer:
             if len(answers):
                 answer = answers[0]
                 host = str(answer).rstrip(".")
-        except Exception as e:
+        except Exception:
             pass
 
         exception_to_raise_after_giving_up: BaseException
