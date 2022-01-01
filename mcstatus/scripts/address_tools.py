@@ -1,4 +1,3 @@
-import socket
 from urllib.parse import urlparse
 from ipaddress import ip_address
 
