@@ -89,8 +89,7 @@ class ServerPinger:
             )
 
         delta = received - sent
-        # We have no trivial way of getting a time delta :(
-        return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
+        return delta.total_seconds() * 1000
 
 
 class AsyncServerPinger(ServerPinger):
@@ -129,8 +128,7 @@ class AsyncServerPinger(ServerPinger):
             )
 
         delta = received - sent
-        # We have no trivial way of getting a time delta :(
-        return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
+        return delta.total_seconds() * 1000
 
 
 class PingResponse:
