@@ -1,5 +1,4 @@
 import socket
-from typing import Any
 import click
 from json import dumps as json_dumps
 
