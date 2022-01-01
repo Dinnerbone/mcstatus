@@ -59,7 +59,7 @@ class Connection:
         if value < -(2 ** 31) or 2 ** 31 - 1 < value:
             raise ValueError("Minecraft varints must be in the range of [-2**31, 2**31 - 1].")
         remaining = unsigned_int32(value).value
-        for i in range(5):
+        for _ in range(5):
             if remaining & ~0x7F == 0:
                 self.write(struct.pack("!B", remaining))
                 return
