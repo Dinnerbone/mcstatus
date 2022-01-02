@@ -119,7 +119,7 @@ class QueryResponse:
             self.map = raw["map"]
             self.players = QueryResponse.Players(raw["numplayers"], raw["maxplayers"], players)
             self.software = QueryResponse.Software(raw["version"], raw["plugins"])
-        except:
+        except KeyError:
             raise ValueError("The provided data is not valid")
 
     @classmethod

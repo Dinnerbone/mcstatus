@@ -9,6 +9,7 @@ from mcstatus.querier import QueryResponse, ServerQuerier, AsyncServerQuerier
 from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 from mcstatus.scripts.address_tools import parse_address
 import dns.resolver
+from dns.exception import DNSException
 
 __all__ = ["MinecraftServer", "MinecraftBedrockServer"]
 
@@ -153,7 +154,7 @@ class MinecraftServer:
             if len(answers):
                 answer = answers[0]
                 host = str(answer).rstrip(".")
-        except Exception:
+        except DNSException:
             pass
 
         exception_to_raise_after_giving_up: Exception
@@ -181,7 +182,7 @@ class MinecraftServer:
             if len(answers):
                 answer = answers[0]
                 host = str(answer).rstrip(".")
-        except Exception:
+        except DNSException:
             pass
 
         exception_to_raise_after_giving_up: BaseException
