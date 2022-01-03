@@ -3,8 +3,6 @@ import json
 import random
 from typing import List, Optional
 
-from six import string_types
-
 from mcstatus.protocol.connection import Connection
 
 COLOR_MAP = {
@@ -89,8 +87,7 @@ class ServerPinger:
             )
 
         delta = received - sent
-        # We have no trivial way of getting a time delta :(
-        return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
+        return delta.total_seconds() * 1000
 
 
 class AsyncServerPinger(ServerPinger):
@@ -129,8 +126,7 @@ class AsyncServerPinger(ServerPinger):
             )
 
         delta = received - sent
-        # We have no trivial way of getting a time delta :(
-        return (delta.days * 24 * 60 * 60 + delta.seconds) * 1000 + delta.microseconds / 1000.0
+        return delta.total_seconds() * 1000
 
 
 class PingResponse:
@@ -147,13 +143,13 @@ class PingResponse:
 
                 if "name" not in raw:
                     raise ValueError("Invalid player object (no 'name' value)")
-                if not isinstance(raw["name"], string_types):
+                if not isinstance(raw["name"], str):
                     raise ValueError(f"Invalid player object (expected 'name' to be str, was {type(raw['name'])}")
                 self.name = raw["name"]
 
                 if "id" not in raw:
                     raise ValueError("Invalid player object (no 'id' value)")
-                if not isinstance(raw["id"], string_types):
+                if not isinstance(raw["id"], str):
                     raise ValueError(f"Invalid player object (expected 'id' to be str, was {type(raw['id'])}")
                 self.id = raw["id"]
 
@@ -194,7 +190,7 @@ class PingResponse:
 
             if "name" not in raw:
                 raise ValueError("Invalid version object (no 'name' value)")
-            if not isinstance(raw["name"], string_types):
+            if not isinstance(raw["name"], str):
                 raise ValueError(f"Invalid version object (expected 'name' to be str, was {type(raw['name'])})")
             self.name = raw["name"]
 
