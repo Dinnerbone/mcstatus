@@ -1,9 +1,9 @@
 import asyncio
-from typing import Callable, Iterable, Type
+from typing import Callable, Tuple, Type
 from functools import wraps
 
 
-def retry(tries: int, exceptions: Iterable[Type[Exception]] = (Exception,)) -> Callable:
+def retry(tries: int, exceptions: Tuple[Type[Exception]] = (Exception,)) -> Callable:
     """
     Decorator that re-runs given function tries times if error occurs.
 
