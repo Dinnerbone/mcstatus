@@ -46,7 +46,10 @@ pathspec = ">=0.9.0,<1"
 platformdirs = ">=2"
 tomli = ">=0.2.6,<2.0.0"
 typed-ast = {version = ">=1.4.2", markers = "python_version < \"3.8\" and implementation_name == \"cpython\""}
-typing-extensions = ">=3.10.0.0"
+typing-extensions = [
+    {version = ">=3.10.0.0", markers = "python_version < \"3.10\""},
+    {version = "!=3.10.0.1", markers = "python_version >= \"3.10\""},
+]
 
 [package.extras]
 colorama = ["colorama (>=0.4.3)"]
@@ -782,8 +785,8 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.7,<3.10"
-content-hash = "fd8dd8e29049e857b7edf7da5803591d4eeb416e790e6eb5a9f3c9a1222de0e4"
+python-versions = ">=3.7"
+content-hash = "9e819727883898bb2d4f2bd80e98f1488c66584232802e51325d534e15639edd"
 
 [metadata.files]
 asyncio-dgram = [
