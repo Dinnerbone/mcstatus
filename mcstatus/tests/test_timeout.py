@@ -17,10 +17,6 @@ async def fake_asyncio_asyncio_open_connection(hostname, port):
     return FakeAsyncStream(), None
 
 
-@pytest.mark.skipif(
-    sys.platform.startswith("win"),
-    reason="async bug on Windows https://github.com/Dinnerbone/mcstatus/issues/140",
-)
 class TestAsyncSocketConnection:
     def setup_method(self):
         self.tcp_async_socket = TCPAsyncSocketConnection()
