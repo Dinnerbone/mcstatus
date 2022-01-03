@@ -34,6 +34,7 @@ asyncio-dgram = "1.2.0"
 click = "7.1.2"
 dnspython = "2.1.0"
 six = "1.14.0"
+tox-poetry = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
 coverage = "^6.1.1"
