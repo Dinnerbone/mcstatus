@@ -13,11 +13,14 @@ class FakeAsyncStream(asyncio.StreamReader):
         return bytes([0] * n)
 
 
-def fake_asyncio_asyncio_open_connection(hostname, port):
+async def fake_asyncio_asyncio_open_connection(hostname, port):
     return FakeAsyncStream(), None
 
 
-@pytest.mark.skipif(sys.platform.startswith("win"), reason="async bug on Windows https://github.com/Dinnerbone/mcstatus/issues/140")
+@pytest.mark.skipif(
+    sys.platform.startswith("win"),
+    reason="async bug on Windows https://github.com/Dinnerbone/mcstatus/issues/140",
+)
 class TestAsyncSocketConnection:
     def setup_method(self):
         self.tcp_async_socket = TCPAsyncSocketConnection()
@@ -29,8 +32,7 @@ class TestAsyncSocketConnection:
             from asyncio import TimeoutError
 
         loop = asyncio.get_event_loop()
-        with patch("asyncio.open_connection") as open_conn:
-            open_conn.return_value = (FakeAsyncStream(), None)
+        with patch("asyncio.open_connection", fake_asyncio_asyncio_open_connection) as open_conn:
             loop.run_until_complete(self.tcp_async_socket.connect("dummy_address", timeout=0.01))
 
             with pytest.raises(TimeoutError):
