@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mcstatus"
-version = "7.0.0"
+version = "8.0.0"
 description = "A library to query Minecraft Servers for their status and capabilities."
 authors = ["Nathan Adams <dinnerbone@dinnerbone.com>"]
 license = "Apache-2.0"
