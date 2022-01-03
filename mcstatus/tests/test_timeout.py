@@ -1,5 +1,4 @@
 from mock import patch
-import sys
 
 import asyncio
 import pytest

@@ -1,4 +1,5 @@
 import asyncio
+import sys
 
 from mock import patch, Mock
 import pytest
