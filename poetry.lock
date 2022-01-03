@@ -41,7 +41,6 @@ python-versions = ">=3.6.2"
 
 [package.dependencies]
 click = ">=7.1.2"
-dataclasses = {version = ">=0.6", markers = "python_version < \"3.7\""}
 mypy-extensions = ">=0.4.3"
 pathspec = ">=0.9.0,<1"
 platformdirs = ">=2"
@@ -147,14 +146,6 @@ pep8test = ["black", "flake8", "flake8-import-order", "pep8-naming"]
 sdist = ["setuptools_rust (>=0.11.4)"]
 ssh = ["bcrypt (>=3.1.5)"]
 test = ["pytest (>=6.2.0)", "pytest-cov", "pytest-subtests", "pytest-xdist", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
-
-[[package]]
-name = "dataclasses"
-version = "0.8"
-description = "A backport of the dataclasses module for Python 3.6"
-category = "dev"
-optional = false
-python-versions = ">=3.6, <3.7"
 
 [[package]]
 name = "decorator"
@@ -270,7 +261,6 @@ optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
-dataclasses = {version = ">=0.6.0", markers = "python_version < \"3.7\""}
 pyyaml = ">=5.2"
 typing-extensions = ">=3.7.4.2"
 typing-inspect = ">=0.4.0"
@@ -490,7 +480,6 @@ python-versions = "<3.10,>=3.6"
 
 [package.dependencies]
 attrs = ">=21.2.0"
-dataclasses = {version = "*", markers = "python_version < \"3.7\""}
 importlab = ">=0.6.1"
 libcst = "*"
 ninja = ">=1.10.0.post2"
@@ -715,8 +704,8 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.6.2,<3.10"
-content-hash = "4fa98019664f49a225a3be36652efb83f83306e034b00ee71e0f0490a4fa6c3e"
+python-versions = ">=3.7,<3.10"
+content-hash = "abd1f632b61248f8b6f8675e774ca00cf7309558c3295a84d4eb6bc540c58178"
 
 [metadata.files]
 asyncio-dgram = [
@@ -879,10 +868,6 @@ cryptography = [
     {file = "cryptography-36.0.0-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:d73e3a96c38173e0aa5646c31bf8473bc3564837977dd480f5cbeacf1d7ef3a3"},
     {file = "cryptography-36.0.0.tar.gz", hash = "sha256:52f769ecb4ef39865719aedc67b4b7eae167bafa48dbc2a26dd36fa56460507f"},
 ]
-dataclasses = [
-    {file = "dataclasses-0.8-py3-none-any.whl", hash = "sha256:0201d89fa866f68c8ebd9d08ee6ff50c0b255f8ec63a71c16fda7af82bb887bf"},
-    {file = "dataclasses-0.8.tar.gz", hash = "sha256:8479067f342acf957dc82ec415d355ab5edb7e7646b90dc6e2fd1d96ad084c97"},
-]
 decorator = [
     {file = "decorator-4.4.2-py2.py3-none-any.whl", hash = "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760"},
     {file = "decorator-4.4.2.tar.gz", hash = "sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7"},
@@ -999,6 +984,18 @@ pytest-cov = [
     {file = "pytest_cov-3.0.0-py3-none-any.whl", hash = "sha256:578d5d15ac4a25e5f961c938b85a05b09fdaae9deef3bb6de9a6e766622ca7a6"},
 ]
 pytype = [
+    {file = "pytype-2021.12.8-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:40fe568ef4e0a7f6f5a80452e819b8e87430e304d53724f82204c35f6d4c0f02"},
+    {file = "pytype-2021.12.8-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:715e38e37bdbbf5701703c8cc94b6b0de8eed4237cd5452d4920a5170092bd0a"},
+    {file = "pytype-2021.12.8-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:765905af299da56f7223e24588727e1db68949e227f4de52ab51ae6070bba1b9"},
+    {file = "pytype-2021.12.8-cp37-cp37m-macosx_10_14_x86_64.whl", hash = "sha256:455c7d4f1e532905887c8e1cbf5a0619759254ff13ca3a692ad989417a7a1bcb"},
+    {file = "pytype-2021.12.8-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:940891d8e52feb2f84bcb3ade07ac3a83044f450750de7091855cb63bc7e4c10"},
+    {file = "pytype-2021.12.8-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:207e140a02acca7b2372b6d948e3c5e12d15f448a4e106ce48902290e7c290be"},
+    {file = "pytype-2021.12.8-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:c33b68e3de15520dd571c0143c72d0d93ecec1379d8470be1ed46ab8dd6e68ad"},
+    {file = "pytype-2021.12.8-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:09f09cd78a20593de75028798615bc5ba27c50e161ed2ca8fe0f617c48488e6b"},
+    {file = "pytype-2021.12.8-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:728c9a2f5d4ac76419ab25e914a34cf8ec1de37adeb6b0ed54177c7c946ac86f"},
+    {file = "pytype-2021.12.8-cp39-cp39-macosx_10_14_x86_64.whl", hash = "sha256:ef0af4068a90a79e2b58d05b7e1e67d116b771d2dee863e97445b350d780fae3"},
+    {file = "pytype-2021.12.8-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cfb9fbd65e656382eb931a8871e96b9fefcf7169212e5feb7ba238a1f8903e47"},
+    {file = "pytype-2021.12.8-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d38936bde0594136271532965ef9766b0822c2ee77b5552306c68605204e0ea4"},
     {file = "pytype-2021.12.8.tar.gz", hash = "sha256:ff9c3b854570a681348095f139d25050bf217c81a43db5880637de763dc9ee5b"},
 ]
 pywin32-ctypes = [
