@@ -1,4 +1,5 @@
 import asyncio
+import sys
 
 from mock import patch, Mock
 import pytest
@@ -57,6 +58,10 @@ async def create_mock_packet_server(event_loop):
 
 
 class TestAsyncMinecraftServer:
+    @pytest.mark.skipif(
+        sys.platform.startswith("win"),
+        reason="async bug on Windows https://github.com/Dinnerbone/mcstatus/issues/140",
+    )
     @pytest.mark.asyncio
     async def test_async_ping(self, unused_tcp_port, create_mock_packet_server):
         mock_packet_server = await create_mock_packet_server(

@@ -19,19 +19,22 @@ class MinecraftServer:
 
     :param str host: The host/address/ip of the Minecraft server.
     :param int port: The port that the server is on.
+    :param float timeout: The timeout in seconds before failing to connect.
     :attr host:
     :attr port:
     """
 
-    def __init__(self, host: str, port: int = 25565):
+    def __init__(self, host: str, port: int = 25565, timeout: float = 3):
         self.host = host
         self.port = port
+        self.timeout = timeout
 
     @classmethod
-    def lookup(cls, address: str):
+    def lookup(cls, address: str, timeout: float = 3):
         """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
 
         :param str address: The address of the Minecraft server, like `example.com:25565`.
+        :param float timeout: The timeout in seconds before failing to connect.
         :return: A `MinecraftServer` instance.
         :rtype: MinecraftServer
         """
@@ -48,7 +51,7 @@ class MinecraftServer:
             except Exception:
                 pass
 
-        return cls(host, port)
+        return cls(host, port, timeout)
 
     def ping(self, tries: int = 3, **kwargs) -> float:
         """Checks the latency between a Minecraft Java Edition server and the client (you).
@@ -59,7 +62,7 @@ class MinecraftServer:
         :rtype: float
         """
 
-        connection = TCPSocketConnection((self.host, self.port))
+        connection = TCPSocketConnection((self.host, self.port), self.timeout)
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
@@ -81,7 +84,7 @@ class MinecraftServer:
         """
 
         connection = TCPAsyncSocketConnection()
-        await connection.connect((self.host, self.port))
+        await connection.connect((self.host, self.port), self.timeout)
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
@@ -103,7 +106,7 @@ class MinecraftServer:
         :rtype: PingResponse
         """
 
-        connection = TCPSocketConnection((self.host, self.port))
+        connection = TCPSocketConnection((self.host, self.port), self.timeout)
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
@@ -127,7 +130,7 @@ class MinecraftServer:
         """
 
         connection = TCPAsyncSocketConnection()
-        await connection.connect((self.host, self.port))
+        await connection.connect((self.host, self.port), self.timeout)
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
@@ -160,7 +163,7 @@ class MinecraftServer:
         exception_to_raise_after_giving_up: Exception
         for _ in range(tries):
             try:
-                connection = UDPSocketConnection((host, self.port))
+                connection = UDPSocketConnection((host, self.port), self.timeout)
                 querier = ServerQuerier(connection)
                 querier.handshake()
                 return querier.read_query()
@@ -189,7 +192,7 @@ class MinecraftServer:
         for _ in range(tries):
             try:
                 connection = UDPAsyncSocketConnection()
-                await connection.connect((host, self.port))
+                await connection.connect((host, self.port), self.timeout)
                 querier = AsyncServerQuerier(connection)
                 await querier.handshake()
                 return await querier.read_query()
@@ -204,13 +207,15 @@ class MinecraftBedrockServer:
 
     :param str host: The host/address/ip of the Minecraft server.
     :param int port: The port that the server is on.
+    :param float timeout: The timeout in seconds before failing to connect.
     :attr host:
     :attr port:
     """
 
-    def __init__(self, host: str, port: int = 19132):
+    def __init__(self, host: str, port: int = 19132, timeout: float = 3):
         self.host = host
         self.port = port
+        self.timeout = timeout
 
     @classmethod
     def lookup(cls, address: str):
@@ -234,7 +239,7 @@ class MinecraftBedrockServer:
 
         for _ in range(tries):
             try:
-                resp = BedrockServerStatus(self.host, self.port, **kwargs).read_status()
+                resp = BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status()
                 break
             except BaseException as e:
                 exception = e
@@ -256,7 +261,7 @@ class MinecraftBedrockServer:
 
         for _ in range(tries):
             try:
-                resp = await BedrockServerStatus(self.host, self.port, **kwargs).read_status_async()
+                resp = await BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status_async()
                 break
             except BaseException as e:
                 exception = e
