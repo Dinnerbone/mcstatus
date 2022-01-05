@@ -53,7 +53,6 @@ class MinecraftServer:
 
         return cls(host, port, timeout)
 
-    @retry(tries=3)
     def ping(self, **kwargs) -> float:
         """Checks the latency between a Minecraft Java Edition server and the client (you).
 
@@ -63,11 +62,14 @@ class MinecraftServer:
         """
 
         connection = TCPSocketConnection((self.host, self.port), self.timeout)
+        return self._retry_ping(connection, **kwargs)
+
+    @retry(tries=3)
+    def _retry_ping(self, connection: TCPSocketConnection, **kwargs) -> float:
         pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
         pinger.handshake()
         return pinger.test_ping()
 
-    @retry(tries=3)
     async def async_ping(self, **kwargs) -> float:
         """Asynchronously checks the latency between a Minecraft Java Edition server and the client (you).
 
@@ -78,12 +80,15 @@ class MinecraftServer:
 
         connection = TCPAsyncSocketConnection()
         await connection.connect((self.host, self.port), self.timeout)
+        return await self._retry_async_ping(connection, **kwargs)
+
+    @retry(tries=3)
+    async def _retry_async_ping(self, connection: TCPAsyncSocketConnection, **kwargs) -> float:
         pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
         pinger.handshake()
         ping = await pinger.test_ping()
         return ping
 
-    @retry(tries=3)
     def status(self, **kwargs) -> PingResponse:
         """Checks the status of a Minecraft Java Edition server via the ping protocol.
 
@@ -93,13 +98,16 @@ class MinecraftServer:
         """
 
         connection = TCPSocketConnection((self.host, self.port), self.timeout)
+        return self._retry_status(connection, **kwargs)
+
+    @retry(tries=3)
+    def _retry_status(self, connection: TCPSocketConnection, **kwargs) -> PingResponse:
         pinger = ServerPinger(connection, host=self.host, port=self.port, **kwargs)
         pinger.handshake()
         result = pinger.read_status()
         result.latency = pinger.test_ping()
         return result
 
-    @retry(tries=3)
     async def async_status(self, **kwargs) -> PingResponse:
         """Asynchronously checks the status of a Minecraft Java Edition server via the ping protocol.
 
@@ -110,13 +118,16 @@ class MinecraftServer:
 
         connection = TCPAsyncSocketConnection()
         await connection.connect((self.host, self.port), self.timeout)
+        return await self._retry_async_status(connection, **kwargs)
+
+    @retry(tries=3)
+    async def _retry_async_status(self, connection: TCPAsyncSocketConnection, **kwargs) -> PingResponse:
         pinger = AsyncServerPinger(connection, host=self.host, port=self.port, **kwargs)
         pinger.handshake()
         result = await pinger.read_status()
         result.latency = await pinger.test_ping()
         return result
 
-    @retry(tries=3)
     def query(self) -> QueryResponse:
         """Checks the status of a Minecraft Java Edition server via the query protocol.
 
@@ -132,12 +143,15 @@ class MinecraftServer:
         except Exception as e:
             pass
 
+        return self._retry_query(host)
+
+    @retry(tries=3)
+    def _retry_query(self, host: str) -> QueryResponse:
         connection = UDPSocketConnection((host, self.port), self.timeout)
         querier = ServerQuerier(connection)
         querier.handshake()
         return querier.read_query()
 
-    @retry(tries=3)
     async def async_query(self) -> QueryResponse:
         """Asynchronously checks the status of a Minecraft Java Edition server via the query protocol.
 
@@ -153,6 +167,10 @@ class MinecraftServer:
         except Exception as e:
             pass
 
+        return await self._retry_async_query(host)
+
+    @retry(tries=3)
+    async def _retry_async_query(self, host) -> QueryResponse:
         connection = UDPAsyncSocketConnection()
         await connection.connect((host, self.port), self.timeout)
         querier = AsyncServerQuerier(connection)
