@@ -27,7 +27,7 @@ class TestAsyncSocketConnection:
             from asyncio import TimeoutError
 
         loop = asyncio.get_event_loop()
-        with patch("asyncio.open_connection", fake_asyncio_asyncio_open_connection) as open_conn:
+        with patch("asyncio.open_connection", fake_asyncio_asyncio_open_connection):
             loop.run_until_complete(self.tcp_async_socket.connect("dummy_address", timeout=0.01))
 
             with pytest.raises(TimeoutError):
