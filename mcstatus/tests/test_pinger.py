@@ -116,7 +116,7 @@ class TestPingResponse:
             }
         )
 
-        assert response.version != None
+        assert response.version is not None
         assert response.version.name == "1.8-pre1"
         assert response.version.protocol == 44
 
@@ -148,7 +148,7 @@ class TestPingResponse:
             }
         )
 
-        assert response.players != None
+        assert response.players is not None
         assert response.players.max == 20
         assert response.players.online == 5
 
@@ -182,7 +182,7 @@ class TestPingResponse:
             }
         )
 
-        assert response.favicon == None
+        assert response.favicon is None
 
 
 class TestPingResponsePlayers:
@@ -221,7 +221,7 @@ class TestPingResponsePlayers:
             }
         )
 
-        assert players.sample != None
+        assert players.sample is not None
         assert players.sample[0].name == "Dinnerbone"
 
     def test_sample_invalid(self):
@@ -230,7 +230,7 @@ class TestPingResponsePlayers:
 
     def test_sample_missing(self):
         players = PingResponse.Players({"max": 20, "online": 1})
-        assert players.sample == None
+        assert players.sample is None
 
 
 class TestPingResponsePlayersPlayer:
