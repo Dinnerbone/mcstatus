@@ -1,5 +1,5 @@
 from mcstatus.protocol.connection import Connection
-from mcstatus.querier import QueryResponse, AsyncServerQuerier
+from mcstatus.querier import AsyncServerQuerier
 from mcstatus.tests.test_async_pinger import async_decorator
 
 

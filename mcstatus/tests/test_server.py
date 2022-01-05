@@ -4,7 +4,7 @@ import sys
 from mock import patch, Mock
 import pytest
 
-from mcstatus.protocol.connection import Connection, TCPAsyncSocketConnection
+from mcstatus.protocol.connection import Connection
 from mcstatus.server import MinecraftServer
 
 

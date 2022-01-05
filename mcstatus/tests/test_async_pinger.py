@@ -2,8 +2,7 @@ import asyncio
 import pytest
 
 from mcstatus.protocol.connection import Connection
-from mcstatus.pinger import AsyncServerPinger, PingResponse
-from mcstatus.server import MinecraftServer
+from mcstatus.pinger import AsyncServerPinger
 
 
 def async_decorator(f):

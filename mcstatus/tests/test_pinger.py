@@ -2,7 +2,6 @@ import pytest
 
 from mcstatus.protocol.connection import Connection
 from mcstatus.pinger import ServerPinger, PingResponse
-from mcstatus.server import MinecraftServer
 
 
 class TestServerPinger:
