@@ -3,7 +3,7 @@ from typing import Callable, Tuple, Type
 from functools import wraps
 
 
-def retry(tries: int, exceptions: Tuple[Type[Exception]] = (Exception,)) -> Callable:
+def retry(tries: int, exceptions: Tuple[Type[BaseException]] = (Exception,)) -> Callable:
     """
     Decorator that re-runs given function tries times if error occurs.
 
@@ -19,7 +19,7 @@ def retry(tries: int, exceptions: Tuple[Type[Exception]] = (Exception,)) -> Call
     def decorate(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, tries: int = tries, **kwargs):
-            last_exc: Exception
+            last_exc: BaseException
             for _ in range(tries):
                 try:
                     return await func(*args, **kwargs)
@@ -30,7 +30,7 @@ def retry(tries: int, exceptions: Tuple[Type[Exception]] = (Exception,)) -> Call
 
         @wraps(func)
         def sync_wrapper(*args, tries: int = tries, **kwargs):
-            last_exc: Exception
+            last_exc: BaseException
             for _ in range(tries):
                 try:
                     return func(*args, **kwargs)
