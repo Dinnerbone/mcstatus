@@ -26,7 +26,7 @@ def retry(tries: int, exceptions: Tuple[Type[Exception]] = (Exception,)) -> Call
                 except exceptions as exc:
                     last_exc = exc
             else:
-                raise last_exc  # type: ignore (This won't actually be unbound)
+                raise last_exc  # type: ignore # (This won't actually be unbound)
 
         @wraps(func)
         def sync_wrapper(*args, tries: int = tries, **kwargs):
@@ -37,7 +37,7 @@ def retry(tries: int, exceptions: Tuple[Type[Exception]] = (Exception,)) -> Call
                 except exceptions as exc:
                     last_exc = exc
             else:
-                raise last_exc  # type: ignore (This won't actually be unbound)
+                raise last_exc  # type: ignore # (This won't actually be unbound)
 
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
