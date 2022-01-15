@@ -37,8 +37,8 @@ Bedrock Edition
 ```python
 from mcstatus import MinecraftBedrockServer
 
-# Use MineCraftBedrockServer for Bedrock servers. If you do not specify a port, 19132 will be used by default.
-server = MinecraftBedrockServer(host="example.org", port=19132)
+# If you know the host and port, you may skip this and use MinecraftBedrockServer("example.org", 19132)
+server = MinecraftBedrockServer.lookup("example.org:19132")
 
 # 'status' is the only feature that is supported by Bedrock at this time.
 # In this case status can also include motd, map, gamemode, and players_max. (ex: status.gamemode)
