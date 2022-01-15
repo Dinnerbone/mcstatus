@@ -2,7 +2,6 @@ import asyncio
 import socket
 import struct
 from time import perf_counter
-from typing import Optional
 
 import asyncio_dgram
 
@@ -21,8 +20,6 @@ class BedrockServerStatus:
         name_length = struct.unpack(">H", data[32:34])[0]
         decoded_data = data[34 : 34 + name_length].decode().split(";")
 
-        map_: Optional[str]
-        gamemode: Optional[str]
         try:
             map_ = decoded_data[7]
             gamemode = decoded_data[8]
