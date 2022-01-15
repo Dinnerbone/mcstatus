@@ -16,11 +16,11 @@ class ServerQuerier:
         self.challenge = 0
 
     @staticmethod
-    def _generate_session_id():
+    def _generate_session_id() -> int:
         # minecraft only supports lower 4 bits
         return random.randint(0, 2 ** 31) & 0x0F0F0F0F
 
-    def _create_packet(self):
+    def _create_packet(self) -> Connection:
         packet = Connection()
         packet.write(self.MAGIC_PREFIX)
         packet.write(struct.pack("!B", self.PACKET_TYPE_QUERY))
@@ -29,26 +29,26 @@ class ServerQuerier:
         packet.write(self.PADDING)
         return packet
 
-    def _create_handshake_packet(self):
+    def _create_handshake_packet(self) -> Connection:
         packet = Connection()
         packet.write(self.MAGIC_PREFIX)
         packet.write(struct.pack("!B", self.PACKET_TYPE_CHALLENGE))
         packet.write_uint(self._generate_session_id())
         return packet
 
-    def _read_packet(self):
+    def _read_packet(self) -> Connection:
         packet = Connection()
         packet.receive(self.connection.read(self.connection.remaining()))
         packet.read(1 + 4)
         return packet
 
-    def handshake(self):
+    def handshake(self) -> None:
         self.connection.write(self._create_handshake_packet())
 
         packet = self._read_packet()
         self.challenge = int(packet.read_ascii())
 
-    def read_query(self):
+    def read_query(self) -> "QueryResponse":
         request = self._create_packet()
         self.connection.write(request)
 
@@ -57,19 +57,19 @@ class ServerQuerier:
 
 
 class AsyncServerQuerier(ServerQuerier):
-    async def _read_packet(self):
+    async def _read_packet(self) -> Connection:
         packet = Connection()
         packet.receive(await self.connection.read(self.connection.remaining()))
         packet.read(1 + 4)
         return packet
 
-    async def handshake(self):
+    async def handshake(self) -> None:
         await self.connection.write(self._create_handshake_packet())
 
         packet = await self._read_packet()
         self.challenge = int(packet.read_ascii())
 
-    async def read_query(self):
+    async def read_query(self) -> "QueryResponse":
         request = self._create_packet()
         await self.connection.write(request)
 
