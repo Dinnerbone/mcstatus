@@ -16,7 +16,7 @@ class BedrockServerStatus:
         self.timeout = timeout
 
     @staticmethod
-    def parse_response(data: bytes, latency: float):
+    def parse_response(data: bytes, latency: float) -> "BedrockStatusResponse":
         data = data[1:]
         name_length = struct.unpack(">H", data[32:34])[0]
         decoded_data = data[34 : 34 + name_length].decode().split(";")
@@ -42,7 +42,7 @@ class BedrockServerStatus:
             gamemode=gamemode,
         )
 
-    def read_status(self):
+    def read_status(self) -> "BedrockStatusResponse":
         start = perf_counter()
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -53,7 +53,7 @@ class BedrockServerStatus:
 
         return self.parse_response(data, (perf_counter() - start))
 
-    async def read_status_async(self):
+    async def read_status_async(self) -> "BedrockStatusResponse":
         start = perf_counter()
         stream = None
 
