@@ -11,6 +11,7 @@ It provides three modes of access (`query`, `status` and `ping`), the difference
 Usage
 -----
 
+Java Edition
 ```python
 from mcstatus import MinecraftServer
 
@@ -30,6 +31,19 @@ print(f"The server replied in {latency} ms")
 # It may give more information than a ping, such as a full player list or mod information.
 query = server.query()
 print(f"The server has the following players online: {', '.join(query.players.names)}")
+```
+
+Bedrock Edition
+```python
+from mcstatus import MinecraftBedrockServer
+
+# Use MineCraftBedrockServer for Bedrock servers. If you do not specify a port, 19132 will be used by default.
+server = MinecraftBedrockServer(host="example.org", port=19132)
+
+# 'status' is the only feature that is supported by Bedrock at this time.
+# In this case status can also include motd, map, gamemode, and players_max. (ex: status.gamemode)
+status = server.status()
+print(f"The server has {status.players_online} players online and replied in {status.latency} ms")
 ```
 
 Command Line Interface
