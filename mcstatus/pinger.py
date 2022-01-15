@@ -48,7 +48,7 @@ class ServerPinger:
         self.port = port
         self.ping_token = ping_token
 
-    def handshake(self):
+    def handshake(self) -> None:
         packet = Connection()
         packet.write_varint(0)
         packet.write_varint(self.version)
@@ -58,7 +58,7 @@ class ServerPinger:
 
         self.connection.write_buffer(packet)
 
-    def read_status(self):
+    def read_status(self) -> "PingResponse":
         request = Connection()
         request.write_varint(0)  # Request status
         self.connection.write_buffer(request)
@@ -75,7 +75,7 @@ class ServerPinger:
         except ValueError as e:
             raise IOError(f"Received invalid status response: {e}")
 
-    def test_ping(self):
+    def test_ping(self) -> float:
         request = Connection()
         request.write_varint(1)  # Test ping
         request.write_long(self.ping_token)
@@ -97,7 +97,7 @@ class ServerPinger:
 
 
 class AsyncServerPinger(ServerPinger):
-    async def read_status(self):
+    async def read_status(self) -> "PingResponse":
         request = Connection()
         request.write_varint(0)  # Request status
         self.connection.write_buffer(request)
@@ -114,7 +114,7 @@ class AsyncServerPinger(ServerPinger):
         except ValueError as e:
             raise IOError(f"Received invalid status response: {e}")
 
-    async def test_ping(self):
+    async def test_ping(self) -> float:
         request = Connection()
         request.write_varint(1)  # Test ping
         request.write_long(self.ping_token)
