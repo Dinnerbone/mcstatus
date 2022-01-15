@@ -23,7 +23,7 @@ class BedrockServerStatus:
         try:
             map_ = decoded_data[7]
             gamemode = decoded_data[8]
-        except BaseException:
+        except IndexError:
             map_ = None
             gamemode = None
 
