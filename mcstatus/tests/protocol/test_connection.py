@@ -223,7 +223,7 @@ class TCPSocketConnectionTest:
 
     def test_receive(self):
         with pytest.raises(TypeError):
-            self.connection.receive("")
+            self.connection.receive("")  # type: ignore # This is desired to produce TypeError
 
     def test_remaining(self):
         with pytest.raises(TypeError):
@@ -263,7 +263,7 @@ class UDPSocketConnectionTest:
 
     def test_receive(self):
         with pytest.raises(TypeError):
-            self.connection.receive("")
+            self.connection.receive("")  # type: ignore # This is desired to produce TypeError
 
     def test_remaining(self):
         assert self.connection.remaining() == 65535
