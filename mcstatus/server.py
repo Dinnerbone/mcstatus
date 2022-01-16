@@ -225,7 +225,7 @@ class MinecraftBedrockServer:
         :return: A `MinecraftBedrockServer` instance.
         :rtype: MinecraftBedrockServer
         """
-        return cls(*parse_address(address))  # type: ignore[assignment]  # This will be fixed in PR #190
+        return cls(*parse_address(address))  # type: ignore[arg-type]  # This will be fixed in PR #190
 
     def status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Checks the status of a Minecraft Bedrock Edition server.
