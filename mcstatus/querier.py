@@ -128,6 +128,24 @@ class QueryResponse:
         data = {}
         players = []
 
+        # If hostname is set to unicode, using other parameters of read_ascii() may be in the wrong order
+        key = response.received[:8].decode('ISO-8859-1')
+        if key == 'hostname':
+            response.read_ascii()
+            name = bytearray()
+            size = 0
+            while True:
+                c = response.read(1)
+                name += c
+                if c[0] == 0:
+                    if response.received[:8].decode('ISO-8859-1') == 'gametype':
+                        name.pop()
+                        break
+                size += 1
+            # Since the minecraft protocol does not support unicode, the hostname is still not resolved correctly
+            # However, this will avoid other parameter parsing errors
+            data[key] = name.decode('ISO-8859-1')
+
         while True:
             key = response.read_ascii()
             if len(key) == 0:
