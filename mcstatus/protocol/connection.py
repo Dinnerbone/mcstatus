@@ -290,7 +290,7 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
 
 class UDPAsyncSocketConnection(AsyncReadConnection):
     # These will only be None until connect is called, ignore the None type assignment
-    stream: asyncio_dgram.DatagramClient = None  # type: ignore[assignment]
+    stream: asyncio_dgram.aio.DatagramClient = None  # type: ignore[assignment]
     timeout: float = None  # type: ignore[assignment]
 
     def __init__(self):
