@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import SupportsBytes, Iterable, SupportsIndex, Union, Optional, TYPE_CHECKING
+from typing import SupportsBytes, Iterable, SupportsIndex, Union
 import socket
 import struct
 import asyncio
@@ -9,9 +9,6 @@ from ctypes import c_uint32 as unsigned_int32
 from ctypes import c_int32 as signed_int32
 
 from ..scripts.address_tools import ip_type
-
-if TYPE_CHECKING:
-    from _typeshed import ReadableBuffer
 
 BytesConvertable = Union[SupportsBytes, SupportsIndex, Iterable[SupportsIndex]]
 
