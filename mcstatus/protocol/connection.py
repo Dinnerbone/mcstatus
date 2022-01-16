@@ -10,7 +10,7 @@ from ctypes import c_int32 as signed_int32
 
 from ..scripts.address_tools import ip_type
 
-BytesConvertable = Union[SupportsBytes, SupportsIndex, Iterable[SupportsIndex]]
+BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
 
 
 class Connection:
@@ -30,7 +30,7 @@ class Connection:
             data = bytearray(data, "utf-8")
         self.sent.extend(data)
 
-    def receive(self, data: BytesConvertable) -> None:
+    def receive(self, data: Union[BytesConvertable, bytearray]) -> None:
         if not isinstance(data, bytearray):
             data = bytearray(data)
         self.received.extend(data)
@@ -43,7 +43,7 @@ class Connection:
         self.sent = bytearray()
         return result
 
-    def _unpack(self, format: str, data: BytesConvertable) -> int:
+    def _unpack(self, format: str, data: Union[BytesConvertable, SupportsBytes]) -> int:
         return struct.unpack(">" + format, bytes(data))[0]
 
     def _pack(self, format: str, data: int) -> bytes:
@@ -193,7 +193,7 @@ class TCPSocketConnection(Connection):
     def flush(self) -> bytearray:
         raise TypeError("TCPSocketConnection does not support flush()")
 
-    def receive(self, data: BytesConvertable) -> None:
+    def receive(self, data: Union[BytesConvertable, SupportsBytes]) -> None:
         raise TypeError("TCPSocketConnection does not support receive()")
 
     def remaining(self) -> int:
@@ -231,7 +231,7 @@ class UDPSocketConnection(Connection):
     def flush(self) -> bytearray:
         raise TypeError("UDPSocketConnection does not support flush()")
 
-    def receive(self, data: BytesConvertable) -> None:
+    def receive(self, data: Union[BytesConvertable, SupportsBytes]) -> None:
         raise TypeError("UDPSocketConnection does not support receive()")
 
     def remaining(self) -> int:
@@ -304,7 +304,7 @@ class UDPAsyncSocketConnection(AsyncReadConnection):
     def flush(self) -> bytearray:
         raise TypeError("UDPSocketConnection does not support flush()")
 
-    def receive(self, data: BytesConvertable) -> None:
+    def receive(self, data: Union[SupportsBytes, BytesConvertable]) -> None:
         raise TypeError("UDPSocketConnection does not support receive()")
 
     def remaining(self) -> int:
