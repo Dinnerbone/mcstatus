@@ -64,7 +64,7 @@ class TestAsyncMinecraftServer:
     )
     @pytest.mark.asyncio
     async def test_async_ping(self, unused_tcp_port, create_mock_packet_server):
-        mock_packet_server = await create_mock_packet_server(
+        await create_mock_packet_server(
             port=unused_tcp_port,
             data_expected_to_receive=bytearray.fromhex("09010000000001C54246"),
             data_to_respond_with=bytearray.fromhex("0F002F096C6F63616C686F737463DD0109010000000001C54246"),
