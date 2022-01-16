@@ -219,7 +219,7 @@ class TCPSocketConnection(Connection):
 
 
 class UDPSocketConnection(Connection):
-    def __init__(self, addr: tuple[str, int], timeout: int = 3):
+    def __init__(self, addr: tuple[str, int], timeout: float = 3):
         Connection.__init__(self)
         self.addr = addr
         self.socket = socket.socket(
@@ -259,12 +259,12 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
     # These will only be None until connect is called, ignore the None type assignment
     reader: asyncio.StreamReader = None  # type: ignore[assignment]
     writer: asyncio.StreamWriter = None  # type: ignore[assignment]
-    timeout: int = None  # type: ignore[assignment]
+    timeout: float = None  # type: ignore[assignment]
 
     def __init__(self):
         super().__init__()
 
-    async def connect(self, addr: tuple[str, int], timeout: int = 3):
+    async def connect(self, addr: tuple[str, int], timeout: float = 3):
         self.timeout = timeout
         conn = asyncio.open_connection(addr[0], addr[1])
         self.reader, self.writer = await asyncio.wait_for(conn, timeout=self.timeout)
@@ -291,12 +291,12 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
 class UDPAsyncSocketConnection(AsyncReadConnection):
     # These will only be None until connect is called, ignore the None type assignment
     stream: asyncio_dgram.DatagramClient = None  # type: ignore[assignment]
-    timeout: int = None  # type: ignore[assignment]
+    timeout: float = None  # type: ignore[assignment]
 
     def __init__(self):
         super().__init__()
 
-    async def connect(self, addr: tuple[str, int], timeout: int = 3):
+    async def connect(self, addr: tuple[str, int], timeout: float = 3):
         self.timeout = timeout
         conn = asyncio_dgram.connect((addr[0], addr[1]))
         self.stream = await asyncio.wait_for(conn, timeout=self.timeout)
