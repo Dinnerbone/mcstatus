@@ -4,7 +4,7 @@ from json import dumps as json_dumps
 
 from .. import MinecraftServer
 
-server = None
+server: MinecraftServer = None  # type: ignore[assignment]  # This will be set with cli function
 
 
 @click.group(context_settings=dict(help_option_names=["-h", "--help"]))
