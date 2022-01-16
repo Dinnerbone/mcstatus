@@ -243,9 +243,7 @@ class TCPSocketConnectionTest:
     def test_write(self):
         self.connection.write(bytearray.fromhex("7FAA"))
 
-        # pytype: disable=attribute-error
-        self.connection.socket.send.assert_called_once_with(bytearray.fromhex("7FAA"))
-        # pytype: enable=attribute-error
+        self.connection.socket.send.assert_called_once_with(bytearray.fromhex("7FAA"))  # type: ignore[attr-defined]
 
 
 class UDPSocketConnectionTest:
@@ -276,6 +274,7 @@ class UDPSocketConnectionTest:
     def test_write(self):
         self.connection.write(bytearray.fromhex("7FAA"))
 
-        # pytype: disable=attribute-error
-        self.connection.socket.sendto.assert_called_once_with(bytearray.fromhex("7FAA"), ("localhost", 1234))
-        # pytype: enable=attribute-error
+        self.connection.socket.sendto.assert_called_once_with(  # type: ignore[attr-defined]
+            bytearray.fromhex("7FAA"),
+            ("localhost", 1234)
+        )
