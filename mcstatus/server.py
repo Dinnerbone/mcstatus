@@ -72,7 +72,7 @@ class MinecraftServer:
             except Exception as e:
                 exception_to_raise_after_giving_up = e
         else:
-            raise exception_to_raise_after_giving_up
+            raise exception_to_raise_after_giving_up  # type: ignore[attr-defined]
 
     async def async_ping(self, tries: int = 3, **kwargs) -> float:
         """Asynchronously checks the latency between a Minecraft Java Edition server and the client (you).
@@ -95,7 +95,7 @@ class MinecraftServer:
             except Exception as e:
                 exception_to_raise_after_giving_up = e
         else:
-            raise exception_to_raise_after_giving_up
+            raise exception_to_raise_after_giving_up  # type: ignore[attr-defined]
 
     def status(self, tries: int = 3, **kwargs) -> PingResponse:
         """Checks the status of a Minecraft Java Edition server via the ping protocol.
@@ -118,7 +118,7 @@ class MinecraftServer:
             except Exception as e:
                 exception_to_raise_after_giving_up = e
         else:
-            raise exception_to_raise_after_giving_up
+            raise exception_to_raise_after_giving_up  # type: ignore[attr-defined]
 
     async def async_status(self, tries: int = 3, **kwargs) -> PingResponse:
         """Asynchronously checks the status of a Minecraft Java Edition server via the ping protocol.
@@ -142,7 +142,7 @@ class MinecraftServer:
             except Exception as e:
                 exception_to_raise_after_giving_up = e
         else:
-            raise exception_to_raise_after_giving_up
+            raise exception_to_raise_after_giving_up  # type: ignore[attr-defined]
 
     def query(self, tries: int = 3) -> QueryResponse:
         """Checks the status of a Minecraft Java Edition server via the query protocol.
@@ -170,7 +170,7 @@ class MinecraftServer:
             except Exception as e:
                 exception_to_raise_after_giving_up = e
         else:
-            raise exception_to_raise_after_giving_up
+            raise exception_to_raise_after_giving_up  # type: ignore[attr-defined]
 
     async def async_query(self, tries: int = 3) -> QueryResponse:
         """Asynchronously checks the status of a Minecraft Java Edition server via the query protocol.
@@ -199,7 +199,7 @@ class MinecraftServer:
             except Exception as e:
                 exception_to_raise_after_giving_up = e
         else:
-            raise exception_to_raise_after_giving_up
+            raise exception_to_raise_after_giving_up  # type: ignore[attr-defined]
 
 
 class MinecraftBedrockServer:
@@ -225,7 +225,7 @@ class MinecraftBedrockServer:
         :return: A `MinecraftBedrockServer` instance.
         :rtype: MinecraftBedrockServer
         """
-        return cls(*parse_address(address))
+        return cls(*parse_address(address))  # type: ignore[assignment]  # This will be fixed in PR #190
 
     def status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Checks the status of a Minecraft Bedrock Edition server.
@@ -247,7 +247,7 @@ class MinecraftBedrockServer:
         if exception:
             raise exception
 
-        return resp
+        return resp  # type: ignore[attr-defined]
 
     async def async_status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Asynchronously checks the status of a Minecraft Bedrock Edition server.
@@ -269,4 +269,4 @@ class MinecraftBedrockServer:
         if exception:
             raise exception
 
-        return resp
+        return resp  # type: ignore[attr-defined]
