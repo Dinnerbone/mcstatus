@@ -239,7 +239,11 @@ class MinecraftBedrockServer:
         :return: A `MinecraftBedrockServer` instance.
         :rtype: MinecraftBedrockServer
         """
-        return cls(*parse_address(address))
+        host, port = parse_address(address)
+        # If the address didn't contain port, fall back to constructor's default
+        if port is None:
+            return cls(host)
+        return cls(host, port)
 
     def status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Checks the status of a Minecraft Bedrock Edition server.
