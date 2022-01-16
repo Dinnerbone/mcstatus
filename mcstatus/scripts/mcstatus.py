@@ -112,9 +112,10 @@ def query():
         response = server.query()
     except socket.timeout:
         print(
-            """The server did not respond to the query protocol.
-              Please ensure that the server has enable-query turned on, and that the necessary port (same as server-port unless query-port is set) is open in any firewall(s).
-              See https://wiki.vg/Query for further information."""
+            "The server did not respond to the query protocol."
+            "\nPlease ensure that the server has enable-query turned on,"
+            " and that the necessary port (same as server-port unless query-port is set) is open in any firewall(s)."
+            "\nSee https://wiki.vg/Query for further information."
         )
         raise click.Abort()
     click.echo(f"host: {response.raw['hostip']}:{response.raw['hostport']}")
