@@ -191,13 +191,13 @@ class TCPSocketConnection(Connection):
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
     def flush(self) -> bytearray:
-        raise TypeError("TCPSocketConnection does not support flush()")
+        raise NotImplementedError("TCPSocketConnection does not support flush()")
 
     def receive(self, data: Union[BytesConvertable, SupportsBytes]) -> None:
-        raise TypeError("TCPSocketConnection does not support receive()")
+        raise NotImplementedError("TCPSocketConnection does not support receive()")
 
     def remaining(self) -> int:
-        raise TypeError("TCPSocketConnection does not support remaining()")
+        raise NotImplementedError("TCPSocketConnection does not support remaining()")
 
     def read(self, length: int) -> bytearray:
         result = bytearray()
@@ -229,10 +229,10 @@ class UDPSocketConnection(Connection):
         self.socket.settimeout(timeout)
 
     def flush(self) -> bytearray:
-        raise TypeError("UDPSocketConnection does not support flush()")
+        raise NotImplementedError("UDPSocketConnection does not support flush()")
 
     def receive(self, data: Union[BytesConvertable, SupportsBytes]) -> None:
-        raise TypeError("UDPSocketConnection does not support receive()")
+        raise NotImplementedError("UDPSocketConnection does not support receive()")
 
     def remaining(self) -> int:
         return 65535
@@ -302,10 +302,10 @@ class UDPAsyncSocketConnection(AsyncReadConnection):
         self.stream = await asyncio.wait_for(conn, timeout=self.timeout)
 
     def flush(self) -> bytearray:
-        raise TypeError("UDPSocketConnection does not support flush()")
+        raise NotImplementedError("UDPSocketConnection does not support flush()")
 
     def receive(self, data: Union[SupportsBytes, BytesConvertable]) -> None:
-        raise TypeError("UDPSocketConnection does not support receive()")
+        raise NotImplementedError("UDPSocketConnection does not support receive()")
 
     def remaining(self) -> int:
         return 65535
