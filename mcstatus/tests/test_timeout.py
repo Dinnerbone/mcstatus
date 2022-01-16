@@ -12,7 +12,7 @@ class FakeAsyncStream(asyncio.StreamReader):
         return bytes([0] * n)
 
 
-async def fake_asyncio_asyncio_open_connection(hostname, port):
+async def fake_asyncio_asyncio_open_connection(hostname: str, port: int):
     return FakeAsyncStream(), None
 
 
