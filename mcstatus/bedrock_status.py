@@ -22,9 +22,11 @@ class BedrockServerStatus:
 
         try:
             map_ = decoded_data[7]
-            gamemode = decoded_data[8]
         except IndexError:
             map_ = None
+        try:
+            gamemode = decoded_data[8]
+        except IndexError:
             gamemode = None
 
         return BedrockStatusResponse(
