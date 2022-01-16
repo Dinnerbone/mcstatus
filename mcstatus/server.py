@@ -235,19 +235,15 @@ class MinecraftBedrockServer:
         :return: Status information in a `BedrockStatusResponse` instance.
         :rtype: BedrockStatusResponse
         """
-        exception = None
+        exception: BaseException
 
         for _ in range(tries):
             try:
-                resp = BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status()
-                break
+                return BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status()
             except BaseException as e:
                 exception = e
 
-        if exception:
-            raise exception
-
-        return resp  # type: ignore[attr-defined]
+        raise exception  # type: ignore[attr-defined]
 
     async def async_status(self, tries: int = 3, **kwargs) -> BedrockStatusResponse:
         """Asynchronously checks the status of a Minecraft Bedrock Edition server.
@@ -257,16 +253,12 @@ class MinecraftBedrockServer:
         :return: Status information in a `BedrockStatusResponse` instance.
         :rtype: BedrockStatusResponse
         """
-        exception = None
+        exception: BaseException
 
         for _ in range(tries):
             try:
-                resp = await BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status_async()
-                break
+                return await BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status_async()
             except BaseException as e:
                 exception = e
 
-        if exception:
-            raise exception
-
-        return resp  # type: ignore[attr-defined]
+        raise exception  # type: ignore[attr-defined]
