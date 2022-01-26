@@ -108,7 +108,7 @@ class Connection:
     def read_uint(self) -> int:
         return self._unpack("I", self.read(4))
 
-    def write_uint(self, value:  int) -> None:
+    def write_uint(self, value: int) -> None:
         self.write(self._pack("I", value))
 
     def read_long(self) -> int:
