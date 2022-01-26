@@ -110,6 +110,63 @@ class TestPingResponse:
                 }
             )
 
+    def test_parse_description(self):
+        out = PingResponse._parse_description("test §2description")
+        assert out == "test §2description"
+
+        out = PingResponse._parse_description({"text": "§8§lfoo"})
+        assert out == "§8§lfoo"
+
+        out = PingResponse._parse_description(
+            {
+                "extra": [
+                    {
+                        "bold": True,
+                        "italic": True,
+                        "color": "gray",
+                        "text": "foo"
+                    },
+                    {
+                        "color": "gold",
+                        "text": "bar"
+                    }
+                ],
+                "text": "."
+            }
+        )
+        # We don't care in which order the style prefixes are, allow any
+        assert out in {
+            "§l§o§7foo§6bar.",
+            "§l§7§ofoo§6bar.",
+            "§o§l§7foo§6bar.",
+            "§o§7§lfoo§6bar.",
+            "§7§o§lfoo§6bar.",
+            "§7§l§ofoo§6bar.",
+        }
+
+        out = PingResponse._parse_description(
+            [
+                {
+                    "bold": True,
+                    "italic": True,
+                    "color": "gray",
+                    "text": "foo"
+                },
+                {
+                    "color": "gold",
+                    "text": "bar"
+                }
+            ]
+        )
+        assert out in {
+            "§l§o§7foo§6bar",
+            "§l§7§ofoo§6bar",
+            "§o§l§7foo§6bar",
+            "§o§7§lfoo§6bar",
+            "§7§o§lfoo§6bar",
+            "§7§l§ofoo§6bar",
+        }
+
     def test_version(self):
         response = PingResponse(
             {
