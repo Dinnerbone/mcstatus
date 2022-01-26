@@ -126,4 +126,4 @@ def query():
 
 
 if __name__ == "__main__":
-    cli()
+    cli()  # type: ignore[call-arg]
