@@ -1,13 +1,8 @@
 from abc import abstractmethod, ABC
+from typing import SupportsBytes, Iterable, Tuple, Union
+from typing_extensions import SupportsIndex  # Python 3.7 doesn't support this yet.
 
-try:
-    from typing import SupportsBytes, Iterable, SupportsIndex, Tuple, Union
-
-    BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
-except ImportError:
-    from typing import SupportsBytes, Iterable, Tuple, Union
-
-    BytesConvertable = Union[int, Iterable[int]]
+BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
 import socket
 import struct
 import asyncio
