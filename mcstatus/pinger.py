@@ -1,7 +1,7 @@
 import datetime
 import json
 import random
-from typing import List, Optional, Union, Awaitable
+from typing import List, Optional, Union
 
 from mcstatus.protocol.connection import Connection, TCPSocketConnection, TCPAsyncSocketConnection
 
@@ -247,7 +247,7 @@ class PingResponse:
             return raw_description
 
         if isinstance(raw_description, dict):
-            entries = raw_description.get("extra", ())
+            entries = raw_description.get("extra", [])
             end = raw_description["text"]
         else:
             entries = raw_description
