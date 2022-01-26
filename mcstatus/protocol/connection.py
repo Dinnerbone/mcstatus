@@ -2,7 +2,6 @@ from abc import abstractmethod, ABC
 from typing import SupportsBytes, Iterable, Tuple, Union
 from typing_extensions import SupportsIndex  # Python 3.7 doesn't support this yet.
 
-BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
 import socket
 import struct
 import asyncio
@@ -12,6 +11,8 @@ from ctypes import c_uint32 as unsigned_int32
 from ctypes import c_int32 as signed_int32
 
 from ..scripts.address_tools import ip_type
+
+BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
 
 
 class Connection:
