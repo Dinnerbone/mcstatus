@@ -1,7 +1,7 @@
 import datetime
 import json
 import random
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Awaitable
 
 from mcstatus.protocol.connection import Connection, TCPSocketConnection, TCPAsyncSocketConnection
 
@@ -258,9 +258,10 @@ class PingResponse:
         for entry in entries:
             for style_key, style_val in STYLE_MAP.items():
                 if entry.get(style_key):
-                    while isinstance(style_val, dict):
+                    if isinstance(style_val, dict):
                         style_val = style_val[entry[style_key]]
 
                     description += f"§{style_val}"
+            description += entry.get("text", "")
 
         return description + end
