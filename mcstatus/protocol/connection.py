@@ -1,5 +1,8 @@
 from abc import abstractmethod, ABC
-from typing import SupportsBytes, Iterable, SupportsIndex, Union
+from typing import SupportsBytes, Iterable, Tuple, Union
+from typing_extensions import SupportsIndex  # Python 3.7 doesn't support this yet.
+
+BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
 import socket
 import struct
 import asyncio
@@ -9,8 +12,6 @@ from ctypes import c_uint32 as unsigned_int32
 from ctypes import c_int32 as signed_int32
 
 from ..scripts.address_tools import ip_type
-
-BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
 
 
 class Connection:
@@ -185,7 +186,7 @@ class AsyncReadConnection(Connection, ABC):
 
 
 class TCPSocketConnection(Connection):
-    def __init__(self, addr: tuple[str, int], timeout: float = 3):
+    def __init__(self, addr: Tuple[str, int], timeout: float = 3):
         Connection.__init__(self)
         self.socket = socket.create_connection(addr, timeout=timeout)
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
@@ -219,7 +220,7 @@ class TCPSocketConnection(Connection):
 
 
 class UDPSocketConnection(Connection):
-    def __init__(self, addr: tuple[str, int], timeout: float = 3):
+    def __init__(self, addr: Tuple[str, int], timeout: float = 3):
         Connection.__init__(self)
         self.addr = addr
         self.socket = socket.socket(
@@ -264,7 +265,7 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
     def __init__(self):
         super().__init__()
 
-    async def connect(self, addr: tuple[str, int], timeout: float = 3):
+    async def connect(self, addr: Tuple[str, int], timeout: float = 3):
         self.timeout = timeout
         conn = asyncio.open_connection(addr[0], addr[1])
         self.reader, self.writer = await asyncio.wait_for(conn, timeout=self.timeout)
@@ -296,7 +297,7 @@ class UDPAsyncSocketConnection(AsyncReadConnection):
     def __init__(self):
         super().__init__()
 
-    async def connect(self, addr: tuple[str, int], timeout: float = 3):
+    async def connect(self, addr: Tuple[str, int], timeout: float = 3):
         self.timeout = timeout
         conn = asyncio_dgram.connect((addr[0], addr[1]))
         self.stream = await asyncio.wait_for(conn, timeout=self.timeout)

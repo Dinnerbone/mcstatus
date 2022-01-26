@@ -276,5 +276,5 @@ class UDPSocketConnectionTest:
 
         self.connection.socket.sendto.assert_called_once_with(  # type: ignore[attr-defined]
             bytearray.fromhex("7FAA"),
-            ("localhost", 1234)
+            ("localhost", 1234),
         )
