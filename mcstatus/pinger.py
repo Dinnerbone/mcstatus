@@ -3,7 +3,7 @@ import json
 import random
 from typing import List, Optional, Union
 
-from mcstatus.protocol.connection import Connection
+from mcstatus.protocol.connection import Connection, TCPSocketConnection, TCPAsyncSocketConnection
 
 STYLE_MAP = {
     "bold": "l",
@@ -34,7 +34,7 @@ STYLE_MAP = {
 class ServerPinger:
     def __init__(
         self,
-        connection,
+        connection: TCPSocketConnection,
         host: str = "",
         port: int = 0,
         version: int = 47,
@@ -97,6 +97,18 @@ class ServerPinger:
 
 
 class AsyncServerPinger(ServerPinger):
+    def __init__(
+        self,
+        connection: TCPAsyncSocketConnection,
+        host: str = "",
+        port: int = 0,
+        version: int = 47,
+        ping_token=None
+    ):
+        # We do this to inform python about self.connection type (it's async)
+        super().__init__(connection, host=host, port=port, version=version, ping_token=ping_token)  # type: ignore[arg-type]
+        self.connection: TCPAsyncSocketConnection
+
     async def read_status(self) -> "PingResponse":
         request = Connection()
         request.write_varint(0)  # Request status

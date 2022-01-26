@@ -2,7 +2,7 @@ import random
 import struct
 from typing import List
 
-from mcstatus.protocol.connection import Connection
+from mcstatus.protocol.connection import Connection, UDPAsyncSocketConnection, UDPSocketConnection
 
 
 class ServerQuerier:
@@ -11,7 +11,7 @@ class ServerQuerier:
     PACKET_TYPE_CHALLENGE = 9
     PACKET_TYPE_QUERY = 0
 
-    def __init__(self, connection):
+    def __init__(self, connection: UDPSocketConnection):
         self.connection = connection
         self.challenge = 0
 
@@ -57,6 +57,11 @@ class ServerQuerier:
 
 
 class AsyncServerQuerier(ServerQuerier):
+    def __init__(self, connection: UDPAsyncSocketConnection):
+        # We do this to inform python about self.connection type (it's async)
+        super().__init__(connection)  # type: ignore[arg-type]
+        self.connection: UDPAsyncSocketConnection
+
     async def _read_packet(self) -> Connection:
         packet = Connection()
         packet.receive(await self.connection.read(self.connection.remaining()))
