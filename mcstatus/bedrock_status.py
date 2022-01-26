@@ -9,7 +9,7 @@ import asyncio_dgram
 class BedrockServerStatus:
     request_status_data = b"\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x00\xfe\xfe\xfe\xfe\xfd\xfd\xfd\xfd\x124Vx"
 
-    def __init__(self, host, port=19132, timeout=3):
+    def __init__(self, host: str, port: int = 19132, timeout: float = 3):
         self.host = host
         self.port = port
         self.timeout = timeout
