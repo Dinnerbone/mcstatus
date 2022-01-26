@@ -13,7 +13,7 @@ class FakeUDPAsyncConnection(Connection):
 
 class TestMinecraftAsyncQuerier:
     def setup_method(self):
-        self.querier = AsyncServerQuerier(FakeUDPAsyncConnection())
+        self.querier = AsyncServerQuerier(FakeUDPAsyncConnection())  # type: ignore[arg-type]
 
     def test_handshake(self):
         self.querier.connection.receive(bytearray.fromhex("090000000035373033353037373800"))

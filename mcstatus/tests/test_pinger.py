@@ -6,7 +6,7 @@ from mcstatus.pinger import ServerPinger, PingResponse
 
 class TestServerPinger:
     def setup_method(self):
-        self.pinger = ServerPinger(Connection(), host="localhost", port=25565, version=44)
+        self.pinger = ServerPinger(Connection(), host="localhost", port=25565, version=44)  # type: ignore[arg-type]
 
     def test_handshake(self):
         self.pinger.handshake()

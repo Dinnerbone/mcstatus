@@ -20,7 +20,12 @@ class FakeAsyncConnection(Connection):
 
 class TestAsyncServerPinger:
     def setup_method(self):
-        self.pinger = AsyncServerPinger(FakeAsyncConnection(), host="localhost", port=25565, version=44)
+        self.pinger = AsyncServerPinger(
+            FakeAsyncConnection(),  # type: ignore[arg-type]
+            host="localhost",
+            port=25565,
+            version=44
+        )
 
     def test_handshake(self):
         self.pinger.handshake()

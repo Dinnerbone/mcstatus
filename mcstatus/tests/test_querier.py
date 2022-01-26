@@ -4,7 +4,7 @@ from mcstatus.querier import ServerQuerier, QueryResponse
 
 class TestMinecraftQuerier:
     def setup_method(self):
-        self.querier = ServerQuerier(Connection())
+        self.querier = ServerQuerier(Connection())  # type: ignore[arg-type]
 
     def test_handshake(self):
         self.querier.connection.receive(bytearray.fromhex("090000000035373033353037373800"))
