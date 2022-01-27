@@ -14,6 +14,10 @@ from mcstatus.utils import retry
 import dns.resolver
 from dns.exception import DNSException
 
+VALID_HOSTNAME_REGEX = re.compile(
+    r"(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
+)
+
 __all__ = ["MinecraftServer", "MinecraftBedrockServer"]
 
 
@@ -24,7 +28,7 @@ def ensure_valid_ip(host: object, port: object):
         raise TypeError(f"Port must be an integer port number, got {type(port)} ({port})")
     if port > 65535 or port < 0:
         raise ValueError(f"Port must be within the allowed range (0-2^16), got {port}")
-    if not re.fullmatch(r"(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])", host):
+    if not VALID_HOSTNAME_REGEX.fullmatch(host):
         raise ValueError(f"Invalid host address, {host!r} (doesn't match the required pattern)")
 
 
