@@ -92,7 +92,7 @@ def json():
         if status_res.players.sample is not None:
             data["players"] = [{"name": player.name, "id": player.id} for player in status_res.players.sample]
 
-        query_res = server.query(tries=1)
+        query_res = server.query(tries=1)  # type: ignore[call-arg] # tries is supported with retry decorator
         data["host_ip"] = query_res.raw["hostip"]
         data["host_port"] = query_res.raw["hostport"]
         data["map"] = query_res.map
