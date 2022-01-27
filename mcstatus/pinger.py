@@ -98,12 +98,7 @@ class ServerPinger:
 
 class AsyncServerPinger(ServerPinger):
     def __init__(
-        self,
-        connection: TCPAsyncSocketConnection,
-        host: str = "",
-        port: int = 0,
-        version: int = 47,
-        ping_token=None
+        self, connection: TCPAsyncSocketConnection, host: str = "", port: int = 0, version: int = 47, ping_token=None
     ):
         # We do this to inform python about self.connection type (it's async)
         super().__init__(connection, host=host, port=port, version=version, ping_token=ping_token)  # type: ignore[arg-type]

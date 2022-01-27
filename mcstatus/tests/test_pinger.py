@@ -119,19 +119,8 @@ class TestPingResponse:
 
         out = PingResponse._parse_description(
             {
-                "extra": [
-                    {
-                        "bold": True,
-                        "italic": True,
-                        "color": "gray",
-                        "text": "foo"
-                    },
-                    {
-                        "color": "gold",
-                        "text": "bar"
-                    }
-                ],
-                "text": "."
+                "extra": [{"bold": True, "italic": True, "color": "gray", "text": "foo"}, {"color": "gold", "text": "bar"}],
+                "text": ".",
             }
         )
         # We don't care in which order the style prefixes are, allow any
@@ -145,18 +134,7 @@ class TestPingResponse:
         }
 
         out = PingResponse._parse_description(
-            [
-                {
-                    "bold": True,
-                    "italic": True,
-                    "color": "gray",
-                    "text": "foo"
-                },
-                {
-                    "color": "gold",
-                    "text": "bar"
-                }
-            ]
+            [{"bold": True, "italic": True, "color": "gray", "text": "foo"}, {"color": "gold", "text": "bar"}]
         )
         assert out in {
             "§l§o§7foo§6bar",
