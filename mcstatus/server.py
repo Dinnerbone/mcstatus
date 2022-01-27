@@ -1,3 +1,5 @@
+import re
+
 from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
 from mcstatus.protocol.connection import (
     TCPSocketConnection,
@@ -14,6 +16,17 @@ import dns.resolver
 __all__ = ["MinecraftServer", "MinecraftBedrockServer"]
 
 
+def ensure_valid_ip(host: object, port: object):
+    if not isinstance(host, str):
+        raise TypeError(f"Host must be a string address, got {type(host)} ({host!r})")
+    if not isinstance(port, int):
+        raise TypeError(f"Port must be an integer port number, got {type(port)} ({port})")
+    if port > 65535 or port < 0:
+        raise ValueError(f"Port must be within the allowed range (0-2^16), got {port}")
+    if not re.fullmatch(r"(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])", host):
+        raise ValueError(f"Invalid host address, {host!r} (doesn't match the required pattern)")
+
+
 class MinecraftServer:
     """Base class for a Minecraft Java Edition server.
 
@@ -25,6 +38,7 @@ class MinecraftServer:
     """
 
     def __init__(self, host: str, port: int = 25565, timeout: float = 3):
+        ensure_valid_ip(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -189,6 +203,7 @@ class MinecraftBedrockServer:
     """
 
     def __init__(self, host: str, port: int = 19132, timeout: float = 3):
+        ensure_valid_ip(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -201,7 +216,11 @@ class MinecraftBedrockServer:
         :return: A `MinecraftBedrockServer` instance.
         :rtype: MinecraftBedrockServer
         """
-        return cls(*parse_address(address))
+        host, port = parse_address(address)
+        # If the address didn't contain port, fall back to constructor's default
+        if port is None:
+            return cls(host)
+        return cls(host, port)
 
     @retry(tries=3)
     def status(self, **kwargs) -> BedrockStatusResponse:
