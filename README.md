@@ -1,6 +1,7 @@
 ![travis build status](https://img.shields.io/travis/Dinnerbone/mcstatus/master.svg)
 ![current version](https://img.shields.io/pypi/v/mcstatus.svg)
 ![supported python versions](https://img.shields.io/pypi/pyversions/mcstatus.svg)
+[![discord chat](https://img.shields.io/discord/936788458939224094.svg?logo=Discord)](https://discord.gg/C2wX7zduxC)
 
 mcstatus
 ========
