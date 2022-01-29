@@ -715,7 +715,7 @@ python-versions = ">=3.6"
 name = "typing-extensions"
 version = "4.0.1"
 description = "Backported and Experimental Type Hints for Python 3.6+"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -786,7 +786,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7"
-content-hash = "9e819727883898bb2d4f2bd80e98f1488c66584232802e51325d534e15639edd"
+content-hash = "929f5970e749a6090ecd06bf16d1c2e52f6f5dad348d4472c1d5d92b6c9235c3"
 
 [metadata.files]
 asyncio-dgram = [

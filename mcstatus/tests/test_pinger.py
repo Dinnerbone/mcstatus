@@ -2,12 +2,11 @@ import pytest
 
 from mcstatus.protocol.connection import Connection
 from mcstatus.pinger import ServerPinger, PingResponse
-from mcstatus.server import MinecraftServer
 
 
 class TestServerPinger:
     def setup_method(self):
-        self.pinger = ServerPinger(Connection(), host="localhost", port=25565, version=44)
+        self.pinger = ServerPinger(Connection(), host="localhost", port=25565, version=44)  # type: ignore[arg-type]
 
     def test_handshake(self):
         self.pinger.handshake()
@@ -17,7 +16,9 @@ class TestServerPinger:
     def test_read_status(self):
         self.pinger.connection.receive(
             bytearray.fromhex(
-                "7200707B226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E382D70726531222C2270726F746F636F6C223A34347D7D"
+                "7200707B226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B2"
+                "26D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E382D70726531222C22"
+                "70726F746F636F6C223A34347D7D"
             )
         )
         status = self.pinger.read_status()
@@ -37,7 +38,8 @@ class TestServerPinger:
     def test_read_status_invalid_reply(self):
         self.pinger.connection.receive(
             bytearray.fromhex(
-                "4F004D7B22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E382D70726531222C2270726F746F636F6C223A34347D7D"
+                "4F004D7B22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616"
+                "D65223A22312E382D70726531222C2270726F746F636F6C223A34347D7D"
             )
         )
 
@@ -108,6 +110,41 @@ class TestPingResponse:
                 }
             )
 
+    def test_parse_description(self):
+        out = PingResponse._parse_description("test §2description")
+        assert out == "test §2description"
+
+        out = PingResponse._parse_description({"text": "§8§lfoo"})
+        assert out == "§8§lfoo"
+
+        out = PingResponse._parse_description(
+            {
+                "extra": [{"bold": True, "italic": True, "color": "gray", "text": "foo"}, {"color": "gold", "text": "bar"}],
+                "text": ".",
+            }
+        )
+        # We don't care in which order the style prefixes are, allow any
+        assert out in {
+            "§l§o§7foo§6bar.",
+            "§l§7§ofoo§6bar.",
+            "§o§l§7foo§6bar.",
+            "§o§7§lfoo§6bar.",
+            "§7§o§lfoo§6bar.",
+            "§7§l§ofoo§6bar.",
+        }
+
+        out = PingResponse._parse_description(
+            [{"bold": True, "italic": True, "color": "gray", "text": "foo"}, {"color": "gold", "text": "bar"}]
+        )
+        assert out in {
+            "§l§o§7foo§6bar",
+            "§l§7§ofoo§6bar",
+            "§o§l§7foo§6bar",
+            "§o§7§lfoo§6bar",
+            "§7§o§lfoo§6bar",
+            "§7§l§ofoo§6bar",
+        }
+
     def test_version(self):
         response = PingResponse(
             {
@@ -117,7 +154,7 @@ class TestPingResponse:
             }
         )
 
-        assert response.version != None
+        assert response.version is not None
         assert response.version.name == "1.8-pre1"
         assert response.version.protocol == 44
 
@@ -149,7 +186,7 @@ class TestPingResponse:
             }
         )
 
-        assert response.players != None
+        assert response.players is not None
         assert response.players.max == 20
         assert response.players.online == 5
 
@@ -183,7 +220,7 @@ class TestPingResponse:
             }
         )
 
-        assert response.favicon == None
+        assert response.favicon is None
 
 
 class TestPingResponsePlayers:
@@ -222,7 +259,7 @@ class TestPingResponsePlayers:
             }
         )
 
-        assert players.sample != None
+        assert players.sample is not None
         assert players.sample[0].name == "Dinnerbone"
 
     def test_sample_invalid(self):
@@ -231,7 +268,7 @@ class TestPingResponsePlayers:
 
     def test_sample_missing(self):
         players = PingResponse.Players({"max": 20, "online": 1})
-        assert players.sample == None
+        assert players.sample is None
 
 
 class TestPingResponsePlayersPlayer:

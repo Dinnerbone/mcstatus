@@ -1,11 +1,10 @@
 import socket
-from typing import Any
 import click
 from json import dumps as json_dumps
 
 from .. import MinecraftServer
 
-server = None
+server: MinecraftServer = None  # type: ignore[assignment]  # This will be set with cli function
 
 
 @click.group(context_settings=dict(help_option_names=["-h", "--help"]))
@@ -93,7 +92,7 @@ def json():
         if status_res.players.sample is not None:
             data["players"] = [{"name": player.name, "id": player.id} for player in status_res.players.sample]
 
-        query_res = server.query(tries=1)
+        query_res = server.query(tries=1)  # type: ignore[call-arg] # tries is supported with retry decorator
         data["host_ip"] = query_res.raw["hostip"]
         data["host_port"] = query_res.raw["hostport"]
         data["map"] = query_res.map
@@ -113,9 +112,10 @@ def query():
         response = server.query()
     except socket.timeout:
         print(
-            """The server did not respond to the query protocol.
-              Please ensure that the server has enable-query turned on, and that the necessary port (same as server-port unless query-port is set) is open in any firewall(s).
-              See https://wiki.vg/Query for further information."""
+            "The server did not respond to the query protocol."
+            "\nPlease ensure that the server has enable-query turned on,"
+            " and that the necessary port (same as server-port unless query-port is set) is open in any firewall(s)."
+            "\nSee https://wiki.vg/Query for further information."
         )
         raise click.Abort()
     click.echo(f"host: {response.raw['hostip']}:{response.raw['hostport']}")
@@ -126,4 +126,4 @@ def query():
 
 
 if __name__ == "__main__":
-    cli()
+    cli()  # type: ignore[call-arg]

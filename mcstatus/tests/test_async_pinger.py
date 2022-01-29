@@ -2,17 +2,13 @@ import asyncio
 import pytest
 
 from mcstatus.protocol.connection import Connection
-from mcstatus.pinger import AsyncServerPinger, PingResponse
-from mcstatus.server import MinecraftServer
+from mcstatus.pinger import AsyncServerPinger
 
 
 def async_decorator(f):
-    async def cor(*args, **kwargs):
-        return await f(*args, **kwargs)
-
     def wrapper(*args, **kwargs):
         loop = asyncio.get_event_loop()
-        return loop.run_until_complete(cor(*args, **kwargs))
+        return loop.run_until_complete(f(*args, **kwargs))
 
     return wrapper
 
@@ -24,7 +20,9 @@ class FakeAsyncConnection(Connection):
 
 class TestAsyncServerPinger:
     def setup_method(self):
-        self.pinger = AsyncServerPinger(FakeAsyncConnection(), host="localhost", port=25565, version=44)
+        self.pinger = AsyncServerPinger(
+            FakeAsyncConnection(), host="localhost", port=25565, version=44  # type: ignore[arg-type]
+        )
 
     def test_handshake(self):
         self.pinger.handshake()
@@ -34,7 +32,9 @@ class TestAsyncServerPinger:
     def test_read_status(self):
         self.pinger.connection.receive(
             bytearray.fromhex(
-                "7200707B226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E382D70726531222C2270726F746F636F6C223A34347D7D"
+                "7200707B226465736372697074696F6E223A2241204D696E65637261667420536572766572222C22706C6179657273223A7B2"
+                "26D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E382D70726531222C22"
+                "70726F746F636F6C223A34347D7D"
             )
         )
         status = async_decorator(self.pinger.read_status)()
@@ -54,7 +54,8 @@ class TestAsyncServerPinger:
     def test_read_status_invalid_reply(self):
         self.pinger.connection.receive(
             bytearray.fromhex(
-                "4F004D7B22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616D65223A22312E382D70726531222C2270726F746F636F6C223A34347D7D"
+                "4F004D7B22706C6179657273223A7B226D6178223A32302C226F6E6C696E65223A307D2C2276657273696F6E223A7B226E616"
+                "D65223A22312E382D70726531222C2270726F746F636F6C223A34347D7D"
             )
         )
 

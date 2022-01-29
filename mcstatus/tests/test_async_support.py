@@ -11,7 +11,7 @@ def test_is_completely_asynchronous():
     assertions = 0
     for attribute in dir(conn):
         if attribute.startswith("read_"):
-            assert iscoroutinefunction(conn.__getattribute__(attribute))
+            assert iscoroutinefunction(getattr(conn, attribute))
             assertions += 1
     assert assertions > 0, "None of the read_* attributes were async"
 
@@ -21,6 +21,6 @@ def test_query_is_completely_asynchronous():
     assertions = 0
     for attribute in dir(conn):
         if attribute.startswith("read_"):
-            assert iscoroutinefunction(conn.__getattribute__(attribute))
+            assert iscoroutinefunction(getattr(conn, attribute))
             assertions += 1
     assert assertions > 0, "None of the read_* attributes were async"

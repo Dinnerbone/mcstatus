@@ -1,34 +1,40 @@
 import datetime
 import json
 import random
-from typing import List, Optional
+from typing import List, Optional, Union
 
-from mcstatus.protocol.connection import Connection
+from mcstatus.protocol.connection import Connection, TCPSocketConnection, TCPAsyncSocketConnection
 
-COLOR_MAP = {
-    "dark_red": "4",
-    "red": "c",
-    "gold": "6",
-    "yellow": "e",
-    "dark_green": "2",
-    "green": "a",
-    "aqua": "b",
-    "dark_aqua": "3",
-    "dark_blue": "1",
-    "blue": "9",
-    "light_purple": "d",
-    "dark_purple": "5",
-    "white": "f",
-    "gray": "7",
-    "dark_gray": "8",
-    "black": "0",
+STYLE_MAP = {
+    "bold": "l",
+    "italic": "o",
+    "underlined": "n",
+    "obfuscated": "k",
+    "color": {
+        "dark_red": "4",
+        "red": "c",
+        "gold": "6",
+        "yellow": "e",
+        "dark_green": "2",
+        "green": "a",
+        "aqua": "b",
+        "dark_aqua": "3",
+        "dark_blue": "1",
+        "blue": "9",
+        "light_purple": "d",
+        "dark_purple": "5",
+        "white": "f",
+        "gray": "7",
+        "dark_gray": "8",
+        "black": "0",
+    },
 }
 
 
 class ServerPinger:
     def __init__(
         self,
-        connection,
+        connection: TCPSocketConnection,
         host: str = "",
         port: int = 0,
         version: int = 47,
@@ -42,7 +48,7 @@ class ServerPinger:
         self.port = port
         self.ping_token = ping_token
 
-    def handshake(self):
+    def handshake(self) -> None:
         packet = Connection()
         packet.write_varint(0)
         packet.write_varint(self.version)
@@ -52,7 +58,7 @@ class ServerPinger:
 
         self.connection.write_buffer(packet)
 
-    def read_status(self):
+    def read_status(self) -> "PingResponse":
         request = Connection()
         request.write_varint(0)  # Request status
         self.connection.write_buffer(request)
@@ -69,7 +75,7 @@ class ServerPinger:
         except ValueError as e:
             raise IOError(f"Received invalid status response: {e}")
 
-    def test_ping(self):
+    def test_ping(self) -> float:
         request = Connection()
         request.write_varint(1)  # Test ping
         request.write_long(self.ping_token)
@@ -91,7 +97,14 @@ class ServerPinger:
 
 
 class AsyncServerPinger(ServerPinger):
-    async def read_status(self):
+    def __init__(
+        self, connection: TCPAsyncSocketConnection, host: str = "", port: int = 0, version: int = 47, ping_token=None
+    ):
+        # We do this to inform python about self.connection type (it's async)
+        super().__init__(connection, host=host, port=port, version=version, ping_token=ping_token)  # type: ignore[arg-type]
+        self.connection: TCPAsyncSocketConnection
+
+    async def read_status(self) -> "PingResponse":
         request = Connection()
         request.write_varint(0)  # Request status
         self.connection.write_buffer(request)
@@ -108,7 +121,7 @@ class AsyncServerPinger(ServerPinger):
         except ValueError as e:
             raise IOError(f"Received invalid status response: {e}")
 
-    async def test_ping(self):
+    async def test_ping(self) -> float:
         request = Connection()
         request.write_varint(1)  # Test ping
         request.write_long(self.ping_token)
@@ -219,36 +232,31 @@ class PingResponse:
 
         if "description" not in raw:
             raise ValueError("Invalid status object (no 'description' value)")
-        if isinstance(raw["description"], (dict, list)):
-            if isinstance(raw["description"], dict):
-                entries = raw["description"].get("extra", ())
-                end = raw["description"]["text"]
-            else:
-                entries = raw["description"]
-                end = ""
-
-            description = ""
-
-            for entry in entries:
-                if entry.get("bold"):
-                    description += "§l"
-
-                if entry.get("italic"):
-                    description += "§o"
-
-                if entry.get("underlined"):
-                    description += "§n"
-
-                if entry.get("obfuscated"):
-                    description += "§k"
-
-                if entry.get("color"):
-                    description += "§" + COLOR_MAP[entry["color"]]
-
-                description += entry.get("text", "")
-
-            self.description = description + end
-        else:
-            self.description = raw["description"]
+        self.description = self._parse_description(raw["description"])
 
         self.favicon = raw.get("favicon")
+
+    @staticmethod
+    def _parse_description(raw_description: Union[dict, list, str]) -> str:
+        if isinstance(raw_description, str):
+            return raw_description
+
+        if isinstance(raw_description, dict):
+            entries = raw_description.get("extra", [])
+            end = raw_description["text"]
+        else:
+            entries = raw_description
+            end = ""
+
+        description = ""
+
+        for entry in entries:
+            for style_key, style_val in STYLE_MAP.items():
+                if entry.get(style_key):
+                    if isinstance(style_val, dict):
+                        style_val = style_val[entry[style_key]]
+
+                    description += f"§{style_val}"
+            description += entry.get("text", "")
+
+        return description + end
