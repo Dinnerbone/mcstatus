@@ -46,6 +46,7 @@ black = "^21.10b0"
 pytype = {version = "^2021.12.8", platform = "linux", python = "<3.10"}
 tox = "^3.24.5"
 tox-poetry = "^0.4.1"
+pyright = "^0.0.13"
 
 [tool.poetry.scripts]
 mcstatus = 'mcstatus.scripts.mcstatus:cli'
