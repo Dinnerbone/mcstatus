@@ -61,7 +61,7 @@ class Connection:
         raise IOError("Server sent a varint that was too big!")
 
     def write_varint(self, value: int) -> None:
-        if value < -(2 ** 31) or 2 ** 31 - 1 < value:
+        if value < -(2**31) or 2**31 - 1 < value:
             raise ValueError("Minecraft varints must be in the range of [-2**31, 2**31 - 1].")
         remaining = unsigned_int32(value).value
         for _ in range(5):
