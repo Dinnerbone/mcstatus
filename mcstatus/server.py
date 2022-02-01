@@ -1,5 +1,4 @@
-import re
-
+from socket import gethostbyname, gaierror
 from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
 from mcstatus.protocol.connection import (
     TCPSocketConnection,
@@ -14,10 +13,6 @@ from mcstatus.utils import retry
 import dns.resolver
 from dns.exception import DNSException
 
-VALID_HOSTNAME_REGEX = re.compile(
-    r"(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
-)
-
 __all__ = ["MinecraftServer", "MinecraftBedrockServer"]
 
 
@@ -28,8 +23,13 @@ def ensure_valid_ip(host: object, port: object):
         raise TypeError(f"Port must be an integer port number, got {type(port)} ({port})")
     if port > 65535 or port < 0:
         raise ValueError(f"Port must be within the allowed range (0-2^16), got {port}")
-    if not VALID_HOSTNAME_REGEX.fullmatch(host):
-        raise ValueError(f"Invalid host address, {host!r} (doesn't match the required pattern)")
+    try:
+        # Check if `host` is valid, this is a more accurate way than regex or like this.
+        # `gethostbyname` makes request to dns, and get number ip, so this have 100% accuracy
+        # BUT it is triggers to not registered domains, which can be ignored
+        gethostbyname(host)
+    except gaierror:
+        raise ValueError(f"Invalid host address, {host!r} (doesn't had answer from DNS)")
 
 
 class MinecraftServer:
