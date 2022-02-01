@@ -43,7 +43,6 @@ class MinecraftServer:
     """
 
     def __init__(self, host: str, port: int = 25565, timeout: float = 3):
-        ensure_valid_ip(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -58,6 +57,7 @@ class MinecraftServer:
         :rtype: MinecraftServer
         """
 
+        ensure_valid_ip(host, port)
         host, port = parse_address(address)
         if port is None:
             port = 25565
@@ -208,7 +208,6 @@ class MinecraftBedrockServer:
     """
 
     def __init__(self, host: str, port: int = 19132, timeout: float = 3):
-        ensure_valid_ip(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -221,6 +220,7 @@ class MinecraftBedrockServer:
         :return: A `MinecraftBedrockServer` instance.
         :rtype: MinecraftBedrockServer
         """
+        ensure_valid_ip(host, port)
         host, port = parse_address(address)
         # If the address didn't contain port, fall back to constructor's default
         if port is None:
