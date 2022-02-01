@@ -1,6 +1,6 @@
 name: Auto Black
 
-on: [push]
+on: [pull_request, push]
 
 jobs:
   autoblack:
@@ -16,4 +16,4 @@ jobs:
 
       - name: autoblack_check
         id: black-check
-        run: black --check -l 127 .
+        run: black --check .
