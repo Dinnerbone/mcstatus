@@ -38,12 +38,14 @@ class MinecraftServer:
     :param str host: The host/address/ip of the Minecraft server.
     :param int port: The port that the server is on.
     :param float timeout: The timeout in seconds before failing to connect.
+    :param bool validating_ip: Switch to check if ip valid. Added to suppurt <9.0.0 version logic.
     :attr host:
     :attr port:
     """
 
-    def __init__(self, host: str, port: int = 25565, timeout: float = 3):
-        ensure_valid_ip(host, port)
+    def __init__(self, host: str, port: int = 25565, timeout: float = 3, validating_ip: bool = True):
+        if validating_ip:
+            ensure_valid_ip(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -203,12 +205,14 @@ class MinecraftBedrockServer:
     :param str host: The host/address/ip of the Minecraft server.
     :param int port: The port that the server is on.
     :param float timeout: The timeout in seconds before failing to connect.
+    :param bool validating_ip: Switch to check if ip valid. Added to suppurt <9.0.0 version logic.
     :attr host:
     :attr port:
     """
 
-    def __init__(self, host: str, port: int = 19132, timeout: float = 3):
-        ensure_valid_ip(host, port)
+    def __init__(self, host: str, port: int = 19132, timeout: float = 3, validating_ip: bool = True):
+        if validating_ip:
+            ensure_valid_ip(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
