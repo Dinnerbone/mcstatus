@@ -1,0 +1,60 @@
+name: Validation
+
+on: [pull_request, push]
+
+env:
+  # Make sure pip caches dependencies and installs as user
+  PIP_NO_CACHE_DIR: false
+  PIP_USER: 1
+
+  # Make sure poetry won't use virtual environments
+  POETRY_VIRTUALENVS_CREATE: false
+
+  # Specify paths here, so we know what to cache
+  POETRY_CACHE_DIR: ${{ github.workspace }}/.cache/py-user-base
+  PYTHONUSERBASE: ${{ github.workspace }}/.cache/py-user-base
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add custom PYTHONUSERBASE to PATH
+        run: echo '${{ env.PYTHONUSERBASE }}/bin/' >> $GITHUB_PATH
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Python setup
+        id: python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.5'
+
+      # Cache python dependencies so that unless we change them,
+      # we won't need to reinstall them with each workflow run.
+      # The key is a composite of multiple values, which when changed
+      # the cache won't be restored in order to make updating possible
+      - name: Python dependency caching
+        uses: actions/cache@v2
+        id: python_cache
+        with:
+          path: ${{ env.PYTHONUSERBASE }}
+          key: "python-0-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
+                ${{ steps.python.outputs.python-version }}-\
+                ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
+
+      # In case the dependencies weren't restored, install them
+      - name: Install dependencies using poetry
+        if: steps.python_cache.outputs.cache-hit != 'true'
+        run: |
+          pip install poetry
+          poetry install
+  
+      # Run the actual linting steps here:
+
+      - name: Run black formatter check
+        run: black --check .
+
+      - name: Run pyright type checker
+        run: pyright -v $PYTHONUSERBASE
