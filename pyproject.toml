@@ -50,6 +50,13 @@ tox-poetry = "^0.4.1"
 [tool.poetry.scripts]
 mcstatus = 'mcstatus.scripts.mcstatus:cli'
 
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--strict-markers --doctest-modules --cov=mcstatus --cov-append --cov-branch --cov-report=term-missing -vvv --no-cov-on-fail"
+testpaths = [
+    "mcstatus/tests",
+]
+
 [tool.black]
 line-length = 127
 
