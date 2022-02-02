@@ -14,7 +14,6 @@ from mcstatus.querier import QueryResponse, ServerQuerier, AsyncServerQuerier
 from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 from mcstatus.scripts.address_tools import parse_address
 from mcstatus.utils import retry
-from dns.exception import DNSException
 
 VALID_HOSTNAME_REGEX = re.compile(
     r"(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
@@ -65,6 +64,21 @@ class MinecraftServer:
         host = str(answer.target).rstrip(".")
         port = int(answer.port)
         return host, port
+
+    @staticmethod
+    def dns_a_lookup(hostname: str) -> str:
+        """Perform a DNS resolution for an A record to given hostname
+
+        :param str address: The address to resolve for.
+        :return: A context manager
+        :raises: dns.resolver.NXDOMAIN if the record wasn't found
+        """
+        answers = dns.resolver.resolve(hostname, "A")
+        # There should only be one answer here, though in case the server
+        # does actually point to multiple IPs, we just pick the first one
+        answer = answers[0]
+        hostname = str(answer).rstrip(".")
+        return hostname
 
     @classmethod
     def lookup(cls, address: str, timeout: float = 3):
@@ -175,20 +189,19 @@ class MinecraftServer:
         :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
-        host = self.host
         try:
-            answers = dns.resolver.resolve(host, "A")
-            if len(answers):
-                answer = answers[0]
-                host = str(answer).rstrip(".")
-        except DNSException:
-            pass
+            ip = self.dns_a_lookup(self.host)
+        except dns.resolver.NXDOMAIN:
+            # The A record lookup can fail here since the host could already be an IP, not a hostname
+            # However it can also fail if the hostname is just invalid and doesn't have any MC server
+            # attached to it, in which case we'll get an error after connecting with the socket.
+            ip = self.host
 
-        return self._retry_query(host)
+        return self._retry_query(ip)
 
     @retry(tries=3)
-    def _retry_query(self, host: str) -> QueryResponse:
-        connection = UDPSocketConnection((host, self.port), self.timeout)
+    def _retry_query(self, ip: str) -> QueryResponse:
+        connection = UDPSocketConnection((ip, self.port), self.timeout)
         querier = ServerQuerier(connection)
         querier.handshake()
         return querier.read_query()
@@ -199,21 +212,20 @@ class MinecraftServer:
         :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
-        host = self.host
         try:
-            answers = dns.resolver.resolve(host, "A")
-            if len(answers):
-                answer = answers[0]
-                host = str(answer).rstrip(".")
-        except DNSException:
-            pass
+            ip = self.dns_a_lookup(self.host)
+        except dns.resolver.NXDOMAIN:
+            # The A record lookup can fail here since the host could already be an IP, not a hostname
+            # However it can also fail if the hostname is just invalid and doesn't have any MC server
+            # attached to it, in which case we'll get an error after connecting with the socket.
+            ip = self.host
 
-        return await self._retry_async_query(host)
+        return await self._retry_async_query(ip)
 
     @retry(tries=3)
-    async def _retry_async_query(self, host) -> QueryResponse:
+    async def _retry_async_query(self, ip: str) -> QueryResponse:
         connection = UDPAsyncSocketConnection()
-        await connection.connect((host, self.port), self.timeout)
+        await connection.connect((ip, self.port), self.timeout)
         querier = AsyncServerQuerier(connection)
         await querier.handshake()
         return await querier.read_query()
