@@ -1,4 +1,7 @@
 import re
+from typing import Tuple
+
+import dns.resolver
 
 from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
 from mcstatus.protocol.connection import (
@@ -11,7 +14,6 @@ from mcstatus.querier import QueryResponse, ServerQuerier, AsyncServerQuerier
 from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 from mcstatus.scripts.address_tools import parse_address
 from mcstatus.utils import retry
-import dns.resolver
 from dns.exception import DNSException
 
 VALID_HOSTNAME_REGEX = re.compile(
@@ -48,6 +50,22 @@ class MinecraftServer:
         self.port = port
         self.timeout = timeout
 
+    @staticmethod
+    def dns_srv_lookup(address: str) -> Tuple[str, int]:
+        """Perform a DNS resolution for SRV record pointing to the Java Server.
+
+        :param str address: The address to resolve for.
+        :return: A tuple of host string and port number
+        :raises: dns.resolver.NXDOMAIN if the record wasn't found
+        """
+        answers = dns.resolver.resolve("_minecraft._tcp." + address, "SRV")
+        # There should only be one answer here, though in case the server
+        # does actually point to multiple IPs, we just pick the first one
+        answer = answers[0]
+        host = str(answer.target).rstrip(".")
+        port = int(answer.port)
+        return host, port
+
     @classmethod
     def lookup(cls, address: str, timeout: float = 3):
         """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
@@ -59,18 +77,22 @@ class MinecraftServer:
         """
 
         host, port = parse_address(address)
-        if port is None:
-            port = 25565
-            try:
-                answers = dns.resolver.resolve("_minecraft._tcp." + host, "SRV")
-                if len(answers):
-                    answer = answers[0]
-                    host = str(answer.target).rstrip(".")
-                    port = int(answer.port)
-            except Exception:
-                pass
 
-        return cls(host, port, timeout)
+        # If we have a port, no DNS resolution is needed, just make the instance, we know where to connect
+        if port is not None:
+            return cls(host, port, timeout=timeout)
+
+        # Try to look for an SRV DNS record. If present, make the instance with host and port from it.
+        try:
+            host, port = cls.dns_srv_lookup(host)
+        except dns.resolver.NXDOMAIN:
+            # The DNS record doesn't exist, this doesn't necessarily mean the server doesn't exist though
+            # SRV record is optional and some servers don't expose it. So we simply use the host from the
+            # address and fall back to the default port
+            return cls(host, timeout=timeout)
+
+        # We have the host and port from the SRV record, use it to make the instance
+        return cls(host, port, timeout=timeout)
 
     def ping(self, **kwargs) -> float:
         """Checks the latency between a Minecraft Java Edition server and the client (you).
