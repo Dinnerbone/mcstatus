@@ -43,9 +43,9 @@ pytest-asyncio = "^0.16.0"
 pytest-cov = "^3.0.0"
 twine = "^3.5.0"
 black = "^22.1.0"
-pytype = {version = "^2021.12.8", platform = "linux", python = "<3.10"}
 tox = "^3.24.5"
 tox-poetry = "^0.4.1"
+pyright = "^0.0.13"
 
 [tool.poetry.scripts]
 mcstatus = 'mcstatus.scripts.mcstatus:cli'
@@ -53,9 +53,7 @@ mcstatus = 'mcstatus.scripts.mcstatus:cli'
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "--strict-markers --doctest-modules --cov=mcstatus --cov-append --cov-branch --cov-report=term-missing -vvv --no-cov-on-fail"
-testpaths = [
-    "mcstatus/tests",
-]
+testpaths = ["mcstatus/tests"]
 
 [tool.black]
 line-length = 127
