@@ -70,7 +70,7 @@ class MinecraftServer:
         """Perform a DNS resolution for an A record to given hostname
 
         :param str address: The address to resolve for.
-        :return: A context manager
+        :return: The resolved IP address from the A record
         :raises: dns.resolver.NXDOMAIN if the record wasn't found
         """
         answers = dns.resolver.resolve(hostname, "A")
@@ -81,15 +81,13 @@ class MinecraftServer:
         return hostname
 
     @classmethod
-    def lookup(cls, address: str, timeout: float = 3):
-        """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
+    def lookup(cls, address: str, *, timeout: float = 3):
+        """Parse the given address and check DNS records for an SRV record that points to the Minecraft java server.
 
-        :param str address: The address of the Minecraft server, like `example.com:25565`.
+        :param str address: The address of the Minecraft server, like `example.com:25565`
         :param float timeout: The timeout in seconds before failing to connect.
         :return: A `MinecraftServer` instance.
-        :rtype: MinecraftServer
         """
-
         host, port = parse_address(address)
 
         # If we have a port, no DNS resolution is needed, just make the instance, we know where to connect
