@@ -1,4 +1,5 @@
 import re
+from typing_extensions import Self
 
 from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
 from mcstatus.protocol.connection import (
@@ -49,7 +50,7 @@ class MinecraftServer:
         self.timeout = timeout
 
     @classmethod
-    def lookup(cls, address: str, timeout: float = 3):
+    def lookup(cls, address: str, timeout: float = 3) -> Self:
         """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
 
         :param str address: The address of the Minecraft server, like `example.com:25565`.
@@ -214,7 +215,7 @@ class MinecraftBedrockServer:
         self.timeout = timeout
 
     @classmethod
-    def lookup(cls, address: str):
+    def lookup(cls, address: str) -> Self:
         """Parses a given address and returns a MinecraftBedrockServer instance.
 
         :param str address: The address of the Minecraft server, like `example.com:19132`
