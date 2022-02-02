@@ -81,7 +81,7 @@ class MinecraftServer:
         return hostname
 
     @classmethod
-    def lookup(cls, address: str, *, timeout: float = 3):
+    def lookup(cls, address: str, timeout: float = 3):
         """Parse the given address and check DNS records for an SRV record that points to the Minecraft java server.
 
         :param str address: The address of the Minecraft server, like `example.com:25565`
