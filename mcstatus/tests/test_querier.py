@@ -63,7 +63,10 @@ class TestMinecraftQuerier:
         
         assert response.motd == "\x00other"
         # Make sure the order is correct
-        assert response.raw['game_id'] == 'MINECRAFT'
+        assert response.raw["game_id"] == "MINECRAFT"
+        assert response.motd == "\x00other"  # "\u2a00other" is actually what is expected,
+        # but the query protocol for vanilla has a bug when it comes to unicode handling.
+        # The status protocol correctly shows "⨀other".
 
 
 class TestQueryResponse:
