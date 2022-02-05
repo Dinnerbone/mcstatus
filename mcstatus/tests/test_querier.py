@@ -46,9 +46,7 @@ class TestMinecraftQuerier:
         )
         response = self.querier.read_query()
         conn_bytes = self.querier.connection.flush()
-        
-        assert response.motd == b'\x00*K\xc3\x95'.decode()
-        # Make sure the order is correct
+
         assert response.raw['game_id'] == 'MINECRAFT'
         assert response.motd == "\x00*KÕ"
 
@@ -60,9 +58,7 @@ class TestMinecraftQuerier:
         )
         response = self.querier.read_query()
         conn_bytes = self.querier.connection.flush()
-        
-        assert response.motd == "\x00other"
-        # Make sure the order is correct
+
         assert response.raw["game_id"] == "MINECRAFT"
         assert response.motd == "\x00other"  # "\u2a00other" is actually what is expected,
         # but the query protocol for vanilla has a bug when it comes to unicode handling.
