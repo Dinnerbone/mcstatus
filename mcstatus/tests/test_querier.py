@@ -47,6 +47,8 @@ class TestMinecraftQuerier:
         response = self.querier.read_query()
         conn_bytes = self.querier.connection.flush()
         
+        assert response.motd == b'\x00*K\xc3\x95'.decode()
+        # Make sure the order is correct
         assert response.raw['game_id'] == 'MINECRAFT'
 
     def test_query_handles_unicode_motd_with_2a00_at_the_start(self):
@@ -57,7 +59,9 @@ class TestMinecraftQuerier:
         )
         response = self.querier.read_query()
         conn_bytes = self.querier.connection.flush()
-
+        
+        assert response.motd == "\x00other"
+        # Make sure the order is correct
         assert response.raw['game_id'] == 'MINECRAFT'
 
 
