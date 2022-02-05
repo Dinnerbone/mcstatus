@@ -15,22 +15,17 @@ from mcstatus.utils import retry
 import dns.resolver
 from dns.exception import DNSException
 
-VALID_HOSTNAME_REGEX = re.compile(
-    r"(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
-)
 
 __all__ = ["MinecraftServer", "MinecraftBedrockServer"]
 
 
-def ensure_valid_ip(host: object, port: object):
+def ensure_valid(host: object, port: object):
     if not isinstance(host, str):
         raise TypeError(f"Host must be a string address, got {type(host)} ({host!r})")
     if not isinstance(port, int):
         raise TypeError(f"Port must be an integer port number, got {type(port)} ({port})")
     if port > 65535 or port < 0:
         raise ValueError(f"Port must be within the allowed range (0-2^16), got {port}")
-    if not VALID_HOSTNAME_REGEX.fullmatch(host):
-        raise ValueError(f"Invalid host address, {host!r} (doesn't match the required pattern)")
 
 
 class MinecraftServer:
@@ -44,7 +39,7 @@ class MinecraftServer:
     """
 
     def __init__(self, host: str, port: int = 25565, timeout: float = 3):
-        ensure_valid_ip(host, port)
+        ensure_valid(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -209,7 +204,7 @@ class MinecraftBedrockServer:
     """
 
     def __init__(self, host: str, port: int = 19132, timeout: float = 3):
-        ensure_valid_ip(host, port)
+        ensure_valid(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
