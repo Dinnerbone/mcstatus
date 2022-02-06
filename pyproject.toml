@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mcstatus"
-version = "8.0.0"
+version = "0.0.0" # version is handled by git tags and poetry-dynamic-versioning
 description = "A library to query Minecraft Servers for their status and capabilities."
 authors = ["Nathan Adams <dinnerbone@dinnerbone.com>"]
 license = "Apache-2.0"
@@ -55,9 +55,15 @@ minversion = "6.0"
 addopts = "--strict-markers --doctest-modules --cov=mcstatus --cov-append --cov-branch --cov-report=term-missing -vvv --no-cov-on-fail"
 testpaths = ["mcstatus/tests"]
 
+[tool.poetry-dynamic-versioning]
+bump = true
+enable = true
+metadata = true
+style = "pep440"
+
 [tool.black]
 line-length = 127
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
 build-backend = "poetry.core.masonry.api"
