@@ -58,7 +58,6 @@ testpaths = ["mcstatus/tests"]
 [tool.poetry-dynamic-versioning]
 bump = true
 enable = true
-metadata = true
 style = "pep440"
 
 [tool.black]
