@@ -51,7 +51,7 @@ class TestMinecraftQuerier:
         response = self.querier.read_query()
         conn_bytes = self.querier.connection.flush()
 
-        assert response.raw['game_id'] == 'MINECRAFT'
+        assert response.raw["game_id"] == "MINECRAFT"
         assert response.motd == "\x00*KÕ"
 
     def test_query_handles_unicode_motd_with_2a00_at_the_start(self):
