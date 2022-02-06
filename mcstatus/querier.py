@@ -1,5 +1,6 @@
 import random
 import struct
+import re
 from typing import List
 
 from mcstatus.protocol.connection import Connection
@@ -128,29 +129,20 @@ class QueryResponse:
         data = {}
         players = []
 
-        # If hostname is set to unicode, using other parameters of read_ascii() may be in the wrong order
-        key = response.received[:8].decode('ISO-8859-1')
-        if key == 'hostname':
-            response.read_ascii()
-            name = bytearray()
-            while True:
-                c = response.read(1)
-                name += c
-                if c[0] == 0:
-                    if response.received[:8].decode('ISO-8859-1') == 'gametype':
-                        name.pop()
-                        break
-            # Since the minecraft protocol does not support unicode, the hostname is still not resolved correctly
-            # However, this will avoid other parameter parsing errors
-            data[key] = name.decode('ISO-8859-1')
-
         while True:
             key = response.read_ascii()
-            if len(key) == 0:
+            if key == "hostname":
+                name = re.search(b"(.*)\x00gametype", response.received, flags=re.DOTALL).group(1)
+                # Since the query protocol does not properly support unicode, the hostname is still not resolved
+                # correctly; however, this will avoid other parameter parsing errors.
+                data[key] = response.read(len(name)).decode("ISO-8859-1")
+                response.read(1)  # ignore null byte
+            elif len(key) == 0:
                 response.read(1)
                 break
-            value = response.read_ascii()
-            data[key] = value
+            else:
+                value = response.read_ascii()
+                data[key] = value
 
         response.read(len("player_") + 1 + 1)
 
