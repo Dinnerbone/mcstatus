@@ -1,5 +1,6 @@
 import random
 import struct
+import re
 from typing import List
 
 from mcstatus.protocol.connection import Connection, UDPAsyncSocketConnection, UDPSocketConnection
@@ -135,11 +136,18 @@ class QueryResponse:
 
         while True:
             key = response.read_ascii()
-            if len(key) == 0:
+            if key == "hostname":
+                name = re.search(b"(.*)\x00gametype", response.received, flags=re.DOTALL).group(1)
+                # Since the query protocol does not properly support unicode, the hostname is still not resolved
+                # correctly; however, this will avoid other parameter parsing errors.
+                data[key] = response.read(len(name)).decode("ISO-8859-1")
+                response.read(1)  # ignore null byte
+            elif len(key) == 0:
                 response.read(1)
                 break
-            value = response.read_ascii()
-            data[key] = value
+            else:
+                value = response.read_ascii()
+                data[key] = value
 
         response.read(len("player_") + 1 + 1)
 

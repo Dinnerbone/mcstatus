@@ -42,6 +42,32 @@ class TestMinecraftQuerier:
         }
         assert response.players.names == ["Dinnerbone", "Djinnibone", "Steve"]
 
+    def test_query_handles_unicode_motd_with_nulls(self):
+        self.querier.connection.receive(
+            bytearray(
+                b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00hostname\x00\x00*K\xd5\x00gametype\x00SMP\x00game_id\x00MINECRAFT\x00version\x001.16.5\x00plugins\x00Paper on 1.16.5-R0.1-SNAPSHOT\x00map\x00world\x00numplayers\x000\x00maxplayers\x0020\x00hostport\x0025565\x00hostip\x00127.0.1.1\x00\x00\x01player_\x00\x00\x00"
+            )
+        )
+        response = self.querier.read_query()
+        conn_bytes = self.querier.connection.flush()
+
+        assert response.raw['game_id'] == 'MINECRAFT'
+        assert response.motd == "\x00*KÕ"
+
+    def test_query_handles_unicode_motd_with_2a00_at_the_start(self):
+        self.querier.connection.receive(
+            bytearray.fromhex(
+                "00000000000000000000000000000000686f73746e616d6500006f746865720067616d657479706500534d500067616d655f6964004d494e4543524146540076657273696f6e00312e31382e3100706c7567696e7300006d617000776f726c64006e756d706c61796572730030006d6178706c617965727300323000686f7374706f727400323535363500686f73746970003137322e31372e302e32000001706c617965725f000000"
+            )
+        )
+        response = self.querier.read_query()
+        conn_bytes = self.querier.connection.flush()
+
+        assert response.raw["game_id"] == "MINECRAFT"
+        assert response.motd == "\x00other"  # "\u2a00other" is actually what is expected,
+        # but the query protocol for vanilla has a bug when it comes to unicode handling.
+        # The status protocol correctly shows "⨀other".
+
 
 class TestQueryResponse:
     def setup_method(self):
