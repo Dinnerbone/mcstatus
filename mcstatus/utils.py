@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 from typing import Callable, Tuple, Type
 from functools import wraps

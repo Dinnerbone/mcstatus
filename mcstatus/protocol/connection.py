@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from abc import abstractmethod, ABC
-from typing import SupportsBytes, Iterable, Tuple, Union
-from typing_extensions import SupportsIndex  # Python 3.7 doesn't support this yet.
+from typing import TYPE_CHECKING, SupportsBytes, Iterable, Tuple, Union
 
 import socket
 import struct
@@ -12,7 +13,10 @@ from ctypes import c_int32 as signed_int32
 
 from ..scripts.address_tools import ip_type
 
-BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
+if TYPE_CHECKING:
+    from typing_extensions import SupportsIndex  # Python 3.7 doesn't support this yet.
+
+    BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
 
 
 class Connection:
@@ -245,7 +249,7 @@ class UDPSocketConnection(Connection):
             result.extend(self.socket.recvfrom(self.remaining())[0])
         return result
 
-    def write(self, data: Union["Connection", bytes, bytearray]) -> None:
+    def write(self, data: Union[Connection, bytes, bytearray]) -> None:
         if isinstance(data, Connection):
             data = bytearray(data.flush())
         self.socket.sendto(data, self.addr)

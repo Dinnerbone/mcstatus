@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from urllib.parse import urlparse
 from typing import Tuple, Optional, Union
 from ipaddress import ip_address

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import socket
 import struct
@@ -41,7 +43,7 @@ class BedrockServerStatus:
             gamemode=gamemode,
         )
 
-    def read_status(self) -> "BedrockStatusResponse":
+    def read_status(self) -> BedrockStatusResponse:
         start = perf_counter()
 
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -52,7 +54,7 @@ class BedrockServerStatus:
 
         return self.parse_response(data, (perf_counter() - start))
 
-    async def read_status_async(self) -> "BedrockStatusResponse":
+    async def read_status_async(self) -> BedrockStatusResponse:
         start = perf_counter()
         stream = None
 
