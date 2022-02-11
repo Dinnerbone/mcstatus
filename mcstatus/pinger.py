@@ -253,10 +253,13 @@ class PingResponse:
         for entry in entries:
             for style_key, style_val in STYLE_MAP.items():
                 if entry.get(style_key):
-                    if isinstance(style_val, dict):
-                        style_val = style_val[entry[style_key]]
+                    try:
+                        if isinstance(style_val, dict):
+                            style_val = style_val[entry[style_key]]
 
-                    description += f"§{style_val}"
+                        description += f"§{style_val}"
+                    except KeyError:
+                        pass  # ignoring these key errors strips out html color codes
             description += entry.get("text", "")
 
         return description + end

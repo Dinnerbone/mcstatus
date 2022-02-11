@@ -1,5 +1,6 @@
 import random
 import struct
+import re
 from typing import List
 
 from mcstatus.protocol.connection import Connection, UDPAsyncSocketConnection, UDPSocketConnection
@@ -135,18 +136,26 @@ class QueryResponse:
 
         while True:
             key = response.read_ascii()
-            if len(key) == 0:
+            if key == "hostname":  # hostname is actually motd in the query protocol
+                match = re.search(b"(.*)\x00gametype", response.received, flags=re.DOTALL)
+                motd = match.group(1) if match else ""
+                # Since the query protocol does not properly support unicode, the motd is still not resolved
+                # correctly; however, this will avoid other parameter parsing errors.
+                data[key] = response.read(len(motd)).decode("ISO-8859-1")
+                response.read(1)  # ignore null byte
+            elif len(key) == 0:
                 response.read(1)
                 break
-            value = response.read_ascii()
-            data[key] = value
+            else:
+                value = response.read_ascii()
+                data[key] = value
 
         response.read(len("player_") + 1 + 1)
 
         while True:
-            name = response.read_ascii()
-            if len(name) == 0:
+            motd = response.read_ascii()
+            if len(motd) == 0:
                 break
-            players.append(name)
+            players.append(motd)
 
         return cls(data, players)

@@ -1,6 +1,7 @@
 import re
 from typing import Tuple
 
+from typing_extensions import Self
 import dns.resolver
 
 from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
@@ -15,22 +16,17 @@ from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 from mcstatus.scripts.address_tools import parse_address
 from mcstatus.utils import retry
 
-VALID_HOSTNAME_REGEX = re.compile(
-    r"(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])"
-)
 
 __all__ = ["MinecraftServer", "MinecraftBedrockServer"]
 
 
-def ensure_valid_ip(host: object, port: object):
+def ensure_valid(host: object, port: object):
     if not isinstance(host, str):
         raise TypeError(f"Host must be a string address, got {type(host)} ({host!r})")
     if not isinstance(port, int):
         raise TypeError(f"Port must be an integer port number, got {type(port)} ({port})")
     if port > 65535 or port < 0:
         raise ValueError(f"Port must be within the allowed range (0-2^16), got {port}")
-    if not VALID_HOSTNAME_REGEX.fullmatch(host):
-        raise ValueError(f"Invalid host address, {host!r} (doesn't match the required pattern)")
 
 
 class MinecraftServer:
@@ -44,7 +40,7 @@ class MinecraftServer:
     """
 
     def __init__(self, host: str, port: int = 25565, timeout: float = 3):
-        ensure_valid_ip(host, port)
+        ensure_valid(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -81,8 +77,8 @@ class MinecraftServer:
         return hostname
 
     @classmethod
-    def lookup(cls, address: str, timeout: float = 3):
-        """Parse the given address and check DNS records for an SRV record that points to the Minecraft java server.
+    def lookup(cls, address: str, timeout: float = 3) -> Self:
+        """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
 
         :param str address: The address of the Minecraft server, like `example.com:25565`
         :param float timeout: The timeout in seconds before failing to connect.
@@ -240,13 +236,13 @@ class MinecraftBedrockServer:
     """
 
     def __init__(self, host: str, port: int = 19132, timeout: float = 3):
-        ensure_valid_ip(host, port)
+        ensure_valid(host, port)
         self.host = host
         self.port = port
         self.timeout = timeout
 
     @classmethod
-    def lookup(cls, address: str):
+    def lookup(cls, address: str) -> Self:
         """Parses a given address and returns a MinecraftBedrockServer instance.
 
         :param str address: The address of the Minecraft server, like `example.com:19132`
