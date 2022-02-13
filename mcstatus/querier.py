@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import random
-import struct
 import re
+import struct
 from typing import List
 
 from mcstatus.protocol.connection import Connection, UDPAsyncSocketConnection, UDPSocketConnection

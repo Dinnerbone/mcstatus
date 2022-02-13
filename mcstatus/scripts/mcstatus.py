@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import socket
-import click
 from json import dumps as json_dumps
+
+import click
 
 from mcstatus import MinecraftServer
 

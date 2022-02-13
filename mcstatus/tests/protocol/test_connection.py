@@ -1,5 +1,4 @@
 import pytest
-
 from mock import Mock, patch
 
 from mcstatus.protocol.connection import (

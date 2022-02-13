@@ -5,7 +5,7 @@ import json
 import random
 from typing import List, Optional, Union
 
-from mcstatus.protocol.connection import Connection, TCPSocketConnection, TCPAsyncSocketConnection
+from mcstatus.protocol.connection import Connection, TCPAsyncSocketConnection, TCPSocketConnection
 
 STYLE_MAP = {
     "bold": "l",

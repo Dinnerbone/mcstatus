@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from urllib.parse import urlparse
-from typing import Tuple, Optional, Union
 from ipaddress import ip_address
+from typing import Optional, Tuple, Union
+from urllib.parse import urlparse
 
 
 def ip_type(address: Union[int, str]) -> Optional[int]:

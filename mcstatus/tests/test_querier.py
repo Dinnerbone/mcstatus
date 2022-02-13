@@ -1,5 +1,5 @@
 from mcstatus.protocol.connection import Connection
-from mcstatus.querier import ServerQuerier, QueryResponse
+from mcstatus.querier import QueryResponse, ServerQuerier
 
 
 class TestMinecraftQuerier:

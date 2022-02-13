@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
-from typing import TYPE_CHECKING, SupportsBytes, Iterable, Tuple, Union
-
+import asyncio
 import socket
 import struct
-import asyncio
-import asyncio_dgram
-
-from ctypes import c_uint32 as unsigned_int32
+from abc import ABC, abstractmethod
 from ctypes import c_int32 as signed_int32
+from ctypes import c_uint32 as unsigned_int32
+from typing import Iterable, SupportsBytes, TYPE_CHECKING, Tuple, Union
+
+import asyncio_dgram
 
 from mcstatus.scripts.address_tools import ip_type
 

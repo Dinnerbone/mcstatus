@@ -1,8 +1,9 @@
 import asyncio
+
 import pytest
 
-from mcstatus.protocol.connection import Connection
 from mcstatus.pinger import AsyncServerPinger
+from mcstatus.protocol.connection import Connection
 
 
 def async_decorator(f):

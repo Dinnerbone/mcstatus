@@ -1,7 +1,7 @@
 import pytest
 
+from mcstatus.pinger import PingResponse, ServerPinger
 from mcstatus.protocol.connection import Connection
-from mcstatus.pinger import ServerPinger, PingResponse
 
 
 class TestServerPinger:

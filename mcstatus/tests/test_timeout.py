@@ -1,7 +1,7 @@
-from mock import patch
-
 import asyncio
+
 import pytest
+from mock import patch
 
 from mcstatus.protocol.connection import TCPAsyncSocketConnection
 

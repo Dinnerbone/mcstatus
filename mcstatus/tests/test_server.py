@@ -1,8 +1,8 @@
 import asyncio
 import sys
 
-from mock import patch, Mock
 import pytest
+from mock import Mock, patch
 
 from mcstatus.protocol.connection import Connection
 from mcstatus.server import MinecraftServer
