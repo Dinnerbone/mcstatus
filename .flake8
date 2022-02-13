@@ -3,4 +3,5 @@ max-line-length=127
 extend-ignore=E203
 application-import-names="mcstatus"
 ban-relative-imports = true
+import-order-style=pycharm
 exclude=".venv,.git,.cache"
