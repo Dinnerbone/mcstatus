@@ -33,9 +33,6 @@ python = ">=3.7,<4"
 asyncio-dgram = "1.2.0"
 click = ">=7.1.2,<9"
 dnspython = "2.1.0"
-flake8-import-order = "^0.18.1"
-flake8-annotations = "^2.7.0"
-pep8-naming = "^0.12.1"
 
 [tool.poetry.dev-dependencies]
 coverage = "^6.1.1"
@@ -52,6 +49,9 @@ typing-extensions = "^4.0.1"
 flake8 = "^4.0.1"
 flake8-bugbear = "^22.1.11"
 flake8-tidy-imports = "^4.6.0"
+flake8-import-order = "^0.18.1"
+pep8-naming = "^0.12.1"
+flake8-annotations = "^2.7.0"
 
 [tool.poetry.scripts]
 mcstatus = 'mcstatus.scripts.mcstatus:cli'
