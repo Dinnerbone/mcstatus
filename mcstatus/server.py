@@ -53,7 +53,10 @@ class MinecraftServer:
 
         :param str address: The address to resolve for.
         :return: A tuple of host string and port number
-        :raises: dns.resolver.NXDOMAIN if the record wasn't found
+        :raises: dns.resolver.NXDOMAIN if the SRV record doesn't exist
+        :raises: dns.resolver.YXDOMAIN if the SRV record name is too long
+        :raises: dns.resolver.Timeout if the SRV record wasn't found in time
+        :raises: Other dns.resolver.resolve exception pointing to a deeper issue
         """
         answers = dns.resolver.resolve("_minecraft._tcp." + address, "SRV")
         # There should only be one answer here, though in case the server
@@ -70,6 +73,9 @@ class MinecraftServer:
         :param str address: The address to resolve for.
         :return: The resolved IP address from the A record
         :raises: dns.resolver.NXDOMAIN if the record wasn't found
+        :raises: dns.resolver.YXDOMAIN if the record name was too long
+        :raises: dns.resolver.Timeout if the record wasn't found in time
+        :raises: Other dns.resolver.resolve exception pointing to a deeper issue
         """
         answers = dns.resolver.resolve(hostname, "A")
         # There should only be one answer here, though in case the server
