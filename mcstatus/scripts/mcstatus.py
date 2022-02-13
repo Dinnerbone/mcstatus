@@ -99,7 +99,7 @@ def json():
         data["host_port"] = query_res.raw["hostport"]
         data["map"] = query_res.map
         data["plugins"] = query_res.software.plugins
-    except:
+    except Exception:  # TODO: Check what this actually excepts
         pass
     click.echo(json_dumps(data))
 

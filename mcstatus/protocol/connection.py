@@ -220,7 +220,7 @@ class TCPSocketConnection(Connection):
     def __del__(self):
         try:
             self.socket.close()
-        except:
+        except Exception:  # TODO: Check what this actually excepts
             pass
 
 
@@ -257,7 +257,7 @@ class UDPSocketConnection(Connection):
     def __del__(self):
         try:
             self.socket.close()
-        except:
+        except Exception:  # TODO: Check what this actually excepts
             pass
 
 
@@ -290,7 +290,7 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
     def __del__(self):
         try:
             self.writer.close()
-        except:
+        except Exception:  # TODO: Check what this actually expects
             pass
 
 
@@ -328,5 +328,5 @@ class UDPAsyncSocketConnection(AsyncReadConnection):
     def __del__(self):
         try:
             self.stream.close()
-        except:
+        except Exception:  # TODO: Check what this actually excepts
             pass
