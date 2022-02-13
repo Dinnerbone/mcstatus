@@ -24,6 +24,7 @@ def ip_type(address: Union[int, str]) -> Optional[int]:
     except ValueError:
         return None
 
+
 class Connection:
     def __init__(self):
         self.sent = bytearray()
