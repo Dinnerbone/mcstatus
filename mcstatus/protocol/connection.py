@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABC
-from typing import TYPE_CHECKING, SupportsBytes, Iterable, Tuple, Union
+from typing import TYPE_CHECKING, SupportsBytes, Iterable, Tuple, Union, Optional
+from ipaddress import ip_address
 
 import socket
 import struct
@@ -11,13 +12,17 @@ import asyncio_dgram
 from ctypes import c_uint32 as unsigned_int32
 from ctypes import c_int32 as signed_int32
 
-from ..scripts.address_tools import ip_type
-
 if TYPE_CHECKING:
     from typing_extensions import SupportsIndex  # Python 3.7 doesn't support this yet.
 
     BytesConvertable = Union[SupportsIndex, Iterable[SupportsIndex]]
 
+
+def ip_type(address: Union[int, str]) -> Optional[int]:
+    try:
+        return ip_address(address).version
+    except ValueError:
+        return None
 
 class Connection:
     def __init__(self):
