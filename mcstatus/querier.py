@@ -5,7 +5,10 @@ import re
 import struct
 from typing import List
 
-from mcstatus.protocol.connection import Connection, UDPAsyncSocketConnection, UDPSocketConnection
+from mcstatus.protocol.connection import Connection, TYPE_CHECKING, UDPAsyncSocketConnection, UDPSocketConnection
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class ServerQuerier:
@@ -131,7 +134,7 @@ class QueryResponse:
             raise ValueError("The provided data is not valid")
 
     @classmethod
-    def from_connection(cls, response: Connection):
+    def from_connection(cls, response: Connection) -> Self:
         response.read(len("splitnum") + 1 + 1 + 1)
         data = {}
         players = []
