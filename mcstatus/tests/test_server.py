@@ -1,6 +1,6 @@
 import asyncio
 import sys
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
