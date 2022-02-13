@@ -1,7 +1,7 @@
 import asyncio
 import sys
 
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 import pytest
 
 from mcstatus.protocol.connection import Connection
