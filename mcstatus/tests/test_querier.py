@@ -52,7 +52,7 @@ class TestMinecraftQuerier:
             )
         )
         response = self.querier.read_query()
-        conn_bytes = self.querier.connection.flush()
+        self.querier.connection.flush()
 
         assert response.raw["game_id"] == "MINECRAFT"
         assert response.motd == "\x00*KÕ"
@@ -67,7 +67,7 @@ class TestMinecraftQuerier:
             )
         )
         response = self.querier.read_query()
-        conn_bytes = self.querier.connection.flush()
+        self.querier.connection.flush()
 
         assert response.raw["game_id"] == "MINECRAFT"
         assert response.motd == "\x00other"  # "\u2a00other" is actually what is expected,
