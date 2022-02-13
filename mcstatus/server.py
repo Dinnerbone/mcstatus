@@ -1,7 +1,7 @@
 from __future__ import annotations
+from typing import Tuple, TYPE_CHECKING
 
-import re
-from typing import TYPE_CHECKING
+import dns.resolver
 
 from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
 from mcstatus.protocol.connection import (
@@ -14,8 +14,6 @@ from mcstatus.querier import QueryResponse, ServerQuerier, AsyncServerQuerier
 from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 from mcstatus.scripts.address_tools import parse_address
 from mcstatus.utils import retry
-import dns.resolver
-from dns.exception import DNSException
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -49,29 +47,68 @@ class MinecraftServer:
         self.port = port
         self.timeout = timeout
 
+    @staticmethod
+    def _dns_srv_lookup(address: str) -> Tuple[str, int]:
+        """Perform a DNS resolution for SRV record pointing to the Java Server.
+
+        :param str address: The address to resolve for.
+        :return: A tuple of host string and port number
+        :raises: dns.resolver.NXDOMAIN if the SRV record doesn't exist
+        :raises: dns.resolver.YXDOMAIN if the SRV record name is too long
+        :raises: dns.resolver.Timeout if the SRV record wasn't found in time
+        :raises: Other dns.resolver.resolve exception pointing to a deeper issue
+        """
+        answers = dns.resolver.resolve("_minecraft._tcp." + address, "SRV")
+        # There should only be one answer here, though in case the server
+        # does actually point to multiple IPs, we just pick the first one
+        answer = answers[0]
+        host = str(answer.target).rstrip(".")
+        port = int(answer.port)
+        return host, port
+
+    @staticmethod
+    def _dns_a_lookup(hostname: str) -> str:
+        """Perform a DNS resolution for an A record to given hostname
+
+        :param str address: The address to resolve for.
+        :return: The resolved IP address from the A record
+        :raises: dns.resolver.NXDOMAIN if the record wasn't found
+        :raises: dns.resolver.YXDOMAIN if the record name was too long
+        :raises: dns.resolver.Timeout if the record wasn't found in time
+        :raises: Other dns.resolver.resolve exception pointing to a deeper issue
+        """
+        answers = dns.resolver.resolve(hostname, "A")
+        # There should only be one answer here, though in case the server
+        # does actually point to multiple IPs, we just pick the first one
+        answer = answers[0]
+        hostname = str(answer).rstrip(".")
+        return hostname
+
     @classmethod
     def lookup(cls, address: str, timeout: float = 3) -> Self:
         """Parses the given address and checks DNS records for an SRV record that points to the Minecraft server.
 
-        :param str address: The address of the Minecraft server, like `example.com:25565`.
+        :param str address: The address of the Minecraft server, like `example.com:25565`
         :param float timeout: The timeout in seconds before failing to connect.
         :return: A `MinecraftServer` instance.
-        :rtype: MinecraftServer
         """
-
         host, port = parse_address(address)
-        if port is None:
-            port = 25565
-            try:
-                answers = dns.resolver.resolve("_minecraft._tcp." + host, "SRV")
-                if len(answers):
-                    answer = answers[0]
-                    host = str(answer.target).rstrip(".")
-                    port = int(answer.port)
-            except Exception:
-                pass
 
-        return cls(host, port, timeout)
+        # If we have a port, no DNS resolution is needed, just make the instance, we know where to connect
+        if port is not None:
+            return cls(host, port, timeout=timeout)
+
+        # Try to look for an SRV DNS record. If present, make the instance with host and port from it.
+        try:
+            host, port = cls._dns_srv_lookup(host)
+        except dns.resolver.NXDOMAIN:
+            # The DNS record doesn't exist, this doesn't necessarily mean the server doesn't exist though
+            # SRV record is optional and some servers don't expose it. So we simply use the host from the
+            # address and fall back to the default port
+            return cls(host, timeout=timeout)
+
+        # We have the host and port from the SRV record, use it to make the instance
+        return cls(host, port, timeout=timeout)
 
     def ping(self, **kwargs) -> float:
         """Checks the latency between a Minecraft Java Edition server and the client (you).
@@ -154,20 +191,19 @@ class MinecraftServer:
         :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
-        host = self.host
         try:
-            answers = dns.resolver.resolve(host, "A")
-            if len(answers):
-                answer = answers[0]
-                host = str(answer).rstrip(".")
-        except DNSException:
-            pass
+            ip = self._dns_a_lookup(self.host)
+        except dns.resolver.NXDOMAIN:
+            # The A record lookup can fail here since the host could already be an IP, not a hostname
+            # However it can also fail if the hostname is just invalid and doesn't have any MC server
+            # attached to it, in which case we'll get an error after connecting with the socket.
+            ip = self.host
 
-        return self._retry_query(host)
+        return self._retry_query(ip)
 
     @retry(tries=3)
-    def _retry_query(self, host: str) -> QueryResponse:
-        connection = UDPSocketConnection((host, self.port), self.timeout)
+    def _retry_query(self, ip: str) -> QueryResponse:
+        connection = UDPSocketConnection((ip, self.port), self.timeout)
         querier = ServerQuerier(connection)
         querier.handshake()
         return querier.read_query()
@@ -178,21 +214,20 @@ class MinecraftServer:
         :return: Query status information in a `QueryResponse` instance.
         :rtype: QueryResponse
         """
-        host = self.host
         try:
-            answers = dns.resolver.resolve(host, "A")
-            if len(answers):
-                answer = answers[0]
-                host = str(answer).rstrip(".")
-        except DNSException:
-            pass
+            ip = self._dns_a_lookup(self.host)
+        except dns.resolver.NXDOMAIN:
+            # The A record lookup can fail here since the host could already be an IP, not a hostname
+            # However it can also fail if the hostname is just invalid and doesn't have any MC server
+            # attached to it, in which case we'll get an error after connecting with the socket.
+            ip = self.host
 
-        return await self._retry_async_query(host)
+        return await self._retry_async_query(ip)
 
     @retry(tries=3)
-    async def _retry_async_query(self, host) -> QueryResponse:
+    async def _retry_async_query(self, ip: str) -> QueryResponse:
         connection = UDPAsyncSocketConnection()
-        await connection.connect((host, self.port), self.timeout)
+        await connection.connect((ip, self.port), self.timeout)
         querier = AsyncServerQuerier(connection)
         await querier.handshake()
         return await querier.read_query()

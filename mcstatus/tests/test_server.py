@@ -1,6 +1,7 @@
 import asyncio
 import sys
 
+import dns.resolver
 from unittest.mock import patch, Mock
 import pytest
 
@@ -176,15 +177,7 @@ class TestMinecraftServer:
 
     def test_by_address_no_srv(self):
         with patch("dns.resolver.resolve") as resolve:
-            resolve.return_value = []
-            self.server = MinecraftServer.lookup("example.org")
-            resolve.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
-        assert self.server.host == "example.org"
-        assert self.server.port == 25565
-
-    def test_by_address_invalid_srv(self):
-        with patch("dns.resolver.resolve") as resolve:
-            resolve.side_effect = [Exception]
+            resolve.side_effect = [dns.resolver.NXDOMAIN]
             self.server = MinecraftServer.lookup("example.org")
             resolve.assert_called_once_with("_minecraft._tcp.example.org", "SRV")
         assert self.server.host == "example.org"
