@@ -2,4 +2,5 @@
 max-line-length=127
 extend-ignore=E203
 application-import-names="mcstatus"
+ban-relative-imports = true
 exclude=".venv,.git,.cache"
