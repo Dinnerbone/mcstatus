@@ -4,7 +4,7 @@ import socket
 import click
 from json import dumps as json_dumps
 
-from .. import MinecraftServer
+from mcstatus import MinecraftServer
 
 server: MinecraftServer = None  # type: ignore[assignment]  # This will be set with cli function
 
