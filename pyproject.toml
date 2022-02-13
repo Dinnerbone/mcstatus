@@ -47,6 +47,7 @@ tox-poetry = "^0.4.1"
 pyright = "^0.0.13"
 typing-extensions = "^4.0.1"
 flake8 = "^4.0.1"
+flake8-bugbear = "^22.1.11"
 
 [tool.poetry.scripts]
 mcstatus = 'mcstatus.scripts.mcstatus:cli'
