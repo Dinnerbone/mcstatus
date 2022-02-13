@@ -44,7 +44,7 @@ class TestConnection:
         assert self.connection.read(2) == bytearray.fromhex("7FAA")
         assert self.connection.read(1) == bytearray.fromhex("BB")
 
-    def _assert_varint_read_write(self, hexstr, value):
+    def _assert_varint_read_write(self, hexstr, value) -> None:
         self.connection.receive(bytearray.fromhex(hexstr))
         assert self.connection.read_varint() == value
 
