@@ -48,7 +48,7 @@ class MinecraftServer:
         self.timeout = timeout
 
     @staticmethod
-    def dns_srv_lookup(address: str) -> Tuple[str, int]:
+    def _dns_srv_lookup(address: str) -> Tuple[str, int]:
         """Perform a DNS resolution for SRV record pointing to the Java Server.
 
         :param str address: The address to resolve for.
@@ -64,7 +64,7 @@ class MinecraftServer:
         return host, port
 
     @staticmethod
-    def dns_a_lookup(hostname: str) -> str:
+    def _dns_a_lookup(hostname: str) -> str:
         """Perform a DNS resolution for an A record to given hostname
 
         :param str address: The address to resolve for.
@@ -94,7 +94,7 @@ class MinecraftServer:
 
         # Try to look for an SRV DNS record. If present, make the instance with host and port from it.
         try:
-            host, port = cls.dns_srv_lookup(host)
+            host, port = cls._dns_srv_lookup(host)
         except dns.resolver.NXDOMAIN:
             # The DNS record doesn't exist, this doesn't necessarily mean the server doesn't exist though
             # SRV record is optional and some servers don't expose it. So we simply use the host from the
@@ -186,7 +186,7 @@ class MinecraftServer:
         :rtype: QueryResponse
         """
         try:
-            ip = self.dns_a_lookup(self.host)
+            ip = self._dns_a_lookup(self.host)
         except dns.resolver.NXDOMAIN:
             # The A record lookup can fail here since the host could already be an IP, not a hostname
             # However it can also fail if the hostname is just invalid and doesn't have any MC server
@@ -209,7 +209,7 @@ class MinecraftServer:
         :rtype: QueryResponse
         """
         try:
-            ip = self.dns_a_lookup(self.host)
+            ip = self._dns_a_lookup(self.host)
         except dns.resolver.NXDOMAIN:
             # The A record lookup can fail here since the host could already be an IP, not a hostname
             # However it can also fail if the hostname is just invalid and doesn't have any MC server
