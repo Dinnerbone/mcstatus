@@ -1,7 +1,6 @@
-import re
-from typing import Tuple
+from __future__ import annotations
+from typing import Tuple, TYPE_CHECKING
 
-from typing_extensions import Self
 import dns.resolver
 
 from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
@@ -15,6 +14,9 @@ from mcstatus.querier import QueryResponse, ServerQuerier, AsyncServerQuerier
 from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
 from mcstatus.scripts.address_tools import parse_address
 from mcstatus.utils import retry
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 __all__ = ["MinecraftServer", "MinecraftBedrockServer"]

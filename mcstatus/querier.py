@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 import struct
 import re
@@ -49,7 +51,7 @@ class ServerQuerier:
         packet = self._read_packet()
         self.challenge = int(packet.read_ascii())
 
-    def read_query(self) -> "QueryResponse":
+    def read_query(self) -> QueryResponse:
         request = self._create_packet()
         self.connection.write(request)
 
@@ -75,7 +77,7 @@ class AsyncServerQuerier(ServerQuerier):
         packet = await self._read_packet()
         self.challenge = int(packet.read_ascii())
 
-    async def read_query(self) -> "QueryResponse":
+    async def read_query(self) -> QueryResponse:
         request = self._create_packet()
         await self.connection.write(request)
 
