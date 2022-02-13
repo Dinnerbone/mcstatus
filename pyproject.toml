@@ -33,6 +33,7 @@ python = ">=3.7"
 asyncio-dgram = "1.2.0"
 click = ">=7.1.2,<9"
 dnspython = "2.1.0"
+flake8-import-order = "^0.18.1"
 
 [tool.poetry.dev-dependencies]
 coverage = "^6.1.1"
