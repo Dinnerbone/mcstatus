@@ -1,4 +1,4 @@
-from mock import Mock
+from unittest.mock import Mock
 
 from mcstatus.protocol.connection import Connection
 from mcstatus.querier import ServerQuerier
