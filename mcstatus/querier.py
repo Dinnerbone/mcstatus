@@ -3,9 +3,9 @@ from __future__ import annotations
 import random
 import re
 import struct
-from typing import List
+from typing import List, TYPE_CHECKING
 
-from mcstatus.protocol.connection import Connection, TYPE_CHECKING, UDPAsyncSocketConnection, UDPSocketConnection
+from mcstatus.protocol.connection import Connection, UDPAsyncSocketConnection, UDPSocketConnection
 
 if TYPE_CHECKING:
     from typing_extensions import Self
