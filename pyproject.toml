@@ -45,7 +45,6 @@ tox = "^3.24.5"
 tox-poetry = "^0.4.1"
 pyright = "^0.0.13"
 typing-extensions = "^4.0.1"
-tox-gh-actions = "^2.9.1"
 
 [tool.poetry.scripts]
 mcstatus = 'mcstatus.scripts.mcstatus:cli'
