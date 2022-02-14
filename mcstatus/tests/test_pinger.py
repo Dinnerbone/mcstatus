@@ -1,7 +1,7 @@
 import pytest
 
+from mcstatus.pinger import PingResponse, ServerPinger
 from mcstatus.protocol.connection import Connection
-from mcstatus.pinger import ServerPinger, PingResponse
 
 
 class TestServerPinger:
@@ -164,9 +164,9 @@ class TestPingResponse:
                 "text": "",
             }
         )
-        assert (
-            out
-            == " ===============§f §lC§lr§le§la§lt§li§lv§le§lF§lu§ln ===============§f \n §lThe server has been updated to §l1.17.1"
+        assert out == (
+            " ===============§f §lC§lr§le§la§lt§li§lv§le§lF§lu§ln ===============§f \n"
+            " §lThe server has been updated to §l1.17.1"
         )
 
     def test_parse_description(self):

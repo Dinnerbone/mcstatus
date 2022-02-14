@@ -50,7 +50,7 @@ jobs:
         run: |
           pip install poetry
           poetry install
-  
+
       # Run the actual linting steps here:
 
       - name: Run black formatter check
@@ -58,3 +58,6 @@ jobs:
 
       - name: Run pyright type checker
         run: pyright -v $PYTHONUSERBASE
+
+      - name: Run flake8 linter
+        run: flake8 .

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Callable, Tuple, Type
 from functools import wraps
+from typing import Callable, Tuple, Type
 
 
 def retry(tries: int, exceptions: Tuple[Type[BaseException]] = (Exception,)) -> Callable:

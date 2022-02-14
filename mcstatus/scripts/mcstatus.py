@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import socket
-import click
 from json import dumps as json_dumps
 
-from .. import MinecraftServer
+import click
+
+from mcstatus import MinecraftServer
 
 server: MinecraftServer = None  # type: ignore[assignment]  # This will be set with cli function
 
@@ -99,7 +100,7 @@ def json():
         data["host_port"] = query_res.raw["hostport"]
         data["map"] = query_res.map
         data["plugins"] = query_res.software.plugins
-    except:
+    except Exception:  # TODO: Check what this actually excepts
         pass
     click.echo(json_dumps(data))
 

@@ -1,21 +1,21 @@
 from __future__ import annotations
 
-import re
-from typing import TYPE_CHECKING, Tuple, Optional
+from typing import Optional, TYPE_CHECKING, Tuple
+from urllib.parse import urlparse
 
-from mcstatus.pinger import PingResponse, ServerPinger, AsyncServerPinger
-from mcstatus.protocol.connection import (
-    TCPSocketConnection,
-    UDPSocketConnection,
-    TCPAsyncSocketConnection,
-    UDPAsyncSocketConnection,
-)
-from mcstatus.querier import QueryResponse, ServerQuerier, AsyncServerQuerier
-from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
-from mcstatus.utils import retry
 import dns.resolver
 from dns.exception import DNSException
-from urllib.parse import urlparse
+
+from mcstatus.bedrock_status import BedrockServerStatus, BedrockStatusResponse
+from mcstatus.pinger import AsyncServerPinger, PingResponse, ServerPinger
+from mcstatus.protocol.connection import (
+    TCPAsyncSocketConnection,
+    TCPSocketConnection,
+    UDPAsyncSocketConnection,
+    UDPSocketConnection,
+)
+from mcstatus.querier import AsyncServerQuerier, QueryResponse, ServerQuerier
+from mcstatus.utils import retry
 
 if TYPE_CHECKING:
     from typing_extensions import Self

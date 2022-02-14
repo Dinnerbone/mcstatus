@@ -1,5 +1,7 @@
-from mcstatus.utils import retry
+import pytest
+
 from mcstatus.tests.test_async_pinger import async_decorator
+from mcstatus.utils import retry
 
 
 def test_sync_success():
@@ -28,13 +30,9 @@ def test_sync_fail():
         elif x == 1:
             raise RuntimeError("Second error")
 
-    try:
+    # We should get the last exception on failure (not OSError)
+    with pytest.raises(RuntimeError):
         func()
-    except Exception as exc:
-        # We should always get the last exception on failure
-        assert isinstance(exc, RuntimeError)
-    else:
-        assert False
 
 
 def test_async_success():
@@ -63,10 +61,6 @@ def test_async_fail():
         elif x == 1:
             raise RuntimeError("Second error")
 
-    try:
+    # We should get the last exception on failure (not OSError)
+    with pytest.raises(RuntimeError):
         async_decorator(func)()
-    except Exception as exc:
-        # We should always get the last exception on failure
-        assert isinstance(exc, RuntimeError)
-    else:
-        assert False

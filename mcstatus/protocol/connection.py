@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
-from typing import TYPE_CHECKING, SupportsBytes, Iterable, Tuple, Union, Optional
-from ipaddress import ip_address
-
+import asyncio
 import socket
 import struct
-import asyncio
-import asyncio_dgram
-
-from ctypes import c_uint32 as unsigned_int32
+from abc import ABC, abstractmethod
 from ctypes import c_int32 as signed_int32
+from ctypes import c_uint32 as unsigned_int32
+from ipaddress import ip_address
+from typing import Iterable, Optional, SupportsBytes, TYPE_CHECKING, Tuple, Union
+
+import asyncio_dgram
 
 if TYPE_CHECKING:
     from typing_extensions import SupportsIndex  # Python 3.7 doesn't support this yet.
@@ -226,7 +225,7 @@ class TCPSocketConnection(Connection):
     def __del__(self):
         try:
             self.socket.close()
-        except:
+        except Exception:  # TODO: Check what this actually excepts
             pass
 
 
@@ -263,7 +262,7 @@ class UDPSocketConnection(Connection):
     def __del__(self):
         try:
             self.socket.close()
-        except:
+        except Exception:  # TODO: Check what this actually excepts
             pass
 
 
@@ -296,7 +295,7 @@ class TCPAsyncSocketConnection(AsyncReadConnection):
     def __del__(self):
         try:
             self.writer.close()
-        except:
+        except Exception:  # TODO: Check what this actually expects
             pass
 
 
@@ -334,5 +333,5 @@ class UDPAsyncSocketConnection(AsyncReadConnection):
     def __del__(self):
         try:
             self.stream.close()
-        except:
+        except Exception:  # TODO: Check what this actually excepts
             pass

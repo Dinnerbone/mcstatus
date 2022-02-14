@@ -1,0 +1,15 @@
+[flake8]
+max-line-length=127
+extend-ignore=E203
+application-import-names=mcstatus
+ban-relative-imports=true
+import-order-style=pycharm
+exclude=.venv,.git,.cache
+ignore=
+    ANN001, # TEMPORARY: parameter annotation (we still have a lot of these)
+    ANN201, # TEMPORARY: return type annotation (we still have a lot of these)
+    ANN002, # *args annotation
+    ANN003, # **kwargs annotation
+    ANN101, # self param annotation
+    ANN102, # cls param annotation
+    ANN204, # return type annotation for special methods
