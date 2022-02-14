@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Tuple
+from urllib.parse import urlparse
 
 import dns.resolver
 from dns.exception import DNSException
@@ -14,7 +15,6 @@ from mcstatus.protocol.connection import (
     UDPSocketConnection,
 )
 from mcstatus.querier import AsyncServerQuerier, QueryResponse, ServerQuerier
-from mcstatus.scripts.address_tools import parse_address
 from mcstatus.utils import retry
 
 if TYPE_CHECKING:
@@ -22,6 +22,13 @@ if TYPE_CHECKING:
 
 
 __all__ = ["MinecraftServer", "MinecraftBedrockServer"]
+
+
+def parse_address(address: str) -> Tuple[str, Optional[int]]:
+    tmp = urlparse("//" + address)
+    if not tmp.hostname:
+        raise ValueError(f"Invalid address '{address}'")
+    return (tmp.hostname, tmp.port)
 
 
 def ensure_valid(host: object, port: object):
