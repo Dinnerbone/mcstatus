@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import Optional, TYPE_CHECKING, Tuple
 from urllib.parse import urlparse
 
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-__all__ = ["JavaServer", "BedrockServer"]
+__all__ = ["JavaServer", "BedrockServer", "MinecraftServer", "MinecraftBedrockServer"]
 
 
 def parse_address(address: str) -> Tuple[str, Optional[int]]:
@@ -255,3 +256,22 @@ class BedrockServer:
         """
         return await BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status_async()
 
+
+class MinecraftServer(JavaServer):
+    """This is a deprecated version of the base class for a Java Minecraft Server.
+
+    This class is kept purely for backwards compatibility reasons and will be removed eventually.
+    """
+    def __init__(self, host: str, port: int = 25565, timeout: float = 3):
+        super().__init__(host, port=port, timeout=timeout)
+        warnings.warn("'MinecraftServer' is deprecated and will be removed, use 'JavaServer' instead")
+
+
+class MinecraftBedrockServer(BedrockServer):
+    """This is a deprecated version of the base class for a Bedrock Minecraft Server.
+
+    This class is kept purely for backwards compatibility reasons and will be removed eventually.
+    """
+    def __init__(self, host: str, port: int = 19139, timeout: float = 3):
+        super().__init__(host, port=port, timeout=timeout)
+        warnings.warn("'MinecraftBedrockServer' is deprecated and will be removed in, use 'BedrockServer' instead")
