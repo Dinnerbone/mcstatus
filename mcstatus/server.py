@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-__all__ = ["MinecraftServer", "MinecraftBedrockServer"]
+__all__ = ["JavaServer", "BedrockServer"]
 
 
 def parse_address(address: str) -> Tuple[str, Optional[int]]:
@@ -40,7 +40,7 @@ def ensure_valid(host: object, port: object):
         raise ValueError(f"Port must be within the allowed range (0-2^16), got {port}")
 
 
-class MinecraftServer:
+class JavaServer:
     """Base class for a Minecraft Java Edition server.
 
     :param str host: The host/address/ip of the Minecraft server.
@@ -205,7 +205,7 @@ class MinecraftServer:
         return await querier.read_query()
 
 
-class MinecraftBedrockServer:
+class BedrockServer:
     """Base class for a Minecraft Bedrock Edition server.
 
     :param str host: The host/address/ip of the Minecraft server.
@@ -254,3 +254,4 @@ class MinecraftBedrockServer:
         :rtype: BedrockStatusResponse
         """
         return await BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status_async()
+
