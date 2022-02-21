@@ -61,3 +61,28 @@ jobs:
 
       - name: Run flake8 linter
         run: flake8 .
+
+      # Steps below are here to generate and upload an artifact from
+      # this workflow so that we can have the data about author and some
+      # other things accessible from the status_embed workflow.
+
+      # Prepare the pull request payload artifact. If this fails, we
+      # fail silently using the `continue-on-error` option, since failure
+      # doesn't mean that the checks in this workflow have failed.
+      - name: Prepare Pull Request Payload artifact
+        id: prepare-artifact
+        if: always() && github.event_name == 'pull_request'
+        continue-on-error: true
+        run: cat $GITHUB_EVENT_PATH | jq '.pull_request' > pull_request_payload.json
+
+      # This only makes sense if the previous step succeeded. To
+      # get the original outcome of the previous step before the
+      # `continue-on-error` conclusion is applied, we use the
+      # `.outcome` value. This step also fails silently.
+      - name: Upload a Build Artifact
+        if: always() && steps.prepare-artifact.outcome == 'success'
+        continue-on-error: true
+        uses: actions/upload-artifact@v2
+        with:
+          name: pull-request-payload
+          path: pull_request_payload.json
