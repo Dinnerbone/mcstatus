@@ -1,6 +1,10 @@
 name: Validation
 
-on: [pull_request, push]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 env:
   # Make sure pip caches dependencies and installs as user
