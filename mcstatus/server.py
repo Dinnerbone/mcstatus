@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 from typing import Optional, TYPE_CHECKING, Tuple
 from urllib.parse import urlparse
 
@@ -16,7 +15,7 @@ from mcstatus.protocol.connection import (
     UDPSocketConnection,
 )
 from mcstatus.querier import AsyncServerQuerier, QueryResponse, ServerQuerier
-from mcstatus.utils import retry
+from mcstatus.utils import deprecated, retry
 
 if TYPE_CHECKING:
     from typing_extensions import Self
@@ -257,6 +256,7 @@ class BedrockServer:
         return await BedrockServerStatus(self.host, self.port, self.timeout, **kwargs).read_status_async()
 
 
+@deprecated(replacement="JavaServer")
 class MinecraftServer(JavaServer):
     """This is a deprecated version of the base class for a Java Minecraft Server.
 
@@ -264,9 +264,9 @@ class MinecraftServer(JavaServer):
     """
     def __init__(self, host: str, port: int = 25565, timeout: float = 3):
         super().__init__(host, port=port, timeout=timeout)
-        warnings.warn("'MinecraftServer' is deprecated and will be removed, use 'JavaServer' instead")
 
 
+@deprecated(replacement="BedrockServer")
 class MinecraftBedrockServer(BedrockServer):
     """This is a deprecated version of the base class for a Bedrock Minecraft Server.
 
@@ -274,4 +274,3 @@ class MinecraftBedrockServer(BedrockServer):
     """
     def __init__(self, host: str, port: int = 19139, timeout: float = 3):
         super().__init__(host, port=port, timeout=timeout)
-        warnings.warn("'MinecraftBedrockServer' is deprecated and will be removed in, use 'BedrockServer' instead")
