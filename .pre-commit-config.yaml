@@ -1,0 +1,46 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.5.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-toml # For pyproject.toml
+      - id: check-yaml # For workflows
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.5.1
+    hooks:
+      - id: python-check-blanket-noqa # Enforce noqa annotations (noqa: F401,W203)
+      - id: python-use-type-annotations # Enforce type annotations instead of type comments
+
+  - repo: local
+    hooks:
+      - id: black
+        name: Black
+        description: Auto-format the code with black
+        entry: poetry run black
+        language: system
+        types: [python]
+        require_serial: true
+
+  - repo: local
+    hooks:
+      - id: flake8
+        name: Flake8
+        description: Run flake8 checks on the code
+        entry: poetry run flake8
+        language: system
+        types: [python]
+        require_serial: true
+
+  - repo: local
+    hooks:
+      - id: pyright
+        name: Pyright
+        description: Run pyright type checker
+        entry: poetry run pyright
+        language: system
+        types: [python]
+        pass_filenames: false
