@@ -21,6 +21,7 @@ env:
   # Specify paths here, so we know what to cache
   POETRY_CACHE_DIR: ${{ github.workspace }}/.cache/py-user-base
   PYTHONUSERBASE: ${{ github.workspace }}/.cache/py-user-base
+  PRE_COMMIT_HOME: ${{ github.workspace }}/.cache/pre-commit-cache
 
 jobs:
   lint:
@@ -59,7 +60,21 @@ jobs:
           pip install poetry
           poetry install
 
+      # Cache pre-commit environment
+      # The key is a composite of multiple values, which when changed
+      # the cache won't be restored in order to make updating possible
+      - name: Pre-commit Environment Caching
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.PRE_COMMIT_HOME }}
+          key: "precommit-0-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
+                ${{ steps.python.outputs.python-version }}-\
+                ${{ hashFiles('./.pre-commit-config.yaml') }}"
+
       # Run the actual linting steps here:
+
+      - name: Run pre-commit hooks
+        run: export PIP_USER=0; SKIP=black,flake8,pyright pre-commit run --all-files
 
       - name: Run black formatter check
         run: black --check .
