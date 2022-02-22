@@ -6,6 +6,10 @@ on:
       - master
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   # Make sure pip caches dependencies and installs as user
   PIP_NO_CACHE_DIR: false
